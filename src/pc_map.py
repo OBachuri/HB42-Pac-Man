@@ -72,27 +72,30 @@ class Map:
 
     def draw(self):
         pg.draw.rect(self.game.screen, 'green', (0, 0,
-                     self.cols*(self.cell_size + self.wall_thickness)
-                     + self.wall_thickness,
+                     self.wall_thickness,
                      self.rows*(self.cell_size + self.wall_thickness)
-                     + self.wall_thickness), 1)
-        pg.draw.rect(self.game.screen, 'green', (self.wall_thickness - 1,
-                     self.wall_thickness - 1,
-                     self.cols*(self.cell_size + self.wall_thickness)
-                     - self.wall_thickness + 2,
-                     self.rows*(self.cell_size + self.wall_thickness)
-                     - self.wall_thickness + 2
-                     ), 1)
+                     + self.wall_thickness), 0)
+        pg.draw.rect(self.game.screen, 'green',
+                     (0, self.rows*(self.cell_size + self.wall_thickness),
+                      self.cols*(self.cell_size + self.wall_thickness),
+                      self.wall_thickness), 0)
+
+        [pg.draw.rect(self.game.screen, 'white',
+                      (pos[0] * (self.cell_size+self.wall_thickness),
+                       pos[1] * (self.cell_size+self.wall_thickness),
+                       self.cell_size + self.wall_thickness * 2,
+                       self.cell_size + self.wall_thickness * 2), 0)
+         for pos in self.world_map if self.world_map[pos] & 15 == 15]
 
         [pg.draw.rect(self.game.screen, 'green',
                       (pos[0] * (self.cell_size+self.wall_thickness),
                        pos[1] * (self.cell_size+self.wall_thickness),
                        self.cell_size + self.wall_thickness * 2,
-                       self.wall_thickness), 1)
+                       self.wall_thickness), 0)
          for pos in self.world_map if self.world_map[pos] & 1 == 1]
         [pg.draw.rect(self.game.screen, 'green',
                       ((pos[0]+1) * (self.cell_size+self.wall_thickness),
                        pos[1] * (self.cell_size+self.wall_thickness),
                        self.wall_thickness,
-                       self.cell_size + self.wall_thickness * 2), 1)
+                       self.cell_size + self.wall_thickness * 2), 0)
          for pos in self.world_map if self.world_map[pos] & 2 == 2]
