@@ -32,7 +32,17 @@ make run my_config.json
 python3 pac-man.py my_config.json
 ```
 
-## Result
+## Play
+
+### Controls
+
+- **W** - Move Up
+- **A** - Move Left
+- **S** - Move Down
+- **D** - Move Right
+- **Space** - Stop
+- **Esc** - Exit game
+
 
 ### Configuration File
 
@@ -56,7 +66,6 @@ The configuration file controls the maze generation physics and rules.
 
 ## Requirements
 
-- Linux with desktop environments (tested on Ubuntu and Debian)
 - Python 3.10 or later
 - Pygame
 - Pydantic
@@ -67,6 +76,9 @@ The configuration file controls the maze generation physics and rules.
 
 PGame - RPG example
 https://www.youtube.com/watch?v=ECqUrT7IdqQ&list=PLi77irUVkDatlbulEY4Kz8O107HO8RGH8
+
+Pacmancode - How to program a Pacman game in the Python language using Pygame
+https://pacmancode.com/
 
 Resources DFS 
 https://en.wikipedia.org/wiki/Depth-first_search

@@ -9,7 +9,7 @@ FPS = 60
 class Game:
     def __init__(self):
         pg.init()
-        pg.mouse.set_visible(False)
+        # pg.mouse.set_visible(False)
         self.screen = pg.display.set_mode((800, 800))
         # pg.display.set_caption("Pac-Man 42")
         pg.event.set_grab(True)
@@ -42,6 +42,11 @@ class Game:
         # self.weapon.draw()
         self.map.draw()
         self.player.draw()
+
+        self.screen.blit(self.font.render(
+            'Move:  W A S D, Stop: Space, Exit: Esc', False, (10, 10, 200)),
+            (10, 10 + (self.map.rows)
+             * (self.map.cell_size + self.map.wall_thickness)))
 
     def check_events(self):
         self.global_trigger = False

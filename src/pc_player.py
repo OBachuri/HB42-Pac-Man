@@ -2,6 +2,7 @@ import pygame as pg
 import pygame.gfxdraw as pggf
 import math
 
+
 class Player:
     def __init__(self, game):
         self.game = game
@@ -31,8 +32,43 @@ class Player:
         self.x = int(x)
         self.y = int(y)
 
-    def check_wall(self, x, y):
-        pass
+    def check_walls(self, new_x, new_y, max_shift) -> bool:
+        """ Returned True if there is wall on new palace """
+
+        new_x_int = int(round(new_x, 0))
+        new_y_int = int(round(new_y, 0))
+
+        # (left or right) and (top ot bottom)
+        if (((abs(new_x_int - new_x) <= max_shift)
+             or (abs(new_y_int - new_y) <= max_shift))):
+            return False
+
+        print("--- Diagonal = left:", (new_x_int > new_x), "top:", (new_y_int > new_y))
+        if new_x_int > new_x:  # left
+            # top
+            if (((new_y_int > new_y)
+                    and (self.game.map.world_map.get(
+                        (new_x_int - 1, new_y_int - 1), 0) & 6 > 0))):
+                print("Top-Left (x,y): (",new_x_int - 1,",",new_y_int - 1,") w:", self.game.map.world_map.get((new_x_int - 1, new_y_int - 1), 0))
+                return True
+            # bottom
+            elif (new_y_int < new_y) and (self.game.map.world_map.get(
+                    (new_x_int - 1, new_y_int + 1), 0) & 3 > 0):
+                print("Bottom-Left (x,y): (",new_x_int - 1,",",new_y_int + 1,") w:", self.game.map.world_map.get((new_x_int - 1, new_y_int + 1), 0))
+                return True
+        else:  # Right
+            # top
+            if (((new_y_int > new_y)
+                    and (self.game.map.world_map.get(
+                        (new_x_int + 1, new_y_int - 1), 0) & 12 > 0))):
+                print("Top-Rigth (x,y): (",new_x_int + 1,",",new_y_int - 1,") w:", self.game.map.world_map.get((new_x_int + 1, new_y_int - 1), 0))
+                return True
+            # bottom
+            elif (new_y_int < new_y) and (self.game.map.world_map.get(
+                    (new_x_int + 1, new_y_int + 1), 0) & 9 > 0):
+                print("Bottom-Right (x,y): (",new_x_int + 1,",",new_y_int + 1,") w:", self.game.map.world_map.get((new_x_int + 1, new_y_int + 1), 0))
+                return True
+        return False
 
     def movement(self):
         num_key_pressed = -1
@@ -54,6 +90,7 @@ class Player:
         if keys[pg.K_SPACE]:
             dx = 0
             dy = 0
+            print("---- stop ----")
         if keys[pg.K_d] or keys[pg.K_p]:
             self.angle += 0.1
         if keys[pg.K_d] or keys[pg.K_o]:
@@ -73,15 +110,15 @@ class Player:
                            / (self.game.map.cell_size
                               + self.game.map.wall_thickness)), 10)
 
-        x = int(self.x)
-        if (self.x - x) > (max_shift + 1e-11):
-            x += 1
-        y = int(self.y)
-        if (self.y - y) > (max_shift + 1e-11):
-            y += 1
-        w = self.game.map.world_map.get((x, y), 0)
+        x = int(round(self.x, 0))
+        y = int(round(self.y, 0))
 
-        print(f"before - cur:({self.x},{self.y}),int:({x},{y}, max_shift:{max_shift}, df({dx},{dy})")
+        # if (self.x - x) > (max_shift + 1e-11):
+        #     x += 1
+        # if (self.y - y) > (max_shift + 1e-11):
+        #     y += 1
+
+        # w = self.game.map.world_map.get((x, y), 0)
 
         dx_sf = dx * self.speed_factor
         dy_sf = dy * self.speed_factor
@@ -89,35 +126,188 @@ class Player:
         new_x = self.x + dx_sf
         new_y = self.y + dy_sf
 
-        new_x_int = int(new_x)
-        if (new_x - new_x_int) > (max_shift + 1e-11):
-            new_x_int += 1
-        new_y_int = int(new_y)
-        if (new_y - new_x_int) > (max_shift + 1e-11):
-            new_y_int += 1
+        new_x_int = int(round(new_x, 0))
+        new_y_int = int(round(new_y, 0))
 
-        if (new_x != x) and (new_y != y):
-            # diagonal move to new cell
-            pass
+        # if (new_x - new_x_int) > (max_shift + 1e-11):
+        #     new_x_int += 1
+        # if (new_y - new_y_int) > (max_shift + 1e-11):
+        #     new_y_int += 1
 
-        if ((dy < 0) and (w & 1 == 1) and (new_y <= y - max_shift)):
-            new_y = y - max_shift
-            dy = 0
-        if ((dy > 0) and (w & 4 == 4) and (new_y >= y + max_shift)):
-            new_y = y + max_shift
-            dy = 0
-        if ((dx > 0) and (w & 2 == 2) and (new_x >= x + max_shift)):
-            new_x = x + max_shift
+        wn_d = self.game.map.world_map.get((new_x_int, new_y_int), 0)
+
+        print(f"new - int:({x},{y}), df:({dx},{dy}), new:({new_x},{new_y}), new_int:({new_x_int},{new_y_int})")
+
+        print(f"x-df: {new_x_int - new_x}, y-df: {new_y_int - new_y}")
+
+        # if ((new_y_int - new_y) > max_shift):  # top
+        #     if ((new_x_int - new_x) > max_shift):  # left
+        #         print("top-left")
+        #         if (self.game.map.world_map.get(
+        #              (new_x_int - 1, new_y_int - 1), 0) & 9 > 0):
+        #             dx = 0
+        #             new_x = self.x
+        #             dy = 0
+        #             new_y = self.y
+        #     elif ((new_x - new_x_int) > max_shift):  # right
+        #         print("top-right")
+        #         if self.game.map.world_map.get(
+        #              (new_x_int + 1, new_y_int - 1), 0) & 3 > 0:
+        #             dx = 0
+        #             new_x = self.x
+        #             dy = 0
+        #             new_y = self.y
+        # elif ((new_y - new_y_int) > max_shift):  # bottom
+        #     if ((new_x_int - new_x) > max_shift):  # left
+        #         print("bottom-left")
+        #         if self.game.map.world_map.get(
+        #              (new_x_int - 1, new_y_int + 1), 0) & 12 > 0:
+        #             dx = 0
+        #             new_x = self.x
+        #             dy = 0
+        #             new_y = self.y
+        #     elif ((new_x - new_x_int) > max_shift):  # right
+        #         print("bottom-right")
+        #         if self.game.map.world_map.get(
+        #              (new_x_int + 1, new_y_int + 1), 0) & 6 > 0:
+        #             dx = 0
+        #             new_x = self.x
+        #             dy = 0
+        #             new_y = self.y
+
+        # left or rigth
+        # if (abs(new_x_int - new_x) > max_shift):  # we are on the border by x
+        #      if ((new_x_int - new_x) > max_shift):  # left border
+
+        # left or rigth
+        if (((((new_x_int - new_x) > max_shift) and (wn_d & 8 == 8))
+             or (((new_x - new_x_int) > max_shift) and (wn_d & 2 == 2)))):
+            print("left or right (left = ", ((new_x_int - new_x) > max_shift))
             dx = 0
-        if ((dx < 0) and (w & 8 == 8) and (new_x <= x - max_shift)):
-            new_x = x - max_shift
-            dx = 0
+            new_x = self.x
+            new_x_int = x
+
+        # top or bottom
+        if (((((new_y_int - new_y) > max_shift) and (wn_d & 1 == 1))
+             or (((new_y - new_y_int) > max_shift) and (wn_d & 4 == 4)))):
+            dy = 0
+            new_y = self.y
+            new_y_int = y
+
+        if self.check_walls(new_x, new_y, max_shift):
+            if (dx != 0) and (dy != 0):
+                if abs(dx) > abs(dy):
+                    if self.check_walls(new_x, self.y, max_shift):
+                        if self.check_walls(self.x, new_y, max_shift):
+                            dy = 0
+                            new_y = self.y
+                            new_y_int = y
+                        dx = 0
+                        new_x = self.x
+                        new_x_int = x
+                    else:
+                        dy = 0
+                        new_y = self.y
+                        new_y_int = y
+                else:
+                    if self.check_walls(self.x, new_y, max_shift):
+                        if self.check_walls(new_x, self.y, max_shift):
+                            dx = 0
+                            new_x = self.x
+                            new_x_int = x
+                        dy = 0
+                        new_y = self.y
+                        new_y_int = y
+                    else:
+                        dx = 0
+                        new_x = self.x
+                        new_x_int = x
+            else:
+                dy = 0
+                new_y = self.y
+                dx = 0
+                new_x = self.x
+
+
+#            print("top or bottom (top = ", ((new_y_int - new_y) > max_shift))
+
+        # (left or right) and (top ot bottom)
+        # if (((abs(new_x_int - new_x) > max_shift)
+        #      and (abs(new_y_int - new_y) > max_shift))):
+        #     print("--- Diagonal = left:", (new_x_int > new_x), "top:", (new_y_int > new_y))
+        #     if new_x_int > new_x:  # left
+        #         # top
+        #         if (((new_y_int > new_y)
+        #              and (self.game.map.world_map.get(
+        #                  (new_x_int - 1, new_y_int - 1), 0) & 6 > 0))):
+        #             dy = 0
+        #             new_y = self.y
+        #             dx = 0
+        #             new_x = self.x
+        #             print("Top-Left (x,y): (",new_x_int - 1,",",new_y_int - 1,") w:", self.game.map.world_map.get((new_x_int - 1, new_y_int - 1), 0))
+        #         # bottom
+        #         elif (new_y_int < new_y) and (self.game.map.world_map.get(
+        #              (new_x_int - 1, new_y_int + 1), 0) & 3 > 0):
+        #             dy = 0
+        #             new_y = self.y
+        #             dx = 0
+        #             new_x = self.x
+        #             print("Bottom-Left (x,y): (",new_x_int - 1,",",new_y_int + 1,") w:", self.game.map.world_map.get((new_x_int - 1, new_y_int + 1), 0))
+        #     else:  # Right
+        #         # top
+        #         if (((new_y_int > new_y)
+        #              and (self.game.map.world_map.get(
+        #                  (new_x_int + 1, new_y_int - 1), 0) & 12 > 0))):
+        #             dy = 0
+        #             new_y = self.y
+        #             dx = 0
+        #             new_x = self.x
+        #             print("Top-Rigth (x,y): (",new_x_int + 1,",",new_y_int - 1,") w:", self.game.map.world_map.get((new_x_int + 1, new_y_int - 1), 0))
+        #         # bottom
+        #         elif (new_y_int < new_y) and (self.game.map.world_map.get(
+        #              (new_x_int + 1, new_y_int + 1), 0) & 9 > 0):
+        #             dy = 0
+        #             new_y = self.y
+        #             dx = 0
+        #             new_x = self.x
+        #             print("Bottom-Right (x,y): (",new_x_int + 1,",",new_y_int + 1,") w:", self.game.map.world_map.get((new_x_int + 1, new_y_int + 1), 0))
+
+
+
+        # if (x != new_x_int) and (y != new_y_int):
+        #     # Diagonal shift (Shift to the bottom-right corner)
+        #     # Check top and left walls in cells that is in bottom-right corner
+        #     wn_d = self.game.map.world_map.get((new_x_int, new_y_int), 0)
+        #     if (wn_d & 9 > 0) or (w & 6 > 0):
+        #         # there is wall on this corner
+        #         if dx > dy:
+        #             dy = 0
+        #             new_y = self.y
+        #         else:
+        #             dx = 0
+        #             new_x = self.x
+
+
+        print(f"before - cur:({self.x},{self.y}),int:({x},{y}, max_shift:{max_shift}, df({dx},{dy})")
+
+        # if ((dy < 0) and (w & 1 == 1) and (new_y <= y - max_shift)):
+        #     new_y = y - max_shift
+        #     dy = 0
+        # if ((dy > 0) and (w & 4 == 4) and (new_y >= y + max_shift)):
+        #     new_y = y + max_shift
+        #     dy = 0
+        # if ((dx > 0) and (w & 2 == 2) and (new_x >= x + max_shift)):
+        #     new_x = x + max_shift
+        #     dx = 0
+        # if ((dx < 0) and (w & 8 == 8) and (new_x <= x - max_shift)):
+        #     new_x = x - max_shift
+        #     dx = 0
 
         self.x = new_x
         self.y = new_y
 
         if (self.x <= - max_shift):
-            self.x = - max_shift
+            self.x = - max_shift 
             dx = 0
         elif (self.x >= (self.game.map.cols - 1) + max_shift):
             self.x = self.game.map.cols - 1 + max_shift
@@ -168,4 +358,22 @@ class Player:
         # mouth = jaws
         pggf.pie(self.game.screen, int(x), int(y), self.size,
                  -20, 20, (255, 0, 0))
-        self.game.screen.blit(self.game.font.render(f'x:{self.x}, y:{self.y}', False, (10, 10, 200)), (10,10))
+        self.game.screen.blit(self.game.font.render(
+            f'x:{self.x}, y:{self.y}', False, (10, 10, 200)),
+            (10, (self.game.map.rows + 1)
+             * (self.game.map.cell_size + self.game.map.wall_thickness)))
+
+        # x = (int(self.x) * (self.game.map.cell_size
+        #                + self.game.map.wall_thickness)
+        #      + self.game.map.cell_size / 2
+        #      + self.game.map.wall_thickness)
+
+        # y = (int(self.y) * (self.game.map.cell_size
+        #                + self.game.map.wall_thickness)
+        #      + self.game.map.cell_size / 2
+        #      + self.game.map.wall_thickness)
+        # pg.draw.circle(self.game.screen,
+        #                'blue',
+        #                (x,
+        #                 y
+        #                 ), 4)

@@ -16,7 +16,7 @@ from src.pc_game import Game
 def main() -> int:
     try:
         c_mz_param = CMazeParams(width=20,
-                                 height=15,
+                                 height=20,
                                  entry=(0, 0),
                                  exit=(0, 1),
                                  output_file="maze_txt.txt",

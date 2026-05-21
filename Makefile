@@ -139,7 +139,7 @@ lint-strict:
 
 install: 
 	@$(ACTIVATE_VENV)
-	$(PIP) install pydantic dotenv build flake8 mypy pygame
+	$(PIP) install pydantic dotenv build flake8 mypy pygame numpy 
 	$(PIP) install mazegen-0.1.0-py3-none-any.whl
 
 .PHONY:	clean run debug install lint-strict lint $(RUN_ARGS) venv check-venv re-build help fclean
