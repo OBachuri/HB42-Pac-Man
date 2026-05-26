@@ -74,6 +74,9 @@ The configuration file controls the maze generation physics and rules.
 
 ## Resources
 
+Pac-Man on WiKi 
+https://en.wikipedia.org/wiki/Pac-Man
+
 PGame - RPG example
 https://www.youtube.com/watch?v=ECqUrT7IdqQ&list=PLi77irUVkDatlbulEY4Kz8O107HO8RGH8
 

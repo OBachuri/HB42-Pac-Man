@@ -307,7 +307,7 @@ class Player:
         self.y = new_y
 
         if (self.x <= - max_shift):
-            self.x = - max_shift 
+            self.x = - max_shift
             dx = 0
         elif (self.x >= (self.game.map.cols - 1) + max_shift):
             self.x = self.game.map.cols - 1 + max_shift
@@ -341,7 +341,8 @@ class Player:
         y = (self.y * (self.game.map.cell_size
                        + self.game.map.wall_thickness)
              + self.game.map.cell_size / 2
-             + self.game.map.wall_thickness)
+             + self.game.map.wall_thickness
+             + self.game.map.top)
 
         pg.draw.circle(self.game.screen,
                        'yellow',
@@ -361,7 +362,7 @@ class Player:
         self.game.screen.blit(self.game.font.render(
             f'x:{self.x}, y:{self.y}', False, (10, 10, 200)),
             (10, (self.game.map.rows + 1)
-             * (self.game.map.cell_size + self.game.map.wall_thickness)))
+             * (self.game.map.step) + self.game.map.top))
 
         # x = (int(self.x) * (self.game.map.cell_size
         #                + self.game.map.wall_thickness)
