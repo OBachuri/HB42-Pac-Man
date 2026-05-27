@@ -13,6 +13,7 @@ class Player:
         self.speed_factor = 0.01
         self.dx = 0
         self.dy = 0
+        self.lives = 3
 
         try:
             self.teleport()
@@ -43,30 +44,30 @@ class Player:
              or (abs(new_y_int - new_y) <= max_shift))):
             return False
 
-        print("--- Diagonal = left:", (new_x_int > new_x), "top:", (new_y_int > new_y))
+        # print("--- Diagonal = left:", (new_x_int > new_x), "top:", (new_y_int > new_y))
         if new_x_int > new_x:  # left
             # top
             if (((new_y_int > new_y)
                     and (self.game.map.world_map.get(
                         (new_x_int - 1, new_y_int - 1), 0) & 6 > 0))):
-                print("Top-Left (x,y): (",new_x_int - 1,",",new_y_int - 1,") w:", self.game.map.world_map.get((new_x_int - 1, new_y_int - 1), 0))
+                # print("Top-Left (x,y): (",new_x_int - 1,",",new_y_int - 1,") w:", self.game.map.world_map.get((new_x_int - 1, new_y_int - 1), 0))
                 return True
             # bottom
             elif (new_y_int < new_y) and (self.game.map.world_map.get(
                     (new_x_int - 1, new_y_int + 1), 0) & 3 > 0):
-                print("Bottom-Left (x,y): (",new_x_int - 1,",",new_y_int + 1,") w:", self.game.map.world_map.get((new_x_int - 1, new_y_int + 1), 0))
+                # print("Bottom-Left (x,y): (",new_x_int - 1,",",new_y_int + 1,") w:", self.game.map.world_map.get((new_x_int - 1, new_y_int + 1), 0))
                 return True
         else:  # Right
             # top
             if (((new_y_int > new_y)
                     and (self.game.map.world_map.get(
                         (new_x_int + 1, new_y_int - 1), 0) & 12 > 0))):
-                print("Top-Rigth (x,y): (",new_x_int + 1,",",new_y_int - 1,") w:", self.game.map.world_map.get((new_x_int + 1, new_y_int - 1), 0))
+                # print("Top-Rigth (x,y): (",new_x_int + 1,",",new_y_int - 1,") w:", self.game.map.world_map.get((new_x_int + 1, new_y_int - 1), 0))
                 return True
             # bottom
             elif (new_y_int < new_y) and (self.game.map.world_map.get(
                     (new_x_int + 1, new_y_int + 1), 0) & 9 > 0):
-                print("Bottom-Right (x,y): (",new_x_int + 1,",",new_y_int + 1,") w:", self.game.map.world_map.get((new_x_int + 1, new_y_int + 1), 0))
+                # print("Bottom-Right (x,y): (",new_x_int + 1,",",new_y_int + 1,") w:", self.game.map.world_map.get((new_x_int + 1, new_y_int + 1), 0))
                 return True
         return False
 
@@ -136,9 +137,9 @@ class Player:
 
         wn_d = self.game.map.world_map.get((new_x_int, new_y_int), 0)
 
-        print(f"new - int:({x},{y}), df:({dx},{dy}), new:({new_x},{new_y}), new_int:({new_x_int},{new_y_int})")
+        # print(f"new - int:({x},{y}), df:({dx},{dy}), new:({new_x},{new_y}), new_int:({new_x_int},{new_y_int})")
 
-        print(f"x-df: {new_x_int - new_x}, y-df: {new_y_int - new_y}")
+        # print(f"x-df: {new_x_int - new_x}, y-df: {new_y_int - new_y}")
 
         # if ((new_y_int - new_y) > max_shift):  # top
         #     if ((new_x_int - new_x) > max_shift):  # left
@@ -182,7 +183,7 @@ class Player:
         # left or rigth
         if (((((new_x_int - new_x) > max_shift) and (wn_d & 8 == 8))
              or (((new_x - new_x_int) > max_shift) and (wn_d & 2 == 2)))):
-            print("left or right (left = ", ((new_x_int - new_x) > max_shift))
+            # print("left or right (left = ", ((new_x_int - new_x) > max_shift), ")")
             dx = 0
             new_x = self.x
             new_x_int = x
@@ -288,7 +289,7 @@ class Player:
         #             new_x = self.x
 
 
-        print(f"before - cur:({self.x},{self.y}),int:({x},{y}, max_shift:{max_shift}, df({dx},{dy})")
+        # print(f"before - cur:({self.x},{self.y}),int:({x},{y}, max_shift:{max_shift}, df({dx},{dy})")
 
         # if ((dy < 0) and (w & 1 == 1) and (new_y <= y - max_shift)):
         #     new_y = y - max_shift

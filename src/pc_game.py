@@ -1,6 +1,7 @@
 from src.pc_map import Map
 from src.pc_player import Player
 from src.pc_npc import NPC
+from src.pc_artifact import PC_Artifacts
 import pygame as pg
 import sys
 
@@ -16,15 +17,16 @@ class Game:
         pg.event.set_grab(True)
         self.clock = pg.time.Clock()
         self.delta_time = 1
-        self.game_time = 90   # sec
+        self.game_time = 110   # sec
         self.global_trigger = False
         self.global_event = pg.USEREVENT + 0
         self.score = 0
-        self.gost_edible = 0  # sec
+        self.gost_edible = 7  # sec - frightened time
         pg.time.set_timer(self.global_event, 40)
         pg.font.init()
         self.font = pg.font.SysFont('Comic Sans MS', 30)
-        self.npcs = []
+        self.npcs: list[NPC] = []
+        self.artifacts: list[PC_Artifacts] = []
         self.new_game()
 
     def new_game(self):
@@ -36,6 +38,8 @@ class Game:
         self.player.update()
         for npc in self.npcs:
             npc.update()
+        for pellet in self.artifacts:
+            pellet.update()
         # self.raycasting.update()
         # self.object_handler.update()
         # self.weapon.update()
@@ -50,6 +54,8 @@ class Game:
         # self.object_renderer.draw()
         # self.weapon.draw()
         self.map.draw()
+        for pellet in self.artifacts:
+            pellet.draw()
         self.player.draw()
         for npc in self.npcs:
             npc.draw()
@@ -60,7 +66,9 @@ class Game:
              * (self.map.step)))
 
         self.screen.blit(self.font.render(
-            f'Time: {self.game_time: 4.1f}    Lives: 1    Level: 1   Score: {self.score}',
+            f'Time: {self.game_time: 4.1f},    '
+            f'Lives: {self.player.lives},    '
+            f'Level: 1,   Score: {self.score}',
             False, (200, 200, 200)),
             (10, 8))
 

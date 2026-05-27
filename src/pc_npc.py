@@ -1,5 +1,14 @@
 import pygame as pg
 import random
+from enum import Enum
+
+
+class GhostMode(Enum):
+    CHASE = 1
+    SCATTER = 2
+    FRIGHTENED = 3
+    STROLL = 4
+    DEAD = 9
 
 
 class NPC:
@@ -12,15 +21,55 @@ class NPC:
         self.health = 100
         self.alive = True
         self.size = 11  # radius
-        self.speed_factor = 0.06
+        self.speed_factor = 0.05
         self.dx = 0
         self.dy = 0
         self.color = color
         self.name = name
-        self.goal = None
+        self.goal: tuple[int, int] | None = None
         self.start_chase_if_near = 5
+        self.mode: GhostMode = GhostMode.CHASE
+
+    def find_goal(self):
+        x = int(round(self.x, 0))
+        y = int(round(self.y, 0))
+
+        # Check if player near and  ghosts not etable now
+        if (self.mode == GhostMode.CHASE):
+            self.goal = (int(round(self.game.player.x, 0)),
+                         int(round(self.game.player.y, 0)))
+        elif (((self.mode == GhostMode.STROLL)
+                and ((self.game.player.x - x) ** 2
+                     + (self.game.player.y - y) ** 2)
+                < self.start_chase_if_near ** 2)):
+            self.goal = (int(round(self.game.player.x, 0)),
+                         int(round(self.game.player.y, 0)))
+        elif ((self.mode == GhostMode.SCATTER)
+              and (self.goal != (self.start_x, self.start_y))):
+            self.goal = (self.start_x, self.start_y)
+        else:
+            if (self.goal is None) or self.goal == (x, y):
+                # We have reached the goal and we need a new one
+                if (self.mode == GhostMode.SCATTER):
+                    self.mode = GhostMode.STROLL
+                x_g = random.randrange(0, self.game.map.cols)
+                y_g = random.randrange(0, self.game.map.rows)
+                i = 20
+                while (self.game.map.world_map.get((x_g, y_g), 0)
+                        & 0xf == 0xf) and (i > 0):
+                    x_g = random.randrange(0, self.game.map.cols)
+                    y_g = random.randrange(0, self.game.map.rows)
+                    i -= 1
+                if i > 0:
+                    self.goal = (x_g, y_g)
+                # print(self.name, " goal=", self.goal)
 
     def movement(self):
+
+        keys = pg.key.get_pressed()
+        if keys[pg.K_f]:
+            self.mode = GhostMode.SCATTER
+
         x = self.x
         y = self.y
 
@@ -30,27 +79,9 @@ class NPC:
             y = int(round(y, 0))
 
             # We in a center of the cell and must decide where to go
+            self.find_goal()
             # Check if player near and not gosts etable now
-            if (((self.game.gost_edible == 0)
-                 and ((self.game.player.x - x) ** 2
-                      + (self.game.player.y - y) ** 2)
-                 < self.start_chase_if_near ** 2)):
-                self.goal = (int(round(self.game.player.x, 0)),
-                             int(round(self.game.player.y, 0)))
-            else:
-                if (self.goal is None) or self.goal == (x, y):
-                    # We have reached the goal and we need a new one
-                    x_g = random.randrange(0, self.game.map.cols)
-                    y_g = random.randrange(0, self.game.map.rows)
-                    i = 20
-                    while (self.game.map.world_map.get((x_g, y_g), 0)
-                           & 0xf == 0xf) and (i > 0):
-                        x_g = random.randrange(0, self.game.map.cols)
-                        y_g = random.randrange(0, self.game.map.rows)
-                        i -= 1
-                    if i > 0:
-                        self.goal = (x_g, y_g)
-                    # print(self.name, " goal=", self.goal)
+
             P_ = self.game.map.find_path((x, y), self.goal)
             # print("gost", self.name, "path:", P_)
             if len(P_) > 1:
@@ -93,9 +124,40 @@ class NPC:
 
 
 class RedGhosts(NPC):
+    """ Red gost (Blinky, Shadow)
 
+    """
     def __init__(self, game,
                  point=(0, 0),
                  color=(250, 20, 20),
                  name="Red gost (Blinky, Shadow)"):
         super().__init__(game, point, color, name)
+
+    def find_goal(self):
+        x = int(round(self.x, 0))
+        y = int(round(self.y, 0))
+
+        # Check if player near and not gosts etable now
+        if (((self.mode != GhostMode.FRIGHTENED)
+             and (self.mode != GhostMode.SCATTER))):
+            self.goal = (int(round(self.game.player.x, 0)),
+                         int(round(self.game.player.y, 0)))
+        elif ((self.mode == GhostMode.SCATTER)
+              and (self.goal != (self.start_x, self.start_y))):
+            self.goal = (self.start_x, self.start_y)
+        else:
+            if (self.goal is None) or self.goal == (x, y):
+                # We have reached the goal and we need a new one
+                if (self.mode == GhostMode.SCATTER):
+                    self.mode = GhostMode.STROLL
+                x_g = random.randrange(0, self.game.map.cols)
+                y_g = random.randrange(0, self.game.map.rows)
+                i = 20
+                while (self.game.map.world_map.get((x_g, y_g), 0)
+                        & 0xf == 0xf) and (i > 0):
+                    x_g = random.randrange(0, self.game.map.cols)
+                    y_g = random.randrange(0, self.game.map.rows)
+                    i -= 1
+                if i > 0:
+                    self.goal = (x_g, y_g)
+                # print(self.name, " goal=", self.goal)

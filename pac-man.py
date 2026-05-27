@@ -2,6 +2,7 @@ import pygame as pg
 # from typing import cast
 from pydantic import ValidationError
 import sys
+import random
 # import os
 
 from mazegen import CMazeParams, MazeGenerator, CAlg
@@ -9,15 +10,19 @@ from mazegen import CMazeParams, MazeGenerator, CAlg
 # from src.pc_player import Player
 from src.pc_game import Game
 from src.pc_npc import NPC, RedGhosts
+from src.pc_artifact import PowerPellet, Pellet
 
 # RES = WIDTH, HEIGHT = 1000, 800
 # FPS = 0
 
 
 def main() -> int:
+
+    pacgum = -42
+
     try:
-        c_mz_param = CMazeParams(width=25,
-                                 height=20,
+        c_mz_param = CMazeParams(width=15,
+                                 height=15,
                                  entry=(0, 0),
                                  exit=(0, 1),
                                  output_file="maze_txt.txt",
@@ -54,6 +59,25 @@ def main() -> int:
     game.npcs[1].goal = (game.player.x, game.player.y)
     game.npcs[2].goal = (game.player.x, game.player.y)
     game.npcs[3].goal = (game.player.x, game.player.y)
+
+    #  Add PowerPellet and Pellet
+    game.artifacts.append(PowerPellet(game, (0, 0)))
+    game.artifacts.append(PowerPellet(game, (game.map.cols - 1, 0)))
+    game.artifacts.append(PowerPellet(game,
+                                      (game.map.cols - 1, game.map.rows - 1)))
+    game.artifacts.append(PowerPellet(game, (0, game.map.rows - 1)))
+
+    place_set = {(x, y) for x in range(0, game.map.cols) for y in range(0, game.map.rows) if (game.map.world_map.get((x, y),0) & 15 != 15)}
+    for a_ in game.artifacts:
+        place_set.remove((a_.x, a_.y))
+    if pacgum <= 0:
+        for s_ in place_set:
+            game.artifacts.append(Pellet(game, s_))
+    else:
+        for _ in range(0, pacgum):
+            x, y = random.choice(tuple(place_set))
+            game.artifacts.append(Pellet(game, (x, y)))
+            place_set.remove((x, y))
 
     # print(game.map.world_map)
     game.screen = pg.display.set_mode(

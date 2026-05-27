@@ -9,6 +9,8 @@ This project is part of the 42.fr curriculum.
 The task: Recreate the famous arcade game Pac-man!
 
 - Use external library for maze generation (‘A-Maze-ing‘ package from other "42" piople)
+- Pac-Man starts from the center of the maze.
+- One ghost appear in each corner of the maze.
 
 > [!WARNING]
 > The program does not ready. It is under development now.
@@ -43,6 +45,9 @@ python3 pac-man.py my_config.json
 - **Space** - Stop
 - **Esc** - Exit game
 
+#### Cheat mode
+
+- **F** - Ghosts SCATTER
 
 ### Configuration File
 
@@ -74,19 +79,25 @@ The configuration file controls the maze generation physics and rules.
 
 ## Resources
 
-Pac-Man on WiKi 
+Pac-Man on WiKi: 
 https://en.wikipedia.org/wiki/Pac-Man
 
-PGame - RPG example
+Pac-Man Ghosts Wiki:
+https://en.wikipedia.org/wiki/Ghosts_(Pac-Man)
+
+PyGame:
+https://www.pygame.org/docs/
+
+PyGame - RPG example:
 https://www.youtube.com/watch?v=ECqUrT7IdqQ&list=PLi77irUVkDatlbulEY4Kz8O107HO8RGH8
 
-Pacmancode - How to program a Pacman game in the Python language using Pygame
+Pacmancode - How to program a Pacman game in the Python language using Pygame:
 https://pacmancode.com/
 
-Resources DFS 
+Resources DFS: 
 https://en.wikipedia.org/wiki/Depth-first_search
 
-Resources PRIMS
+Resources PRIMS:
 https://en.wikipedia.org/wiki/Prim%27s_algorithm
 
 
@@ -95,8 +106,8 @@ https://en.wikipedia.org/wiki/Prim%27s_algorithm
 Team Members
 
 Obachuri
-- Project lead
 - Main architecture design
+- Pac-Man's movements
 
 ## License
 
