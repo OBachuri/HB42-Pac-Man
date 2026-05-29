@@ -1,5 +1,6 @@
 import pygame as pg
 from collections import deque
+import random
 
 _ = False
 mini_map = [
@@ -16,18 +17,22 @@ class Map:
         self.world_map = {}
         self.rows = 1
         self.cols = 1
-        self.cell_size = 35
+        self.cell_size = 41
         self.wall_thickness = 4
         self.step = self.cell_size + self.wall_thickness
         self.top = self.step
-        self.get_map()
 
-    def get_map(self):
-        pass
-        # for j, row in enumerate(self.mini_map):
-        #     for i, value in enumerate(row):
-        #         if value:
-        #             self.world_map[(i, j)] = value
+    # get map from list
+    def get_map(self, maze_: list[list[int]]):
+        self.world_map = {}
+        for y, row in enumerate(maze_):
+            for x, value in enumerate(row):
+                self.world_map[(x, y)] = value
+                self.rows = 1
+        self.cols = 0
+        self.rows = len(maze_)
+        if self.rows > 0:
+            self.cols = len(maze_[0])
 
     def get_map_form_file(self, file_name: str):
         self.world_map = {}
@@ -144,3 +149,147 @@ class Map:
                               + self.top,
                               self.cell_size + self.wall_thickness * 2,
                               self.wall_thickness), 0)
+
+    @classmethod
+    def do_not_prefect(cls, maze: list[list[int]]) -> list[list[int]]:
+        for y in range(0, len(maze)):
+            for x in range(0, len(maze[0])):
+                # check for dead end - there is 3 wall
+                v = maze[y][x]
+                if (v & 0xf) == 0xf:   # skeep pattern, entry, exit
+                    continue
+                v = v & 3
+                if y == 0:
+                    v = v | 1
+                if x == 0:
+                    v = v | 8
+                elif (maze[y][x-1] & 2):
+                    v = v | 8
+                if y == (len(maze)-1):
+                    v = v | 4
+                elif (maze[y+1][x] & 1):
+                    v = v | 4
+                if x == (len(maze[0])-1):
+                    v = v | 2
+                w = v
+                if len([(1 << i) for i in range(4) if (v >> i) & 1]) == 3:
+                    # dead end found
+                    # print(f"dead end x={x}, y={y}, w={w}")
+                    # Trying to delete wall
+                    # At first try to find walls that could be removed
+                    if w & 1:   # top
+                        if y == 0:
+                            w = w & 0xe  # e  1110
+                        elif (maze[y-1][x] & 0xf) == 0xf:     # pattern
+                            w = w & 0xe
+                    if w & 2:   # reight
+                        if x == (len(maze[0])-1):
+                            w = w & 13   # d  1101
+                        elif (maze[y][x+1] & 0xf) == 0xf:     # pattern
+                            w = w & 13
+                    if w & 4:   # bottom
+                        if y == (len(maze)-1):
+                            w = w & 11   # b  1011
+                        elif (maze[y+1][x] & 0xf) == 0xf:     # pattern
+                            w = w & 11
+                    if w & 8:   # left
+                        if x == 0:
+                            w = w & 7   # 7  0111
+                        elif (maze[y][x-1] & 0xf) == 0xf:     # pattern
+                            w = w & 7
+                    if (w == 0):     # walls can`t be removed
+                        continue
+                    chosen_wall = random.choice([(1 << i) for i in range(4)
+                                                    if (w >> i) & 1])
+                    #  print("wall:", chosen_wall)
+                    match chosen_wall:
+                        case 1:
+                            # 1 - (xxx1) Top wall (North)
+                            maze[y][x] = maze[y][x] & 0xfffe
+                            maze[y-1][x] = maze[y-1][x] & 0xfffb
+                            print("del", chosen_wall, ":", (x, y))
+                            continue
+                        case 2:
+                            # 2 - (xx1x) Right (East)
+                            maze[y][x] = maze[y][x] & 0xfffd
+                            maze[y][x+1] = maze[y][x+1] & 0xfff7
+                            print("del", chosen_wall, ":", (x, y))
+                            continue
+                        case 4:
+                            # 4 - (x1xx) Bottom (South)
+                            maze[y+1][x] = maze[y+1][x] & 0xfffe
+                            maze[y][x] = maze[y][x] & 0xfffb
+                            print("del", chosen_wall, ":", (x, y))
+                            continue
+                        case 8:
+                            # 8 - (1xxx) Left
+                            maze[y][x-1] = maze[y][x-1] & 0xfffd
+                            maze[y][x] = maze[y][x] & 0xfff7
+                            print("del", chosen_wall, ":", (x, y))
+                            continue
+
+        return maze
+    
+    def print(self, maze_=[]):
+
+        print("*"*30)
+        if len(maze_) <= 0:
+            for y in range(0,self.rows):
+                l_= []
+                for x in range(0,self.cols):
+                    l_.append(self.world_map.get((x, y), 0)) 
+                maze_.append(l_)
+
+        if len(maze_) > 0:
+            print("Maze size (x,y):",(len(maze_[0]),len(maze_)))
+            print("    ",end="")
+            for x in range(0,len(maze_[0])):
+                print(f"{x % 10} ", end="") 
+            print()
+        for row_ in range(0,len(maze_)):
+            print(f"{row_:2}", "{", end="")
+            for v_ in maze_[row_]:
+                v_ = v_ & 15 
+                if v_ == 15:
+                    print("▧ ",end="")  # ▢
+                elif v_ == 0: 
+                    print("∘ ",end="")
+                elif v_ == 1: 
+                    print("‾ ",end="")
+                elif v_ == 13: # oxD = 13 = 1101
+                    print("ᑕ ",end="")
+                elif v_ == 8: 
+                    print("[ ",end="")
+                elif v_ == 2: 
+                    print("] ",end="")
+                elif v_ == 4: 
+                    print("_ ",end="")
+                elif v_ == 1+4: 
+                    print("⚌ ",end="") # =〓⚌
+                elif v_ == 2+8: 
+                    print("Ⅱ ",end="")
+                elif v_ == 8 + 4: 
+                    print("⌞ ",end="")  # ᒪ ᄂ ∟ 
+                elif v_ == 3: 
+                    print("⌝ ",end="") # ᄀ 
+                elif v_ == 2 + 4: 
+                    print("⌟ ",end="") # ᒧ
+                elif v_ == 1 + 8: 
+                    print("⌜ ",end="")  # ᒥ 
+                elif v_ == 2+4+8: 
+                    print("ᑌ ",end="")
+                elif v_ == 1+2+8:
+                    print("ᑎ ",end="")
+                elif v_ == 1+2+4: 
+                    print("ᑐ ",end="")
+                else:
+                    print(f"{v_:1}",end="")
+            print("}")
+        # for row_ in maze_:
+        #     print("[",end=" ")
+        #     for v_ in row_:
+        #         print(f"{v_:3}",end=" ")
+        #     print("]")
+
+        print("*"*30)
+

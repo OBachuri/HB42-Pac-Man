@@ -9,7 +9,7 @@ class Player:
         self.x, self.y = 1, 1
         self.angle = 0
         self.health = 100
-        self.size = 11  # radius
+        self.size = 13  # radius
         self.speed_factor = 0.01
         self.dx = 0
         self.dy = 0
@@ -91,7 +91,7 @@ class Player:
         if keys[pg.K_SPACE]:
             dx = 0
             dy = 0
-            print("---- stop ----")
+            # print("---- stop ----")
         if keys[pg.K_d] or keys[pg.K_p]:
             self.angle += 0.1
         if keys[pg.K_d] or keys[pg.K_o]:

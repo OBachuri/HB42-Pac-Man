@@ -9,7 +9,7 @@ RUN_ARGS := "pc_config.json"
 
 TARGETS_WITH_ARGS := run debug
 
-VENV_DIR := .mz-venv
+VENV_DIR := .venv
 PYTHON := python3
 PIP := pip
 C_DIR := pwd
@@ -42,13 +42,12 @@ endif
 help:
 	@echo "Start:"
 	@echo "                 $$ make install"
-	@echo "                 $$ make run config.txt"
+	@echo "                 $$ make run config.json"
 	@echo ""
 	@echo "Available targets:"
 	@echo "  install        Install dependencies and set up the virtual environment"
-#	@echo "  re-build       Compile and install the wheel file of mazegen library"
 	@echo "  run            Run the application"
-	@echo "                 $$ make run config.txt"
+	@echo "                 $$ make run config.json"
 	@echo "  lint           Run flake8 and mypy checks"
 	@echo "  lint-strict    Run flake8 and strict mypy checks"
 	@echo "  clean          Remove caches and temporary files"
@@ -122,7 +121,7 @@ lint:
 		--ignore-missing-imports  \
 		--disallow-untyped-defs \
 		--check-untyped-defs \
-		--exclude '(^\.mz-venv/|^test/|^subject/)'
+		--exclude '(^\.venv/|^test/|^subject/)'
 
 lint-strict:
 	@$(ACTIVATE_VENV)
@@ -131,7 +130,7 @@ lint-strict:
 	echo "--- mypy strict test :"
 	mypy . \
 	--strict \
-	--exclude '(^\.mz-venv/|^test/|^subject/)'
+	--exclude '(^\.venv/|^test/|^subject/)'
 
 # $(MLX_FIXED):
 # 		wget -O $(MLX_ORIG) $(MLX_URL)
@@ -140,6 +139,7 @@ lint-strict:
 install: 
 	@$(ACTIVATE_VENV)
 	$(PIP) install pydantic dotenv build flake8 mypy pygame numpy 
-	$(PIP) install mazegen-0.1.0-py3-none-any.whl
+	$(PIP) install mazegenerator-00001-py3-none-any.whl
+#	$(PIP) install mazegen-0.1.0-py3-none-any.whl
 
 .PHONY:	clean run debug install lint-strict lint $(RUN_ARGS) venv check-venv re-build help fclean

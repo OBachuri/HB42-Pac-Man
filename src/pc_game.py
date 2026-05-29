@@ -1,9 +1,11 @@
 from src.pc_map import Map
 from src.pc_player import Player
-from src.pc_npc import NPC
+from src.pc_npc import NPC, GhostMode
 from src.pc_artifact import PC_Artifacts
+from src.pc_artifact import PowerPellet, Pellet
 import pygame as pg
 import sys
+import random
 
 FPS = 60
 
@@ -21,10 +23,11 @@ class Game:
         self.global_trigger = False
         self.global_event = pg.USEREVENT + 0
         self.score = 0
+        self.level = 1
         self.gost_edible = 7  # sec - frightened time
         pg.time.set_timer(self.global_event, 40)
         pg.font.init()
-        self.font = pg.font.SysFont('Comic Sans MS', 30)
+        self.font = pg.font.SysFont('Nimbus Mono PS', 20)
         self.npcs: list[NPC] = []
         self.artifacts: list[PC_Artifacts] = []
         self.new_game()
@@ -33,6 +36,50 @@ class Game:
         self.map = Map(self)
         self.player = Player(self)
         #  self.npcs = [NPC(self), NPC(self), NPC(self), NPC(self)]
+
+    def next_level(self):
+
+        pacgum = -111
+
+        self.level += 1
+
+        # Set pleer in the center
+        self.player.dx = 0
+        self.player.dy = 0
+        self.player.teleport()
+
+        # Set NPC
+        for n in self.npcs:
+            n.teleport()
+            n.mode = GhostMode.STROLL
+
+        #  Add PowerPellet and Pellet
+        self.artifacts.append(PowerPellet(self, (0, 0)))
+        self.artifacts.append(PowerPellet(self, (self.map.cols - 1, 0)))
+        self.artifacts.append(PowerPellet(self,
+                                          (self.map.cols - 1,
+                                           self.map.rows - 1)))
+        self.artifacts.append(PowerPellet(self, (0, self.map.rows - 1)))
+
+        place_set = {(x, y) for x in range(0, self.map.cols)
+                     for y in range(0, self.map.rows)
+                     if (self.map.world_map.get((x, y), 0) & 15 != 15)}
+
+        for a_ in self.artifacts:
+            place_set.remove((a_.x, a_.y))
+
+        if pacgum <= 0:
+            for s_ in place_set:
+                self.artifacts.append(Pellet(self, s_))
+        else:
+            for p in range(0, pacgum):
+                if (len(place_set) < 1):
+                    print("All Pellets can't be placed",
+                          f"({p+1} from {pacgum}).")
+                    break
+                x, y = random.choice(tuple(place_set))
+                self.artifacts.append(Pellet(self, (x, y)))
+                place_set.remove((x, y))
 
     def update(self):
         self.player.update()
@@ -48,6 +95,8 @@ class Game:
         self.game_time -= self.delta_time / 1000
         pg.display.set_caption('Pac-man  42 '
                                f'(fps:{self.clock.get_fps(): 6.1f})')
+        if len(self.artifacts) <= 0:
+            self.next_level()
 
     def draw(self):
         self.screen.fill('black')
@@ -66,9 +115,10 @@ class Game:
              * (self.map.step)))
 
         self.screen.blit(self.font.render(
-            f'Time: {self.game_time: 4.1f},    '
-            f'Lives: {self.player.lives},    '
-            f'Level: 1,   Score: {self.score}',
+            f'Time: {self.game_time: 3.0f}, '
+            f'Lives:{self.player.lives: 2}, '
+            f'Level:{self.level: 2}, '
+            f'Score:{self.score: 3}',
             False, (200, 200, 200)),
             (10, 8))
 

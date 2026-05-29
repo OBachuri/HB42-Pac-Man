@@ -21,7 +21,7 @@ class NPC:
         self.health = 100
         self.alive = True
         self.size = 11  # radius
-        self.speed_factor = 0.05
+        self.speed_factor = 0.04
         self.dx = 0
         self.dy = 0
         self.color = color
@@ -63,6 +63,14 @@ class NPC:
                 if i > 0:
                     self.goal = (x_g, y_g)
                 # print(self.name, " goal=", self.goal)
+
+    def teleport(self, x: int = -1, y: int = -1):
+        if x < 0:
+            x = self.start_x
+        if y < 0:
+            y = self.start_y
+        self.x = int(x)
+        self.y = int(y)
 
     def movement(self):
 
