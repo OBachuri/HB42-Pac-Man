@@ -5,6 +5,7 @@ from src.pc_artifact import PC_Artifacts
 from src.pc_artifact import PowerPellet, Pellet
 import pygame as pg
 import sys
+import os
 import random
 
 FPS = 60
@@ -26,8 +27,22 @@ class Game:
         self.level = 1
         self.gost_edible = 7  # sec - frightened time
         pg.time.set_timer(self.global_event, 40)
+
+        # fonts
         pg.font.init()
-        self.font = pg.font.SysFont('Nimbus Mono PS', 20)
+        path_ = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                "inc/fonts/PressStart2P-Regular.ttf",
+            )
+        if os.path.exists(path_):
+            self.font = pg.font.SysFont(path_, 40)
+        else:
+            print("The file with font does not exist (inc/fonts/PressStart2P-Regular.ttf).")
+            self.font = pg.font.SysFont('Nimbus Mono PS', 20)
+        # print(path_)
+
+
+
         self.npcs: list[NPC] = []
         self.artifacts: list[PC_Artifacts] = []
         self.new_game()
@@ -42,6 +57,7 @@ class Game:
         pacgum = -111
 
         self.level += 1
+        self.game_time = 110   # sec
 
         # Set pleer in the center
         self.player.dx = 0
@@ -115,7 +131,7 @@ class Game:
              * (self.map.step)))
 
         self.screen.blit(self.font.render(
-            f'Time: {self.game_time: 3.0f}, '
+            f'Time: {self.game_time: 3.0f}s, '
             f'Lives:{self.player.lives: 2}, '
             f'Level:{self.level: 2}, '
             f'Score:{self.score: 3}',

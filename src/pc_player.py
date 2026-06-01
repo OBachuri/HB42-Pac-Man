@@ -2,23 +2,24 @@ import pygame as pg
 import pygame.gfxdraw as pggf
 import math
 
+from src.pc_entity import Entity, FrameType
 
-class Player:
-    def __init__(self, game):
+class Player(Entity):
+    """ Player = PacMan """
+    def __init__(self, game, point=(0, 0), color=(250,250,10), name="PacMan", size=21):
+        super().__init__(game, point=point, color=color, name=name, size=size)
         self.game = game
-        self.x, self.y = 1, 1
         self.angle = 0
         self.health = 100
-        self.size = 13  # radius
         self.speed_factor = 0.01
-        self.dx = 0
-        self.dy = 0
         self.lives = 3
 
         try:
             self.teleport()
         except Exception:
             pass
+
+        self.read_frames_from_file("inc/img/pacman/run/", FrameType.RUN)
 
     def teleport(self, x: int = -1, y: int = -1):
         if x < 0:
@@ -93,14 +94,14 @@ class Player:
             dy = 0
             # print("---- stop ----")
         if keys[pg.K_d] or keys[pg.K_p]:
-            self.angle += 0.1
+            self.angle += 1
         if keys[pg.K_d] or keys[pg.K_o]:
-            self.angle -= 0.1
+            self.angle -= 1
 
-        if (self.angle >= 2 * math.pi):
+        if (self.angle >= 360):
             self.angle = 0
         elif self.angle < 0:
-            self.angle = 2 * math.pi - 0.1
+            self.angle = 359
 
         if (dx == 0) and (dy == 0):
             self.dx = dx
@@ -324,10 +325,11 @@ class Player:
         self.dx = dx
         self.dy = dy
 
+        if (dx != 0) or (dy != 0):
+            self.angle = math.degrees(math.atan2(-dy, dx)) % 360
+
  #       print(f"after - cur:({self.x},{self.y}),int:({x},{y}, max_shift:{max_shift}, df({dx},{dy})")
 
-    def update(self):
-        self.movement()
 
     def draw(self):
         # pg.draw.line(self.game.screen, 'yellow', (self.x * (self.game.map.self.cell_size + self.game.map.wall_thickness), self.y * (self.game.map.self.cell_size + self.game.map.wall_thickness)),
@@ -345,25 +347,47 @@ class Player:
              + self.game.map.wall_thickness
              + self.game.map.top)
 
-        pg.draw.circle(self.game.screen,
-                       'yellow',
-                       (x, y), self.size)
-        # eye
-        # print("angle:", math.degrees(self.angle))
-        sin_a = math.sin(self.angle)
-        cos_a = math.cos(self.angle)
-        pg.draw.circle(self.game.screen,
-                       'black',
-                       (x + 5 * sin_a,
-                        y - 5 * cos_a
-                        ), 3)
-        # mouth = jaws
-        pggf.pie(self.game.screen, int(x), int(y), self.size,
-                 -20, 20, (255, 0, 0))
+
+        frames = self.frames.get(FrameType.RUN, [])
+        if len(frames) > 0:
+            if self.frame_index >= len(frames):
+                self.frame_index = 0
+            image = frames[self.frame_index]
+            if self.angle == 0:
+                frame = image
+            elif (self.angle == 180):
+                frame = pg.transform.flip(image, True, False)
+            elif (self.angle < 260) and (self.angle > 90):
+                frame = pg.transform.flip(image, True, False)
+                frame = pg.transform.rotate(frame, self.angle-180)
+            else:
+                frame = pg.transform.rotate(image, self.angle)
+            
+            rect = frame.get_rect(center=(int(x), int(y)))
+            self.game.screen.blit(frame, rect)
+        
+        else:
+        
+            pg.draw.circle(self.game.screen,
+                        self.color,
+                        (x, y), self.size)
+            # eye
+            # print("angle:", math.degrees(self.angle))
+            sin_a = math.sin(self.angle)
+            cos_a = math.cos(self.angle)
+            pg.draw.circle(self.game.screen,
+                        'black',
+                        (x + 5 * sin_a,
+                            y - 5 * cos_a
+                            ), 3)
+            # mouth = jaws
+            pggf.pie(self.game.screen, int(x), int(y), self.size,
+                    -20, 20, (255, 0, 0))
+
         self.game.screen.blit(self.game.font.render(
-            f'x:{self.x}, y:{self.y}', False, (10, 10, 200)),
+            f'x:{self.x}, y:{self.y}, a:{self.angle} ', False, (10, 10, 200)),
             (10, (self.game.map.rows + 1)
-             * (self.game.map.step) + self.game.map.top))
+            * (self.game.map.step) + self.game.map.top))
 
         # x = (int(self.x) * (self.game.map.cell_size
         #                + self.game.map.wall_thickness)

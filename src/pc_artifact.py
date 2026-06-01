@@ -15,6 +15,7 @@ class PC_Artifacts:
         self.size = 2  # radius
         self.color = color
         self.points = points  # score add
+        self.frames = []
 
     def draw(self):
         x = (self.x * self.game.map.step
@@ -26,9 +27,11 @@ class PC_Artifacts:
              + self.game.map.wall_thickness
              + self.game.map.top)
 
-        pg.draw.circle(self.game.screen,
+        if len(self.frames) == 0: 
+            pg.draw.circle(self.game.screen,
                        self.color,
                        (x, y), self.size)
+            
 
     def event(self):
         self.game.score += self.points
@@ -65,6 +68,6 @@ class PowerPellet(PC_Artifacts):
 
 
 class Pellet(PC_Artifacts):
-    # PowerPellet = Super-pacgums = Energizer
+    # Pellet = Pacgums = Dots
     def __init__(self, game, point=(0, 0), points=10, color=(220, 220, 250)):
         super().__init__(game, point, points, color)

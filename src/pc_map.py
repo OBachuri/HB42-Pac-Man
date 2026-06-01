@@ -2,22 +2,13 @@ import pygame as pg
 from collections import deque
 import random
 
-_ = False
-mini_map = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, _, _, _, _, _, _, _, _, _, _, _, _, _, _, 1],
-    [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-]
-
-
 class Map:
     def __init__(self, game):
         self.game = game
-#        self.mini_map = mini_map
         self.world_map = {}
         self.rows = 1
         self.cols = 1
-        self.cell_size = 41
+        self.cell_size = 55
         self.wall_thickness = 4
         self.step = self.cell_size + self.wall_thickness
         self.top = self.step

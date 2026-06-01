@@ -1,6 +1,7 @@
 import pygame as pg
 import random
 from enum import Enum
+from src.pc_entity import Entity
 
 
 class GhostMode(Enum):
@@ -8,24 +9,20 @@ class GhostMode(Enum):
     SCATTER = 2
     FRIGHTENED = 3
     STROLL = 4
-    DEAD = 9
+    DEAD = 9  # SPAWN  
 
 
-class NPC:
+class NPC(Entity):
     """ Gosts """
-    def __init__(self, game, point=(0, 0), color=(100, 100, 100), name="Gost"):
-        self.game = game
-        self.x, self.y = point
+    def __init__(self, game, point=(0, 0), color=(100, 100, 100), name="Gost", size=11):
+        super().__init__(game,point=point,color=color,name=name,size=size)
         self.start_x, self.start_y = point
         self.angle = 0
         self.health = 100
         self.alive = True
-        self.size = 11  # radius
         self.speed_factor = 0.04
         self.dx = 0
         self.dy = 0
-        self.color = color
-        self.name = name
         self.goal: tuple[int, int] | None = None
         self.start_chase_if_near = 5
         self.mode: GhostMode = GhostMode.CHASE
@@ -113,27 +110,13 @@ class NPC:
         self.x = x
         self.y = y
 
-    def draw(self):
-        x = (self.x * self.game.map.step
-             + self.game.map.cell_size / 2
-             + self.game.map.wall_thickness)
-
-        y = (self.y * (self.game.map.step)
-             + self.game.map.cell_size / 2
-             + self.game.map.wall_thickness
-             + self.game.map.top)
-
-        pg.draw.circle(self.game.screen,
-                       self.color,
-                       (x, y), self.size)
-
     def update(self):
         self.movement()
 
 
 class RedGhosts(NPC):
     """ Red gost (Blinky, Shadow)
-
+        Blinky always chase his prey :)
     """
     def __init__(self, game,
                  point=(0, 0),

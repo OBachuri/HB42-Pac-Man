@@ -32,6 +32,8 @@ def main() -> int:
     #     # print("Error with mazegen library connection:", err_msg)
     #     # sys.exit(1)
 
+    random.seed(1)
+
     # try shcool maze generator
     if not our_mazgen:
         try:
@@ -43,7 +45,7 @@ def main() -> int:
             sys.exit(1)
 
         print("Maze generation - start  ...")
-        maze_ = MazeGenerator(size=(14, 14), perfect=False).maze
+        maze_ = MazeGenerator(size=(14, 12), perfect=False).maze
         print("Maze generation - end")
 
     else:
@@ -73,8 +75,9 @@ def main() -> int:
 
     game = Game()
     # print(game.map.world_map)
-    # print("*"*30)
+    print("*"*30)
 
+    # print(pg.font.get_fonts())
     
     game.map.print(maze_)
 
