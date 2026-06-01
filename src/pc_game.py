@@ -41,8 +41,6 @@ class Game:
             self.font = pg.font.SysFont('Nimbus Mono PS', 20)
         # print(path_)
 
-
-
         self.npcs: list[NPC] = []
         self.artifacts: list[PC_Artifacts] = []
         self.new_game()

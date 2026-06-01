@@ -20,6 +20,7 @@ class Player(Entity):
             pass
 
         self.read_frames_from_file("inc/img/pacman/run/", FrameType.RUN)
+        self.read_frames_from_file("inc/img/pacman/stay/", FrameType.STAY)
 
     def teleport(self, x: int = -1, y: int = -1):
         if x < 0:
@@ -347,21 +348,25 @@ class Player(Entity):
              + self.game.map.wall_thickness
              + self.game.map.top)
 
-
-        frames = self.frames.get(FrameType.RUN, [])
+        if (self.dx == 0) and (self.dy == 0):
+            frames = self.frames.get(FrameType.STAY, [])
+            angle = 0
+        else:
+            frames = self.frames.get(FrameType.RUN, [])
+            angle = self.angle
         if len(frames) > 0:
             if self.frame_index >= len(frames):
                 self.frame_index = 0
             image = frames[self.frame_index]
-            if self.angle == 0:
+            if angle == 0:
                 frame = image
-            elif (self.angle == 180):
+            elif (angle == 180):
                 frame = pg.transform.flip(image, True, False)
-            elif (self.angle < 260) and (self.angle > 90):
+            elif (angle < 260) and (angle > 90):
                 frame = pg.transform.flip(image, True, False)
-                frame = pg.transform.rotate(frame, self.angle-180)
+                frame = pg.transform.rotate(frame, angle-180)
             else:
-                frame = pg.transform.rotate(image, self.angle)
+                frame = pg.transform.rotate(image, angle)
             
             rect = frame.get_rect(center=(int(x), int(y)))
             self.game.screen.blit(frame, rect)
