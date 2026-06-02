@@ -1,8 +1,7 @@
 import pygame as pg
 from src.pc_npc import GhostMode
 
-
-class PC_Artifacts:
+class PC_Artifacts():
     """
     Artifacts = Pellet or  PowerPellet
 

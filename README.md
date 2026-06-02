@@ -101,13 +101,24 @@ Resources PRIMS:
 https://en.wikipedia.org/wiki/Prim%27s_algorithm
 
 
+
+
 ### Team Project Management
 
 Team Members
 
-Obachuri
+Obachuri:
 - Main architecture design
-- Pac-Man's movements
+- Pac-Man's movements and animation
+
+
+### AI Usage
+
+Tools Used:
+- ChatGPT (GPT-4)
+- Nano Banana 2
+
+AI was used to generate images and structuring this README.
 
 ## License
 

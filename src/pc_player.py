@@ -21,6 +21,7 @@ class Player(Entity):
 
         self.read_frames_from_file("inc/img/pacman/run/", FrameType.RUN)
         self.read_frames_from_file("inc/img/pacman/stay/", FrameType.STAY)
+        self.read_frames_from_file("inc/img/pacman/death/", FrameType.DEATH)
 
     def teleport(self, x: int = -1, y: int = -1):
         if x < 0:
@@ -73,31 +74,39 @@ class Player(Entity):
                 return True
         return False
 
+    def after_death(self):
+        self.lives -= 1
+        self.reset()
+        for n in self.game.npcs:
+            n.reset()
+        
+
     def movement(self):
         num_key_pressed = -1
         dx = self.dx
         dy = self.dy
-        keys = pg.key.get_pressed()
-        if keys[pg.K_w] or keys[pg.K_UP]:
-            num_key_pressed += 1
-            dy += -1
-        if keys[pg.K_s] or keys[pg.K_DOWN]:
-            num_key_pressed += 1
-            dy += 1
-        if keys[pg.K_a] or keys[pg.K_LEFT]:
-            num_key_pressed += 1
-            dx += -1
-        if keys[pg.K_d] or keys[pg.K_RIGHT]:
-            num_key_pressed += 1
-            dx += 1
-        if keys[pg.K_SPACE]:
-            dx = 0
-            dy = 0
-            # print("---- stop ----")
-        if keys[pg.K_d] or keys[pg.K_p]:
-            self.angle += 1
-        if keys[pg.K_d] or keys[pg.K_o]:
-            self.angle -= 1
+        if self.alive:
+            keys = pg.key.get_pressed()
+            if keys[pg.K_w] or keys[pg.K_UP]:
+                num_key_pressed += 1
+                dy += -1
+            if keys[pg.K_s] or keys[pg.K_DOWN]:
+                num_key_pressed += 1
+                dy += 1
+            if keys[pg.K_a] or keys[pg.K_LEFT]:
+                num_key_pressed += 1
+                dx += -1
+            if keys[pg.K_d] or keys[pg.K_RIGHT]:
+                num_key_pressed += 1
+                dx += 1
+            if keys[pg.K_SPACE]:
+                dx = 0
+                dy = 0
+                # print("---- stop ----")
+            if keys[pg.K_d] or keys[pg.K_p]:
+                self.angle += 1
+            if keys[pg.K_d] or keys[pg.K_o]:
+                self.angle -= 1
 
         if (self.angle >= 360):
             self.angle = 0
@@ -250,7 +259,7 @@ class Player(Entity):
         #             print("Top-Left (x,y): (",new_x_int - 1,",",new_y_int - 1,") w:", self.game.map.world_map.get((new_x_int - 1, new_y_int - 1), 0))
         #         # bottom
         #         elif (new_y_int < new_y) and (self.game.map.world_map.get(
-        #              (new_x_int - 1, new_y_int + 1), 0) & 3 > 0):
+        #              (new_x_int - 1, new_y_int + 1), 0) & self.3 > 0):
         #             dy = 0
         #             new_y = self.y
         #             dx = 0
@@ -348,7 +357,11 @@ class Player(Entity):
              + self.game.map.wall_thickness
              + self.game.map.top)
 
-        if (self.dx == 0) and (self.dy == 0):
+        if not (self.game.player.alive):
+            frames = self.frames.get(FrameType.DEATH, [])
+            angle = 0
+            # print("DEATH from",len(frames),self.frame_index)
+        elif (self.dx == 0) and (self.dy == 0):
             frames = self.frames.get(FrameType.STAY, [])
             angle = 0
         else:
@@ -356,6 +369,10 @@ class Player(Entity):
             angle = self.angle
         if len(frames) > 0:
             if self.frame_index >= len(frames):
+                if not (self.game.player.alive):
+                    self.frame_index = len(frames) - 1
+                    self.after_death()
+                    return
                 self.frame_index = 0
             image = frames[self.frame_index]
             if angle == 0:

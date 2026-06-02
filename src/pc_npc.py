@@ -16,10 +16,8 @@ class NPC(Entity):
     """ Gosts """
     def __init__(self, game, point=(0, 0), color=(100, 100, 100), name="Gost", size=11):
         super().__init__(game,point=point,color=color,name=name,size=size)
-        self.start_x, self.start_y = point
         self.angle = 0
         self.health = 100
-        self.alive = True
         self.speed_factor = 0.04
         self.dx = 0
         self.dy = 0
@@ -60,14 +58,6 @@ class NPC(Entity):
                 if i > 0:
                     self.goal = (x_g, y_g)
                 # print(self.name, " goal=", self.goal)
-
-    def teleport(self, x: int = -1, y: int = -1):
-        if x < 0:
-            x = self.start_x
-        if y < 0:
-            y = self.start_y
-        self.x = int(x)
-        self.y = int(y)
 
     def movement(self):
 
@@ -112,6 +102,16 @@ class NPC(Entity):
 
     def update(self):
         self.movement()
+        if self.visible and self.collide_check(self.game.player):
+            self.event()
+
+    def event(self):
+        print("Collide PacMan and" ,self.name, "!")
+        if self.game.player.alive:
+            self.game.player.frame_index = 0
+        self.game.player.alive = False
+        self.visible = False
+
 
 
 class RedGhosts(NPC):

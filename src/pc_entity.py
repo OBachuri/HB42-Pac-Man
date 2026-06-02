@@ -10,9 +10,8 @@ class FrameType(Enum):
     RIGHT = 4,
     TOP = 5,
     BOTTOM = 6,
-    DEAD = 7
-
-
+    DEATH = 7,
+    DEAD = 8
 
 class Entity:
     """Parent Class for NPC (Gosts) + Player (Pac-man) """
@@ -20,8 +19,10 @@ class Entity:
     def __init__(self, game, point=(0, 0), color=(50, 50, 50), name="Entity",size=11):
         self.game = game
         self.x, self.y = point
+        self.start_x, self.start_y = point
         self.name = name
         self.size = size  # radius
+        self.alive = True        
         self.dx = 0
         self.dy = 0
         self.color = color  # RGB() 
@@ -29,19 +30,56 @@ class Entity:
         self.frame_index = 0
         self.animation_timer = 0
         self.speed_factor = 0.04
+        self.visible = True
+
+    def reset(self):
+        self.dx = 0
+        self.dy = 0
+        self.teleport()
+        self.frame_index = 0
+        self.animation_timer = 0
+        self.alive = True
+        self.visible = True
+        
+
+    def teleport(self, x: int = -1, y: int = -1):
+        if x < 0:
+            x = self.start_x
+        if y < 0:
+            y = self.start_y
+        self.x = int(x)
+        self.y = int(y)
 
 
     def movement(self):
         pass
-
+       
     def update(self):
         self.movement()
-        self.animation_timer += 0.1 + (abs(self.dx) + abs(self.dy))*self.speed_factor*5
+        if self.alive:
+            self.animation_timer += 0.1 + (abs(self.dx) + abs(self.dy))*self.speed_factor*5
+        else:
+            self.animation_timer += 0.1
         if self.animation_timer > 1:
             self.animation_timer = 0
             self.frame_index += 1
 
+    def collide_check(self, o_: "Entity"):
+        x = o_.x
+        y = o_.y
+        s = o_.size
+        # print("o(x,y,s)",x,y,s,f"{o_.name}^{self.name}"," c(x,y,s)", self.x,self.y,self.size)
+        # print(((self.x - x)**2 + (self.y - y)**2))
+        # print(((self.size + s)/self.game.map.step)**2)
+        return (((self.x - x)**2
+                + (self.y - y)**2)
+                < ((self.size + s)/self.game.map.step)**2)
+
     def draw(self):
+
+        if not (self.visible):
+            return
+        
         x = (self.x * self.game.map.step
              + self.game.map.cell_size / 2
              + self.game.map.wall_thickness)
