@@ -31,6 +31,7 @@ class Entity:
         self.animation_timer = 0
         self.speed_factor = 0.04
         self.visible = True
+        self.max_d = 5 # max dx + dy
 
     def reset(self):
         self.dx = 0
@@ -89,9 +90,27 @@ class Entity:
              + self.game.map.wall_thickness
              + self.game.map.top)
 
-        pg.draw.circle(self.game.screen,
-                       self.color,
-                       (x, y), self.size)
+        if not (self.alive):
+            frames = self.frames.get(FrameType.DEATH, [])
+            # print("DEATH from",len(frames),self.frame_index)
+        elif (self.dx == 0) and (self.dy == 0):
+            frames = self.frames.get(FrameType.STAY, [])
+        else:
+            frames = self.frames.get(FrameType.RUN, [])
+        if len(frames) > 0:
+            if self.frame_index >= len(frames):
+                if not (self.alive):
+                    self.frame_index = len(frames) - 1
+                    # self.after_death()
+                    return
+                self.frame_index = 0
+            image = frames[self.frame_index]
+            rect = image.get_rect(center=(int(x), int(y)))
+            self.game.screen.blit(image, rect)
+        else:
+            pg.draw.circle(self.game.screen,
+                        self.color,
+                        (x, y), self.size)
         
     def read_frames_from_file(self, file_path:str, frame_type: FrameType):
         path_ = os.path.join(

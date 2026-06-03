@@ -1,8 +1,7 @@
 import pygame as pg
 import random
 from enum import Enum
-from src.pc_entity import Entity
-
+from src.pc_entity import Entity, FrameType
 
 class GhostMode(Enum):
     CHASE = 1
@@ -18,11 +17,11 @@ class NPC(Entity):
         super().__init__(game,point=point,color=color,name=name,size=size)
         self.angle = 0
         self.health = 100
-        self.speed_factor = 0.04
+        self.speed_factor = 0.02
         self.dx = 0
         self.dy = 0
         self.goal: tuple[int, int] | None = None
-        self.start_chase_if_near = 5
+        self.start_chase_if_near = 4
         self.mode: GhostMode = GhostMode.CHASE
 
     def find_goal(self):
@@ -102,8 +101,13 @@ class NPC(Entity):
 
     def update(self):
         self.movement()
+        self.animation_timer += 0.1
+        if self.animation_timer > 1:
+            self.animation_timer = 0
+            self.frame_index += 1
         if self.visible and self.collide_check(self.game.player):
             self.event()
+
 
     def event(self):
         print("Collide PacMan and" ,self.name, "!")
@@ -123,6 +127,8 @@ class RedGhosts(NPC):
                  color=(250, 20, 20),
                  name="Red gost (Blinky, Shadow)"):
         super().__init__(game, point, color, name)
+        self.read_frames_from_file("inc/img/red/run/", FrameType.RUN)
+
 
     def find_goal(self):
         x = int(round(self.x, 0))

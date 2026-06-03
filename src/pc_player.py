@@ -132,6 +132,14 @@ class Player(Entity):
 
         # w = self.game.map.world_map.get((x, y), 0)
 
+        if abs(dx) + abs(dy) > self.max_d:
+            # print("d--in(x,y)",dx,dy)
+            if dx != 0:
+                dx = int(round(dx * self.max_d/(abs(dx) + abs(dy)), 0))
+            if dy != 0:
+                dy = int(round(dy * self.max_d/(abs(dx) + abs(dy)), 0))
+            # print("d-out(x,y)",dx,dy)
+
         dx_sf = dx * self.speed_factor
         dy_sf = dy * self.speed_factor
 
@@ -357,7 +365,7 @@ class Player(Entity):
              + self.game.map.wall_thickness
              + self.game.map.top)
 
-        if not (self.game.player.alive):
+        if not (self.alive):
             frames = self.frames.get(FrameType.DEATH, [])
             angle = 0
             # print("DEATH from",len(frames),self.frame_index)
@@ -369,7 +377,7 @@ class Player(Entity):
             angle = self.angle
         if len(frames) > 0:
             if self.frame_index >= len(frames):
-                if not (self.game.player.alive):
+                if not (self.alive):
                     self.frame_index = len(frames) - 1
                     self.after_death()
                     return
