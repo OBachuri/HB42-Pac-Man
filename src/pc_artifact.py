@@ -63,7 +63,7 @@ class PowerPellet(PC_Artifacts):
         self.game.player.dx = max(0, self.game.player.dx - 3)
         self.game.player.dy = max(0, self.game.player.dy - 3)
         for n in self.game.npcs:
-            n.mode = GhostMode.SCATTER
+            n.mode = GhostMode.FRIGHTENED
 
 
 class Pellet(PC_Artifacts):

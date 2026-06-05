@@ -1,28 +1,23 @@
 import pygame as pg
 import random
 from enum import Enum
-from src.pc_entity import Entity, FrameType
-
-class GhostMode(Enum):
-    CHASE = 1
-    SCATTER = 2
-    FRIGHTENED = 3
-    STROLL = 4
-    DEAD = 9  # SPAWN  
+from src.pc_entity import Entity, FrameType, GhostMode
 
 
 class NPC(Entity):
     """ Gosts """
-    def __init__(self, game, point=(0, 0), color=(100, 100, 100), name="Gost", size=11):
+    def __init__(self, game, point=(0, 0), color=(100, 100, 100), name="Gost", size=11, points=200):
         super().__init__(game,point=point,color=color,name=name,size=size)
         self.angle = 0
         self.health = 100
         self.speed_factor = 0.02
+        self.points = points  # score add
         self.dx = 0
         self.dy = 0
         self.goal: tuple[int, int] | None = None
         self.start_chase_if_near = 4
-        self.mode: GhostMode = GhostMode.CHASE
+        self.mode: GhostMode = GhostMode.STROLL
+        self.read_frames_from_file("inc/img/frightened/", FrameType.FRIGHTENED)
 
     def find_goal(self):
         x = int(round(self.x, 0))
@@ -110,11 +105,24 @@ class NPC(Entity):
 
 
     def event(self):
+        if not self.alive:
+            return 
         print("Collide PacMan and" ,self.name, "!")
-        if self.game.player.alive:
-            self.game.player.frame_index = 0
-        self.game.player.alive = False
-        self.visible = False
+        if self.mode == GhostMode.FRIGHTENED:
+            self.game.score += self.points
+            self.mode = GhostMode.DEAD
+            self.alive = False
+        else:
+            if self.game.player.alive:
+                self.game.player.frame_index = 0
+            self.game.player.alive = False
+            self.visible = False
+
+    def reset(self):
+        self.mode = GhostMode.STROLL
+        super().reset()
+        # print("name:",self.name, "mode:",self.mode, "alive:",self.alive)
+        
 
 
 

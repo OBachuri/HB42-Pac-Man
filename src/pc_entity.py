@@ -11,7 +11,16 @@ class FrameType(Enum):
     TOP = 5,
     BOTTOM = 6,
     DEATH = 7,
-    DEAD = 8
+    DEAD = 8,
+    FRIGHTENED = 9
+
+class GhostMode(Enum):
+    CHASE = 1
+    SCATTER = 2
+    FRIGHTENED = 3
+    STROLL = 4
+    DEAD = 9  # SPAWN  
+
 
 class Entity:
     """Parent Class for NPC (Gosts) + Player (Pac-man) """
@@ -22,11 +31,12 @@ class Entity:
         self.start_x, self.start_y = point
         self.name = name
         self.size = size  # radius
-        self.alive = True        
+        self.alive = True
         self.dx = 0
         self.dy = 0
         self.color = color  # RGB() 
         self.frames: dict[FrameType, list[pg.Surface]] = {}
+        self.mode: GhostMode = GhostMode.STROLL
         self.frame_index = 0
         self.animation_timer = 0
         self.speed_factor = 0.04
@@ -41,7 +51,7 @@ class Entity:
         self.animation_timer = 0
         self.alive = True
         self.visible = True
-        
+            
 
     def teleport(self, x: int = -1, y: int = -1):
         if x < 0:
@@ -93,6 +103,8 @@ class Entity:
         if not (self.alive):
             frames = self.frames.get(FrameType.DEATH, [])
             # print("DEATH from",len(frames),self.frame_index)
+        elif (self.mode == GhostMode.FRIGHTENED):
+            frames = self.frames.get(FrameType.FRIGHTENED, [])
         elif (self.dx == 0) and (self.dy == 0):
             frames = self.frames.get(FrameType.STAY, [])
         else:
@@ -132,8 +144,8 @@ class Entity:
                     os.path.join(path_, filename)
                 ).convert_alpha()
                 self.frames[frame_type].append(frame)
-                print(filename)
-            print(self.frames[frame_type])
+            #     print(filename)
+            # print(self.frames[frame_type])
 
             if not self.frames[frame_type]:
                 print(f"No image files found in {path_}.")

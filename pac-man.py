@@ -46,7 +46,7 @@ def main() -> int:
             sys.exit(1)
 
         print("Maze generation - start  ...")
-        maze_ = MazeGenerator(size=(14, 12), perfect=False).maze
+        maze_ = MazeGenerator(size=(6, 6), perfect=False).maze
         print("Maze generation - end")
 
     else:

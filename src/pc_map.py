@@ -242,31 +242,31 @@ class Map:
             for v_ in maze_[row_]:
                 v_ = v_ & 15 
                 if v_ == 15:
-                    print("▧ ",end="")  # ▢
+                    print("🞓 ",end="")  # ▢ ▧ █ 
                 elif v_ == 0: 
                     print("∘ ",end="")
                 elif v_ == 1: 
-                    print("‾ ",end="")
+                    print("🭶 ",end="")  # ‾
                 elif v_ == 13: # oxD = 13 = 1101
                     print("ᑕ ",end="")
                 elif v_ == 8: 
-                    print("[ ",end="")
+                    print("▏ ",end="")  # 🭰[ ▏
                 elif v_ == 2: 
-                    print("] ",end="")
+                    print("▕ ",end="") # ] ▕ 🭵 ▕
                 elif v_ == 4: 
-                    print("_ ",end="")
+                    print("🭻 ",end="")  # _
                 elif v_ == 1+4: 
-                    print("⚌ ",end="") # =〓⚌
+                    print("🮀 ",end="") # =〓⚌
                 elif v_ == 2+8: 
-                    print("Ⅱ ",end="")
+                    print("⣿ ",end="")  # Ⅱ ⏸ ᱿ ║ 
                 elif v_ == 8 + 4: 
-                    print("⌞ ",end="")  # ᒪ ᄂ ∟ 
+                    print("🭼 ",end="")  # ᒪ ᄂ ∟ ⌞
                 elif v_ == 3: 
-                    print("⌝ ",end="") # ᄀ 
+                    print("🭾 ",end="") # ᄀ ⌝
                 elif v_ == 2 + 4: 
-                    print("⌟ ",end="") # ᒧ
+                    print("🭿 ",end="") # ᒧ ⌟
                 elif v_ == 1 + 8: 
-                    print("⌜ ",end="")  # ᒥ 
+                    print("🭽 ",end="")  # ᒥ ⌜
                 elif v_ == 2+4+8: 
                     print("ᑌ ",end="")
                 elif v_ == 1+2+8:
@@ -281,6 +281,7 @@ class Map:
         #     for v_ in row_:
         #         print(f"{v_:3}",end=" ")
         #     print("]")
+        # 	  ⠿⠼⠯⠇⠸⠹
 
         print("*"*30)
 

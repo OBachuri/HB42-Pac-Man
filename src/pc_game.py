@@ -64,8 +64,7 @@ class Game:
 
         # Set NPC
         for n in self.npcs:
-            n.teleport()
-            n.mode = GhostMode.STROLL
+            n.reset()
 
         #  Add PowerPellet and Pellet
         self.artifacts.append(PowerPellet(self, (0, 0)))
