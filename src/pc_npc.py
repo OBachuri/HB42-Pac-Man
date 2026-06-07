@@ -18,6 +18,7 @@ class NPC(Entity):
         self.start_chase_if_near = 4
         self.mode: GhostMode = GhostMode.STROLL
         self.read_frames_from_file("inc/img/frightened/", FrameType.FRIGHTENED)
+        self.read_frames_from_file("inc/img/ghost/death/", FrameType.DEATH)
 
     def find_goal(self):
         x = int(round(self.x, 0))
