@@ -46,7 +46,7 @@ def main() -> int:
             sys.exit(1)
 
         print("Maze generation - start  ...")
-        maze_ = MazeGenerator(size=(10, 10), perfect=False).maze
+        maze_ = MazeGenerator(size=(11, 11), perfect=False).maze
         print("Maze generation - end")
 
     else:
@@ -67,8 +67,6 @@ def main() -> int:
             print(e, file=sys.stderr)
             sys.exit(1)
 
-
-
         print("Maze config:", c_mz_param.print())
         maze_ = MazeGenerator.generate(c_mz_param)
         MazeGenerator.write_to_file(maze_, c_mz_param, [])
@@ -79,10 +77,8 @@ def main() -> int:
     print("*"*30)
 
     # print(pg.font.get_fonts())
-    
     game.map.print(maze_)
 
-    
     maze_ = game.map.do_not_prefect(maze_)
 
     # game.map.get_map_form_file(c_mz_param.output_file)
@@ -93,19 +89,19 @@ def main() -> int:
     game.npcs.append(RedGhosts(game))
 
     pink = NPC(game, (game.map.cols - 1, 0),
-                         (240, 24, 140), "Pink gost (Speedy)")
+               (240, 24, 140), "Pink gost (Speedy)")
     game.npcs.append(pink)
     pink.read_frames_from_file("inc/img/pink/run/", FrameType.RUN)
 
     cyan = NPC(game,
-                         (game.map.cols - 1, game.map.rows - 1),
-                         (100, 250, 250), "Cyan gost (Inky, Bashful)")
+               (game.map.cols - 1, game.map.rows - 1),
+               (100, 250, 250), "Cyan gost (Inky, Bashful)")
     game.npcs.append(cyan)
     cyan.read_frames_from_file("inc/img/cyan/run/", FrameType.RUN)
 
     orange = NPC(game,
-                         (0, game.map.rows - 1),
-                         (250, 120, 10), "Orange gost (Clyde, Pockey)")
+                 (0, game.map.rows - 1),
+                 (250, 120, 10), "Orange gost (Clyde, Pockey)")
     game.npcs.append(orange)
     orange.read_frames_from_file("inc/img/orange/run/", FrameType.RUN)
 

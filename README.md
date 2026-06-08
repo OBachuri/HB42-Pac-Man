@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by obachuri and ......*
+*This project has been created as part of the 42 curriculum by obachuri and iiunusov*
 
 ---
 
@@ -114,6 +114,10 @@ Team Members
 Obachuri:
 - Main architecture design
 - Pac-Man's movements and animation
+
+IIunusov:
+- Project management
+
 
 ## License
 
