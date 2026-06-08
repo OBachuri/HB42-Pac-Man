@@ -68,6 +68,7 @@ class PowerPellet(PC_Artifacts):
                 n.mode = GhostMode.FRIGHTENED
                 n.dx *= -1
                 n.dy *= -1
+                n.event_timer = self.game.gost_edible
 
 
 class Pellet(PC_Artifacts):

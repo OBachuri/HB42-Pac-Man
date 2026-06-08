@@ -14,7 +14,7 @@ PYTHON := python3
 PIP := pip
 C_DIR := pwd
 
-# BUILD_SOURCE_DIR := "mazegen-source"
+BUILD_SOURCE_DIR := "src"
 # WHEEL := $(BUILD_SOURCE_DIR)/dist/*.whl
 
 #MLX_URL := https://cdn.intra.42.fr/document/document/47086/mlx-2.2-py3-ubuntu-any.whl
@@ -138,7 +138,7 @@ lint-strict:
 
 install: 
 	@$(ACTIVATE_VENV)
-	$(PIP) install pydantic dotenv build flake8 mypy pygame numpy 
+	$(PIP) install pydantic dotenv build flake8 mypy pygame-ce numpy 
 	$(PIP) install mazegenerator-00001-py3-none-any.whl
 #	$(PIP) install mazegen-0.1.0-py3-none-any.whl
 

@@ -20,6 +20,8 @@ class NPC(Entity):
         self.mode: GhostMode = GhostMode.STROLL
 
         self.read_frames_from_file("inc/img/frightened/", FrameType.FRIGHTENED)
+        self.read_frames_from_file("inc/img/end_of_frightened/",
+                                   FrameType.END_OF_FRIGHTENED)
         self.read_frames_from_file("inc/img/ghost/death/", FrameType.DEATH)
         self.read_frames_from_file("inc/img/ghost/eyes/down/", FrameType.DOWN)
         self.read_frames_from_file("inc/img/ghost/eyes/up/", FrameType.UP)
@@ -112,6 +114,11 @@ class NPC(Entity):
         self.y = y
 
     def update(self):
+        if self.event_timer > 0:
+            self.event_timer -= 1/self.game.fps
+            if self.event_timer <= 0:
+                self.event_timer = 0
+                self.event_end()
         self.movement()
         self.animation_timer += 0.1
         if self.animation_timer > 1:
@@ -119,6 +126,11 @@ class NPC(Entity):
             self.frame_index += 1
         if self.visible and self.collide_check(self.game.player):
             self.event()
+
+    def event_end(self):
+        # print("Fr End:", self.event_timer, self.mode, self.name)
+        if self.mode == GhostMode.FRIGHTENED:
+            self.mode = GhostMode.STROLL
 
     def event(self):
         if not self.alive:

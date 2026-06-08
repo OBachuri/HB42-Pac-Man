@@ -74,8 +74,7 @@ The configuration file controls the maze generation physics and rules.
 - Python 3.10 or later
 - Pygame
 - Pydantic
-- Dotenv
-
+- Pip (for instaqll script)
 
 ## Resources
 
@@ -100,18 +99,6 @@ https://en.wikipedia.org/wiki/Depth-first_search
 Resources PRIMS:
 https://en.wikipedia.org/wiki/Prim%27s_algorithm
 
-
-
-
-### Team Project Management
-
-Team Members
-
-Obachuri:
-- Main architecture design
-- Pac-Man's movements and animation
-
-
 ### AI Usage
 
 Tools Used:
@@ -119,6 +106,14 @@ Tools Used:
 - Nano Banana 2
 
 AI was used to generate images and structuring this README.
+
+## Project Management
+
+Team Members
+
+Obachuri:
+- Main architecture design
+- Pac-Man's movements and animation
 
 ## License
 

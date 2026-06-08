@@ -8,7 +8,7 @@ import sys
 import os
 import random
 
-FPS = 60
+# FPS = 60
 
 
 class Game:
@@ -25,7 +25,8 @@ class Game:
         self.global_event = pg.USEREVENT + 0
         self.score = 0
         self.level = 1
-        self.gost_edible = 7  # sec - frightened time
+        self.fps = 60
+        self.gost_edible = 17  # sec - frightened time
         pg.time.set_timer(self.global_event, 40)
 
         # fonts
@@ -104,7 +105,7 @@ class Game:
         # self.object_handler.update()
         # self.weapon.update()
         pg.display.flip()
-        self.delta_time = self.clock.tick(FPS)
+        self.delta_time = self.clock.tick(self.fps)
         self.game_time -= self.delta_time / 1000
         pg.display.set_caption('Pac-man  42 '
                                f'(fps:{self.clock.get_fps(): 6.1f})')

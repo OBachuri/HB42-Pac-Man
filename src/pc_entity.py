@@ -13,7 +13,8 @@ class FrameType(Enum):
     DOWN = 6,
     DEATH = 7,
     DEAD = 8,
-    FRIGHTENED = 9
+    FRIGHTENED = 9,
+    END_OF_FRIGHTENED = 10,
 
 
 class GhostMode(Enum):
@@ -43,6 +44,7 @@ class Entity:
         self.mode: GhostMode = GhostMode.STROLL
         self.frame_index = 0
         self.animation_timer = 0
+        self.event_timer = 0
         self.speed_factor = 0.04
         self.visible = True
         self.max_d = 5  # max dx + dy
@@ -121,7 +123,10 @@ class Entity:
                 elif self.dx > 0:  # right
                     frames = self.frames.get(FrameType.RIGHT, [])
         elif (self.mode == GhostMode.FRIGHTENED):
-            frames = self.frames.get(FrameType.FRIGHTENED, [])
+            if self.event_timer > 2:
+                frames = self.frames.get(FrameType.FRIGHTENED, [])
+            else:
+                frames = self.frames.get(FrameType.END_OF_FRIGHTENED, [])
         elif (self.dx == 0) and (self.dy == 0):
             frames = self.frames.get(FrameType.STAY, [])
         else:
