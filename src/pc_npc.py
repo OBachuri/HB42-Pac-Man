@@ -1,13 +1,14 @@
 import pygame as pg
 import random
-from enum import Enum
+# from enum import Enum
 from src.pc_entity import Entity, FrameType, GhostMode
 
 
 class NPC(Entity):
     """ Gosts """
-    def __init__(self, game, point=(0, 0), color=(100, 100, 100), name="Gost", size=11, points=200):
-        super().__init__(game,point=point,color=color,name=name,size=size)
+    def __init__(self, game, point=(0, 0), color=(100, 100, 100),
+                 name="Gost", size=11, points=200):
+        super().__init__(game, point=point, color=color, name=name, size=size)
         self.angle = 0
         self.health = 100
         self.speed_factor = 0.02
@@ -17,8 +18,14 @@ class NPC(Entity):
         self.goal: tuple[int, int] | None = None
         self.start_chase_if_near = 4
         self.mode: GhostMode = GhostMode.STROLL
+
         self.read_frames_from_file("inc/img/frightened/", FrameType.FRIGHTENED)
         self.read_frames_from_file("inc/img/ghost/death/", FrameType.DEATH)
+        self.read_frames_from_file("inc/img/ghost/eyes/down/", FrameType.DOWN)
+        self.read_frames_from_file("inc/img/ghost/eyes/up/", FrameType.UP)
+        self.read_frames_from_file("inc/img/ghost/eyes/left/", FrameType.LEFT)
+        self.read_frames_from_file("inc/img/ghost/eyes/right/",
+                                   FrameType.RIGHT)
 
     def find_goal(self):
         x = int(round(self.x, 0))
@@ -63,13 +70,23 @@ class NPC(Entity):
         x = self.x
         y = self.y
 
-        if (((abs(int(round(x, 0)) - x) < self.speed_factor)
-             and (abs(int(round(y, 0)) - y) < self.speed_factor))):
+        if self.mode == GhostMode.SPAWN:
+            speed_factor = max(0.05, self.speed_factor)
+        else:
+            speed_factor = self.speed_factor
+
+        if (((abs(int(round(x, 0)) - x) < speed_factor)
+             and (abs(int(round(y, 0)) - y) < speed_factor))):
             x = int(round(x, 0))
             y = int(round(y, 0))
 
-            # We in a center of the cell and must decide where to go
-            self.find_goal()
+            if self.mode == GhostMode.SPAWN:
+                if self.goal == (x, y):
+                    self.reborn()
+            else:
+                # We in a center of the cell and must decide where to go
+                self.find_goal()
+
             # Check if player near and not gosts etable now
 
             P_ = self.game.map.find_path((x, y), self.goal)
@@ -84,13 +101,12 @@ class NPC(Entity):
             else:
                 dx = 0
                 dy = 0
-
         else:
             dx = self.dx
             dy = self.dy
 
-        x = self.speed_factor * dx + self.x
-        y = self.speed_factor * dy + self.y
+        x = speed_factor * dx + self.x
+        y = speed_factor * dy + self.y
 
         self.x = x
         self.y = y
@@ -104,11 +120,10 @@ class NPC(Entity):
         if self.visible and self.collide_check(self.game.player):
             self.event()
 
-
     def event(self):
         if not self.alive:
-            return 
-        print("Collide PacMan and" ,self.name, "!")
+            return
+        print("Collide PacMan and", self.name, "!")
         if self.mode == GhostMode.FRIGHTENED:
             self.game.score += self.points
             self.mode = GhostMode.DEAD
@@ -123,8 +138,18 @@ class NPC(Entity):
         self.mode = GhostMode.STROLL
         super().reset()
         # print("name:",self.name, "mode:",self.mode, "alive:",self.alive)
-        
 
+    def after_death(self):
+        self.mode = GhostMode.SPAWN
+        self.goal = (self.start_x, self.start_y)
+
+    def reborn(self):
+        self.mode = GhostMode.STROLL
+        self.alive = True
+        self.visible = True
+        self.dx = 0
+        self.dy = 0
+        self.teleport()
 
 
 class RedGhosts(NPC):
@@ -137,7 +162,6 @@ class RedGhosts(NPC):
                  name="Red gost (Blinky, Shadow)"):
         super().__init__(game, point, color, name)
         self.read_frames_from_file("inc/img/red/run/", FrameType.RUN)
-
 
     def find_goal(self):
         x = int(round(self.x, 0))

@@ -1,13 +1,15 @@
 import pygame as pg
 from src.pc_npc import GhostMode
 
+
 class PC_Artifacts():
     """
-    Artifacts = Pellet or  PowerPellet
+    Artifacts = Pellet or PowerPellet
 
     Pellet = Dot = Pacgums
     PowerPellet = Super-pacgums = Energizer
     """
+
     def __init__(self, game, point=(0, 0), points=10, color=(200, 200, 200)):
         self.game = game
         self.x, self.y = point
@@ -26,11 +28,10 @@ class PC_Artifacts():
              + self.game.map.wall_thickness
              + self.game.map.top)
 
-        if len(self.frames) == 0: 
+        if len(self.frames) == 0:
             pg.draw.circle(self.game.screen,
-                       self.color,
-                       (x, y), self.size)
-            
+                           self.color,
+                           (x, y), self.size)
 
     def event(self):
         self.game.score += self.points
@@ -63,7 +64,10 @@ class PowerPellet(PC_Artifacts):
         self.game.player.dx = max(0, self.game.player.dx - 3)
         self.game.player.dy = max(0, self.game.player.dy - 3)
         for n in self.game.npcs:
-            n.mode = GhostMode.FRIGHTENED
+            if n.alive:
+                n.mode = GhostMode.FRIGHTENED
+                n.dx *= -1
+                n.dy *= -1
 
 
 class Pellet(PC_Artifacts):

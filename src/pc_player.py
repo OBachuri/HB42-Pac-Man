@@ -4,9 +4,12 @@ import math
 
 from src.pc_entity import Entity, FrameType
 
+
 class Player(Entity):
     """ Player = PacMan """
-    def __init__(self, game, point=(0, 0), color=(250,250,10), name="PacMan", size=21):
+    def __init__(self, game, point=(0, 0),
+                 color=(250, 250, 10),
+                 name="PacMan", size=21):
         super().__init__(game, point=point, color=color, name=name, size=size)
         self.game = game
         self.angle = 0
@@ -47,30 +50,44 @@ class Player(Entity):
              or (abs(new_y_int - new_y) <= max_shift))):
             return False
 
-        # print("--- Diagonal = left:", (new_x_int > new_x), "top:", (new_y_int > new_y))
+        # print("--- Diagonal = left:", (new_x_int > new_x), "top:",
+        # (new_y_int > new_y))
+
         if new_x_int > new_x:  # left
             # top
             if (((new_y_int > new_y)
                     and (self.game.map.world_map.get(
                         (new_x_int - 1, new_y_int - 1), 0) & 6 > 0))):
-                # print("Top-Left (x,y): (",new_x_int - 1,",",new_y_int - 1,") w:", self.game.map.world_map.get((new_x_int - 1, new_y_int - 1), 0))
+                # print("Top-Left (x,y): (",new_x_int - 1,
+                # ",",new_y_int - 1,") w:",
+                # self.game.map.world_map.get((new_x_int - 1,
+                # new_y_int - 1), 0))
                 return True
             # bottom
             elif (new_y_int < new_y) and (self.game.map.world_map.get(
                     (new_x_int - 1, new_y_int + 1), 0) & 3 > 0):
-                # print("Bottom-Left (x,y): (",new_x_int - 1,",",new_y_int + 1,") w:", self.game.map.world_map.get((new_x_int - 1, new_y_int + 1), 0))
+                # print("Bottom-Left (x,y): (",new_x_int - 1,
+                # ",",new_y_int + 1,") w:",
+                # self.game.map.world_map.get((new_x_int - 1,
+                # new_y_int + 1), 0))
                 return True
         else:  # Right
             # top
             if (((new_y_int > new_y)
                     and (self.game.map.world_map.get(
                         (new_x_int + 1, new_y_int - 1), 0) & 12 > 0))):
-                # print("Top-Rigth (x,y): (",new_x_int + 1,",",new_y_int - 1,") w:", self.game.map.world_map.get((new_x_int + 1, new_y_int - 1), 0))
+                # print("Top-Rigth (x,y): (",new_x_int + 1,",",
+                # new_y_int - 1,") w:",
+                # self.game.map.world_map.get((new_x_int + 1,
+                # new_y_int - 1), 0))
                 return True
             # bottom
             elif (new_y_int < new_y) and (self.game.map.world_map.get(
                     (new_x_int + 1, new_y_int + 1), 0) & 9 > 0):
-                # print("Bottom-Right (x,y): (",new_x_int + 1,",",new_y_int + 1,") w:", self.game.map.world_map.get((new_x_int + 1, new_y_int + 1), 0))
+                # print("Bottom-Right (x,y): (",new_x_int + 1,",",
+                # new_y_int + 1,") w:",
+                # self.game.map.world_map.get((new_x_int + 1,
+                # new_y_int + 1), 0))
                 return True
         return False
 
@@ -79,7 +96,6 @@ class Player(Entity):
         self.reset()
         for n in self.game.npcs:
             n.reset()
-        
 
     def movement(self):
         num_key_pressed = -1
@@ -156,7 +172,8 @@ class Player(Entity):
 
         wn_d = self.game.map.world_map.get((new_x_int, new_y_int), 0)
 
-        # print(f"new - int:({x},{y}), df:({dx},{dy}), new:({new_x},{new_y}), new_int:({new_x_int},{new_y_int})")
+        # print(f"new - int:({x},{y}), df:({dx},{dy}), new:({new_x},{new_y}),
+        # new_int:({new_x_int},{new_y_int})")
 
         # print(f"x-df: {new_x_int - new_x}, y-df: {new_y_int - new_y}")
 
@@ -202,7 +219,8 @@ class Player(Entity):
         # left or rigth
         if (((((new_x_int - new_x) > max_shift) and (wn_d & 8 == 8))
              or (((new_x - new_x_int) > max_shift) and (wn_d & 2 == 2)))):
-            # print("left or right (left = ", ((new_x_int - new_x) > max_shift), ")")
+            # print("left or right (left = ",
+            # ((new_x_int - new_x) > max_shift), ")")
             dx = 0
             new_x = self.x
             new_x_int = x
@@ -248,81 +266,6 @@ class Player(Entity):
                 dx = 0
                 new_x = self.x
 
-
-#            print("top or bottom (top = ", ((new_y_int - new_y) > max_shift))
-
-        # (left or right) and (top ot bottom)
-        # if (((abs(new_x_int - new_x) > max_shift)
-        #      and (abs(new_y_int - new_y) > max_shift))):
-        #     print("--- Diagonal = left:", (new_x_int > new_x), "top:", (new_y_int > new_y))
-        #     if new_x_int > new_x:  # left
-        #         # top
-        #         if (((new_y_int > new_y)
-        #              and (self.game.map.world_map.get(
-        #                  (new_x_int - 1, new_y_int - 1), 0) & 6 > 0))):
-        #             dy = 0
-        #             new_y = self.y
-        #             dx = 0
-        #             new_x = self.x
-        #             print("Top-Left (x,y): (",new_x_int - 1,",",new_y_int - 1,") w:", self.game.map.world_map.get((new_x_int - 1, new_y_int - 1), 0))
-        #         # bottom
-        #         elif (new_y_int < new_y) and (self.game.map.world_map.get(
-        #              (new_x_int - 1, new_y_int + 1), 0) & self.3 > 0):
-        #             dy = 0
-        #             new_y = self.y
-        #             dx = 0
-        #             new_x = self.x
-        #             print("Bottom-Left (x,y): (",new_x_int - 1,",",new_y_int + 1,") w:", self.game.map.world_map.get((new_x_int - 1, new_y_int + 1), 0))
-        #     else:  # Right
-        #         # top
-        #         if (((new_y_int > new_y)
-        #              and (self.game.map.world_map.get(
-        #                  (new_x_int + 1, new_y_int - 1), 0) & 12 > 0))):
-        #             dy = 0
-        #             new_y = self.y
-        #             dx = 0
-        #             new_x = self.x
-        #             print("Top-Rigth (x,y): (",new_x_int + 1,",",new_y_int - 1,") w:", self.game.map.world_map.get((new_x_int + 1, new_y_int - 1), 0))
-        #         # bottom
-        #         elif (new_y_int < new_y) and (self.game.map.world_map.get(
-        #              (new_x_int + 1, new_y_int + 1), 0) & 9 > 0):
-        #             dy = 0
-        #             new_y = self.y
-        #             dx = 0
-        #             new_x = self.x
-        #             print("Bottom-Right (x,y): (",new_x_int + 1,",",new_y_int + 1,") w:", self.game.map.world_map.get((new_x_int + 1, new_y_int + 1), 0))
-
-
-
-        # if (x != new_x_int) and (y != new_y_int):
-        #     # Diagonal shift (Shift to the bottom-right corner)
-        #     # Check top and left walls in cells that is in bottom-right corner
-        #     wn_d = self.game.map.world_map.get((new_x_int, new_y_int), 0)
-        #     if (wn_d & 9 > 0) or (w & 6 > 0):
-        #         # there is wall on this corner
-        #         if dx > dy:
-        #             dy = 0
-        #             new_y = self.y
-        #         else:
-        #             dx = 0
-        #             new_x = self.x
-
-
-        # print(f"before - cur:({self.x},{self.y}),int:({x},{y}, max_shift:{max_shift}, df({dx},{dy})")
-
-        # if ((dy < 0) and (w & 1 == 1) and (new_y <= y - max_shift)):
-        #     new_y = y - max_shift
-        #     dy = 0
-        # if ((dy > 0) and (w & 4 == 4) and (new_y >= y + max_shift)):
-        #     new_y = y + max_shift
-        #     dy = 0
-        # if ((dx > 0) and (w & 2 == 2) and (new_x >= x + max_shift)):
-        #     new_x = x + max_shift
-        #     dx = 0
-        # if ((dx < 0) and (w & 8 == 8) and (new_x <= x - max_shift)):
-        #     new_x = x - max_shift
-        #     dx = 0
-
         self.x = new_x
         self.y = new_y
 
@@ -346,13 +289,10 @@ class Player(Entity):
         if (dx != 0) or (dy != 0):
             self.angle = math.degrees(math.atan2(-dy, dx)) % 360
 
- #       print(f"after - cur:({self.x},{self.y}),int:({x},{y}, max_shift:{max_shift}, df({dx},{dy})")
-
+        #  print(f"after - cur:({self.x},{self.y}),int:({x},{y},
+        #          max_shift:{max_shift}, df({dx},{dy})")
 
     def draw(self):
-        # pg.draw.line(self.game.screen, 'yellow', (self.x * (self.game.map.self.cell_size + self.game.map.wall_thickness), self.y * (self.game.map.self.cell_size + self.game.map.wall_thickness)),
-        #             (self.x * 100 + WIDTH * math.cos(self.angle),
-        #              self.y * 100 + WIDTH * math. sin(self.angle)), 2)
 
         x = (self.x * (self.game.map.cell_size
                        + self.game.map.wall_thickness)
@@ -392,32 +332,29 @@ class Player(Entity):
                 frame = pg.transform.rotate(frame, angle-180)
             else:
                 frame = pg.transform.rotate(image, angle)
-            
             rect = frame.get_rect(center=(int(x), int(y)))
             self.game.screen.blit(frame, rect)
-        
         else:
-        
             pg.draw.circle(self.game.screen,
-                        self.color,
-                        (x, y), self.size)
+                           self.color,
+                           (x, y), self.size)
             # eye
             # print("angle:", math.degrees(self.angle))
             sin_a = math.sin(self.angle)
             cos_a = math.cos(self.angle)
             pg.draw.circle(self.game.screen,
-                        'black',
-                        (x + 5 * sin_a,
+                           'black',
+                           (x + 5 * sin_a,
                             y - 5 * cos_a
                             ), 3)
             # mouth = jaws
             pggf.pie(self.game.screen, int(x), int(y), self.size,
-                    -20, 20, (255, 0, 0))
+                     -20, 20, (255, 0, 0))
 
         self.game.screen.blit(self.game.font.render(
             f'x:{self.x}, y:{self.y}, a:{self.angle} ', False, (10, 10, 200)),
             (10, (self.game.map.rows + 1)
-            * (self.game.map.step) + self.game.map.top))
+             * (self.game.map.step) + self.game.map.top))
 
         # x = (int(self.x) * (self.game.map.cell_size
         #                + self.game.map.wall_thickness)

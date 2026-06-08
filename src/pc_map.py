@@ -2,6 +2,7 @@ import pygame as pg
 from collections import deque
 import random
 
+
 class Map:
     def __init__(self, game):
         self.game = game
@@ -191,7 +192,7 @@ class Map:
                     if (w == 0):     # walls can`t be removed
                         continue
                     chosen_wall = random.choice([(1 << i) for i in range(4)
-                                                    if (w >> i) & 1])
+                                                 if (w >> i) & 1])
                     #  print("wall:", chosen_wall)
                     match chosen_wall:
                         case 1:
@@ -220,61 +221,61 @@ class Map:
                             continue
 
         return maze
-    
+
     def print(self, maze_=[]):
 
         print("*"*30)
         if len(maze_) <= 0:
-            for y in range(0,self.rows):
-                l_= []
-                for x in range(0,self.cols):
-                    l_.append(self.world_map.get((x, y), 0)) 
+            for y in range(0, self.rows):
+                l_ = []
+                for x in range(0, self.cols):
+                    l_.append(self.world_map.get((x, y), 0))
                 maze_.append(l_)
 
         if len(maze_) > 0:
-            print("Maze size (x,y):",(len(maze_[0]),len(maze_)))
-            print("    ",end="")
-            for x in range(0,len(maze_[0])):
-                print(f"{x % 10} ", end="") 
+            print("Maze size (x,y):", (len(maze_[0]), len(maze_)))
+            print("    ", end="")
+            for x in range(0, len(maze_[0])):
+                print(f"{x % 10} ", end="")
             print()
-        for row_ in range(0,len(maze_)):
+        for row_ in range(0, len(maze_)):
             print(f"{row_:2}", "{", end="")
             for v_ in maze_[row_]:
-                v_ = v_ & 15 
+                v_ = v_ & 15
                 if v_ == 15:
-                    print("🞓 ",end="")  # ▢ ▧ █ 
-                elif v_ == 0: 
-                    print("∘ ",end="")
-                elif v_ == 1: 
-                    print("🭶 ",end="")  # ‾
-                elif v_ == 13: # oxD = 13 = 1101
-                    print("ᑕ ",end="")
-                elif v_ == 8: 
-                    print("▏ ",end="")  # 🭰[ ▏
-                elif v_ == 2: 
-                    print("▕ ",end="") # ] ▕ 🭵 ▕
-                elif v_ == 4: 
-                    print("🭻 ",end="")  # _
-                elif v_ == 1+4: 
-                    print("🮀 ",end="") # =〓⚌
-                elif v_ == 2+8: 
-                    print("⣿ ",end="")  # Ⅱ ⏸ ᱿ ║ 
-                elif v_ == 8 + 4: 
-                    print("🭼 ",end="")  # ᒪ ᄂ ∟ ⌞
-                elif v_ == 3: 
-                    print("🭾 ",end="") # ᄀ ⌝
-                elif v_ == 2 + 4: 
-                    print("🭿 ",end="") # ᒧ ⌟
-                elif v_ == 1 + 8: 
-                    print("🭽 ",end="")  # ᒥ ⌜
-                elif v_ == 2+4+8: 
-                    print("ᑌ ",end="")
+                    print("🞓 ", end="")  # ▢ ▧ █
+                elif v_ == 0:
+                    print("∘ ", end="")
+                elif v_ == 1:
+                    print("🭶 ", end="")  # ‾
+                elif v_ == 13:  # oxD = 13 = 1101
+                    print("ᑕ ", end="")
+                elif v_ == 8:
+                    print("▏ ", end="")  # 🭰[ ▏
+                elif v_ == 2:
+                    print("▕ ", end="")  # ] ▕ 🭵 ▕
+                elif v_ == 4:
+                    print("🭻 ", end="")  # _
+                elif v_ == 1+4:
+                    print("🮀 ", end="")  # =〓⚌
+                elif v_ == 2+8:
+                    print("⣿ ", end="")  # Ⅱ ⏸ ᱿ ║
+                elif v_ == 8 + 4:
+                    print("🭼 ", end="")  # ᒪ ᄂ ∟ ⌞
+                elif v_ == 3:
+                    print("🭾 ", end="")  # ᄀ ⌝
+                elif v_ == 2 + 4:
+                    print("🭿 ", end="")  # ᒧ ⌟
+                elif v_ == 1 + 8:
+                    print("🭽 ", end="")  # ᒥ ⌜
+                elif v_ == 2+4+8:
+                    print("ᑌ ", end="")
                 elif v_ == 1+2+8:
-                    print("ᑎ ",end="")
-                elif v_ == 1+2+4: 
-                    print("ᑐ ",end="")
+                    print("ᑎ ", end="")
+                elif v_ == 1+2+4:
+                    print("ᑐ ", end="")
                 else:
-                    print(f"{v_:1}",end="")
+                    print(f"{v_:1}", end="")
             print("}")
         # for row_ in maze_:
         #     print("[",end=" ")
@@ -284,4 +285,3 @@ class Map:
         # 	  ⠿⠼⠯⠇⠸⠹
 
         print("*"*30)
-

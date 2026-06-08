@@ -1,6 +1,6 @@
 from src.pc_map import Map
 from src.pc_player import Player
-from src.pc_npc import NPC, GhostMode
+from src.pc_npc import NPC  # , GhostMode
 from src.pc_artifact import PC_Artifacts
 from src.pc_artifact import PowerPellet, Pellet
 import pygame as pg
@@ -37,7 +37,7 @@ class Game:
         if os.path.exists(path_):
             self.font = pg.font.SysFont(path_, 40)
         else:
-            print("The file with font does not exist (inc/fonts/PressStart2P-Regular.ttf).")
+            print(f"The file with font does not exist: {path_} .")
             self.font = pg.font.SysFont('Nimbus Mono PS', 20)
         # print(path_)
 
