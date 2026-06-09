@@ -1,10 +1,15 @@
-import pygame as pg
-# from typing import cast
-from pydantic import ValidationError
 import sys
 import random
+# from typing import cast
 # import os
 
+try:
+    import pygame as pg
+    from pydantic import ValidationError
+except ModuleNotFoundError as e:
+    print("\nError: One of the dependencies is missing\n", e)
+    print("Please run 'make install'")
+    sys.exit(1)
 
 # from src.pc_map import Map
 # from src.pc_player import Player
@@ -43,6 +48,8 @@ def main() -> int:
             # from mazegenerator import MazeGenerator
         except Exception as err_msg:
             print("Error with mazegen library connection:", err_msg)
+            print("Check for the presence of the package " +
+                  "and run 'make install' again.")
             sys.exit(1)
 
         print("Maze generation - start  ...")
