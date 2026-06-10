@@ -1,5 +1,10 @@
 import pygame as pg
-from src.pc_npc import GhostMode
+from src.pc_entity import FrameType, GhostMode
+from src.pc_sound import SoundType, Sound
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from src.pc_game import Game
 
 
 class PC_Artifacts():
@@ -10,13 +15,20 @@ class PC_Artifacts():
     PowerPellet = Super-pacgums = Energizer
     """
 
-    def __init__(self, game, point=(0, 0), points=10, color=(200, 200, 200)):
+    frames: dict[FrameType, list[pg.Surface]] = {}
+    frame_index: int = 0
+    sounds: dict[SoundType, list[Sound]] = {}
+    sound_index: int = 0
+
+    def __init__(self, game: "Game",
+                 point: tuple[int | float, int | float] = (0, 0),
+                 points: int = 10,
+                 color: tuple[int, int, int] = (200, 200, 200)):
         self.game = game
         self.x, self.y = point
-        self.size = 2  # radius
+        self.size: int = 2  # radius
         self.color = color
         self.points = points  # score add
-        self.frames = []
 
     def draw(self):
         x = (self.x * self.game.map.step
@@ -55,9 +67,12 @@ class PC_Artifacts():
 
 class PowerPellet(PC_Artifacts):
     # PowerPellet = Super-pacgums = Energizer
-    def __init__(self, game, point=(0, 0), points=50, color=(220, 250, 220)):
+    def __init__(self, game: "Game",
+                 point: tuple[int | float, int | float] = (0, 0),
+                 points: int = 50,
+                 color: tuple[int, int, int] = (220, 250, 220)) -> None:
         super().__init__(game, point, points, color)
-        self.size = 6  # radius
+        self.size: int = 6  # radius
 
     def event(self):
         super().event()
@@ -70,8 +85,34 @@ class PowerPellet(PC_Artifacts):
                 n.dy *= -1
                 n.event_timer = self.game.gost_edible
 
+        sound = self.sounds.get(SoundType.EATEN, [])
+        if len(sound) > 0:
+            if self.sound_index >= len(sound):
+                type(self).sound_index = 0
+            sound[type(self).sound_index].play()
+            type(self).sound_index += 1
+
 
 class Pellet(PC_Artifacts):
     # Pellet = Pacgums = Dots
-    def __init__(self, game, point=(0, 0), points=10, color=(220, 220, 250)):
+
+    @classmethod
+    def sound_init(cls) -> None:
+        cls.sounds = Sound.read_sounds_from_files(
+            "inc/sounds/pacgum/", SoundType.EATEN)
+
+    def __init__(self, game: "Game",
+                 point: tuple[int | float, int | float] = (0, 0),
+                 points: int = 10,
+                 color: tuple[int, int, int] = (220, 220, 250)) -> None:
         super().__init__(game, point, points, color)
+
+    def event(self) -> None:
+        sound = self.sounds.get(SoundType.EATEN, [])
+        if len(sound) > 0:
+            if self.sound_index >= len(sound):
+                type(self).sound_index = 0
+            sound[type(self).sound_index].play()
+            type(self).sound_index += 1
+
+        super().event()
