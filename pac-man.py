@@ -31,7 +31,6 @@ def main() -> int:
 
     config: Config = Parser.get_config(sys.argv[1])
 
-    our_mazgen = False
     maze_ = []
 
     # try our maze generator
@@ -46,44 +45,20 @@ def main() -> int:
     # random.seed(1)
 
     # try shcool maze generator
-    if not our_mazgen:
-        try:
-            print("*"*40)
-            from mazegenerator.mazegenerator import MazeGenerator
-            # from mazegenerator import MazeGenerator
-        except Exception as err_msg:
-            print("Error with mazegen library connection:", err_msg)
-            print("Check for the presence of the package " +
-                  "and run 'make install' again.")
-            sys.exit(1)
+    try:
+        print("*"*40)
+        from mazegenerator.mazegenerator import MazeGenerator
+        # from mazegenerator import MazeGenerator
+    except Exception as err_msg:
+        print("Error with mazegen library connection:", err_msg)
+        print("Check for the presence of the package " +
+              "and run 'make install' again.")
+        sys.exit(1)
 
-        print("Maze generation - start  ...")
-        # temporary first level (config.levels[0])
-        maze_ = MazeGenerator(size=config.levels[0].size, seed=config.levels[0].seed).maze
-        print("Maze generation - end")
-
-    # else:
-
-    #     try:
-    #         c_mz_param = CMazeParams(width=20,
-    #                                 height=20,
-    #                                 entry=(0, 0),
-    #                                 exit=(0, 1),
-    #                                 output_file="maze_txt.txt",
-    #                                 perfect=False,
-    #                                 insert_42=True,
-    #                                 algorithm=CAlg.DFS
-    #                                 )
-    #     except ValidationError as e:
-    #         # for err in e.errors():
-    #         #     print(err["msg"])
-    #         print(e, file=sys.stderr)
-    #         sys.exit(1)
-
-    #     print("Maze config:", c_mz_param.print())
-    #     maze_ = MazeGenerator.generate(c_mz_param)
-    #     MazeGenerator.write_to_file(maze_, c_mz_param, [])
-    #     print(f"The maze saved to file '{c_mz_param.output_file}'")
+    print("Maze generation - start  ...")
+    # temporary first level (config.levels[0])
+    maze_ = MazeGenerator(size=config.levels[0].size, seed=config.levels[0].seed).maze
+    print("Maze generation - end")
 
     game = Game(config)
     # print(game.map.world_map)
