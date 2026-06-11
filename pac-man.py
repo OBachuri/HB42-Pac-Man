@@ -57,10 +57,12 @@ def main() -> int:
 
     print("Maze generation - start  ...")
     # temporary first level (config.levels[0])
-    maze_ = MazeGenerator(size=config.levels[0].size, seed=config.levels[0].seed).maze
+    maze_ = MazeGenerator(
+        size=config.levels[0].size, seed=config.levels[0].seed).maze
     print("Maze generation - end")
 
     game = Game(config)
+    Pellet.sound_init()
     # print(game.map.world_map)
     print("*"*30)
 
@@ -118,7 +120,8 @@ def main() -> int:
     else:
         for p in range(0, config.pacgum):
             if (len(place_set) < 1):
-                print(f"All Pellets can't be placed ({p+1} from {config.pacgum}).")
+                print(
+                    f"All Pellets can't be placed ({p+1} from {config.pacgum}).")
                 break
             x, y = random.choice(tuple(place_set))
             game.artifacts.append(Pellet(game, (x, y)))
