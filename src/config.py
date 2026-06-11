@@ -4,11 +4,11 @@ from pydantic import PositiveInt, NonNegativeInt, PositiveFloat
 
 class Level(BaseModel):
     map_filename: str = Field(min_length=1, default="")
-    number: PositiveInt
+    number: PositiveInt = 1
     is_perfect: bool = False
-    width: int = Field(ge=3, default=14)
-    height: int = Field(ge=3, default=12)
-    seed: int = 42
+    width: int = Field(ge=3, le=40, default=14)
+    height: int = Field(ge=3, le=20, default=12)
+    seed: int = 0
     level_max_time: PositiveInt = 90
     speed_factor_player: PositiveFloat = 0.01
     speed_factor_ghost: PositiveFloat = 0.02
@@ -20,7 +20,7 @@ class Level(BaseModel):
 
 class Config(BaseModel):
     highscores_filename: str = Field(min_length=6, default="highscores.json")
-    levels: list[Level]
+    levels: list[Level] = [Level()]
     lives: PositiveInt = 3
     pacgum: NonNegativeInt = 42
     points_per_pacgum: PositiveInt = 10

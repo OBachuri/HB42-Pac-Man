@@ -58,7 +58,7 @@ def main() -> int:
     print("Maze generation - start  ...")
     # temporary first level (config.levels[0])
     maze_ = MazeGenerator(
-        size=config.levels[0].size, seed=config.levels[0].seed).maze
+        size=config.levels[0].size, exit_cell=(0, 1), seed=config.levels[0].seed).maze
     print("Maze generation - end")
 
     game = Game(config)
