@@ -3,6 +3,7 @@ from src.pc_player import Player
 from src.pc_npc import NPC  # , GhostMode
 from src.pc_artifact import PC_Artifacts
 from src.pc_artifact import PowerPellet, Pellet
+from src.config import Config
 import pygame as pg
 import sys
 import os
@@ -12,7 +13,7 @@ import random
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, config: Config):
         pg.init()
         pg.mixer.init()
         # pg.mouse.set_visible(False)
@@ -45,11 +46,11 @@ class Game:
 
         self.npcs: list[NPC] = []
         self.artifacts: list[PC_Artifacts] = []
-        self.new_game()
+        self.new_game(config)
 
-    def new_game(self):
+    def new_game(self, config: Config):
         self.map = Map(self)
-        self.player = Player(self)
+        self.player = Player(self, lives=config.lives)
         #  self.npcs = [NPC(self), NPC(self), NPC(self), NPC(self)]
 
     def next_level(self):

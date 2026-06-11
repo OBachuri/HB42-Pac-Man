@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 from pydantic import BaseModel, Field
 from pydantic import PositiveInt, NonNegativeInt
 
@@ -10,10 +10,14 @@ class Level(BaseModel):
     seed: int = 42
     level_max_time: PositiveInt = 90
 
+    @property
+    def size(self) -> Tuple[PositiveInt, PositiveInt]:
+        return (self.width, self.height)
+
 
 class Config(BaseModel):
     highscore_filename: str = Field(min_length=1)
-    level: List[Level]
+    levels: List[Level]
     lives: PositiveInt = 3
     pacgum: NonNegativeInt = 42
     points_per_pacgum: PositiveInt = 10
