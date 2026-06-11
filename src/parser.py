@@ -6,6 +6,7 @@ from src.config import Config
 
 
 class Parser:
+    @staticmethod
     def _get_config_data(path: str) -> Dict[str, Any]:
         try:
             with open(path) as f:
