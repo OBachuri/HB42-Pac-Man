@@ -6,8 +6,7 @@ from src.config import Config
 
 
 class Parser:
-    @classmethod
-    def _get_config_data(cls, path: str) -> Dict[str, Any]:
+    def _get_config_data(path: str) -> Dict[str, Any]:
         try:
             with open(path) as f:
                 raw_text = f.readlines()

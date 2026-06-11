@@ -19,7 +19,7 @@
 #	"maze_file": "maze_txt_3.txt"
 #	}
 ],
-"lives": 123,
+"lives": 3,
 "pacgum" : 0,
 "points_per_pacgum" : 10,
 "points_per_super_pacgum" : 50,
