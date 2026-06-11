@@ -1,13 +1,13 @@
 import sys
 import json
-from typing import Dict, Any
+from typing import Any
 from pydantic import ValidationError
 from src.config import Config
 
 
 class Parser:
     @staticmethod
-    def _get_config_data(path: str) -> Dict[str, Any]:
+    def _get_config_data(path: str) -> dict[str, Any]:
         try:
             with open(path) as f:
                 raw_text = f.readlines()

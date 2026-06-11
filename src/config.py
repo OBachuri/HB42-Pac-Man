@@ -1,23 +1,26 @@
-from typing import List, Tuple
 from pydantic import BaseModel, Field
-from pydantic import PositiveInt, NonNegativeInt
+from pydantic import PositiveInt, NonNegativeInt, PositiveFloat
 
 
 class Level(BaseModel):
+    map_filename: str = Field(min_length=1, default="")
     number: PositiveInt
-    width: PositiveInt = 14
-    height: PositiveInt = 12
+    is_perfect: bool = False
+    width: int = Field(ge=3, default=14)
+    height: int = Field(ge=3, default=12)
     seed: int = 42
     level_max_time: PositiveInt = 90
+    speed_factor_player: PositiveFloat = 0.01
+    speed_factor_ghost: PositiveFloat = 0.02
 
     @property
-    def size(self) -> Tuple[PositiveInt, PositiveInt]:
+    def size(self) -> tuple[PositiveInt, PositiveInt]:
         return (self.width, self.height)
 
 
 class Config(BaseModel):
-    highscore_filename: str = Field(min_length=1)
-    levels: List[Level]
+    highscores_filename: str = Field(min_length=6, default="highscores.json")
+    levels: list[Level]
     lives: PositiveInt = 3
     pacgum: NonNegativeInt = 42
     points_per_pacgum: PositiveInt = 10
