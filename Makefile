@@ -5,7 +5,7 @@ NAME :=  pac-man.py
 
 RM := rm -fr
 
-RUN_ARGS := "pc_config.json"
+RUN_ARGS := "config.json"
 
 TARGETS_WITH_ARGS := run debug
 
