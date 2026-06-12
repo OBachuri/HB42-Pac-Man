@@ -1,5 +1,5 @@
 {
-"highscores_filename": "pc_score_list.json",
+"highscores_filename": "highscores.json",
 "levels": [
 	{
 	"number": 1,
@@ -25,6 +25,5 @@
 "points_per_super_pacgum" : 50,
 "points_per_ghost" : 200,
 "seed" : 42,
-"level_max_time" : 180,
-"cheat": true
+"cheat": false
 }

@@ -1,6 +1,5 @@
 import json
 from typing import Any
-from pydantic import ValidationError
 from src.config import Config
 
 
@@ -12,16 +11,16 @@ class Parser:
             with open(path) as f:
                 raw_text = f.readlines()
                 clean_json = [line for line in raw_text
-                            if not line.strip().startswith("#")]
+                              if not line.strip().startswith("#")]
                 result = json.loads("".join(clean_json))
                 if not result:
                     print("Could not extract config")
         except json.JSONDecodeError as e:
             print("Got JSON decoding error:", e)
-        except FileNotFoundError as e:
+        except FileNotFoundError:
             print(f"Config file not found: {path}")
         return result
-    
+
     @classmethod
     def get_config(cls, path: str) -> Config:
         cfg_data = cls._get_config_data(path)
