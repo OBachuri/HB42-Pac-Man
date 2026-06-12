@@ -5,7 +5,7 @@ import random
 
 try:
     import pygame as pg
-    from pydantic import ValidationError
+    # from pydantic import ValidationError
 except ModuleNotFoundError as e:
     print("\nError: One of the dependencies is missing\n", e)
     print("Please run 'make install'")
@@ -30,8 +30,6 @@ def main() -> int:
         sys.exit(1)
 
     config: Config = Parser.get_config(sys.argv[1])
-    print(config.levels[0])
-    sys.exit(0)
 
     maze_ = []
 
@@ -59,8 +57,9 @@ def main() -> int:
 
     print("Maze generation - start  ...")
     # temporary first level (config.levels[0])
-    maze_ = MazeGenerator(
-        size=config.levels[0].size, exit_cell=(0, 1), seed=config.levels[0].seed).maze
+    maze_ = MazeGenerator(size=config.levels[0].size,
+                          exit_cell=(0, 1),
+                          seed=config.levels[0].seed).maze
     print("Maze generation - end")
 
     game = Game(config)
@@ -122,8 +121,8 @@ def main() -> int:
     else:
         for p in range(0, config.pacgum):
             if (len(place_set) < 1):
-                print(
-                    f"All Pellets can't be placed ({p+1} from {config.pacgum}).")
+                print("All Pellets can't be placed "
+                      f"({p+1} from {config.pacgum}).")
                 break
             x, y = random.choice(tuple(place_set))
             game.artifacts.append(Pellet(game, (x, y)))
