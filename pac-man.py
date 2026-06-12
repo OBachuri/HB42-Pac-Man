@@ -30,6 +30,8 @@ def main() -> int:
         sys.exit(1)
 
     config: Config = Parser.get_config(sys.argv[1])
+    print(config.levels[0])
+    sys.exit(0)
 
     maze_ = []
 
