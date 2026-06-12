@@ -9,13 +9,13 @@ class Player(Entity):
     """ Player = PacMan """
     def __init__(self, game, point=(0, 0),
                  color=(250, 250, 10),
-                 name="PacMan", size=21):
+                 name="PacMan", size=21, lives=3):
         super().__init__(game, point=point, color=color, name=name, size=size)
         self.game = game
         self.angle = 0
         self.health = 100
         self.speed_factor = 0.01
-        self.lives = 3
+        self.lives = lives
 
         try:
             self.teleport()

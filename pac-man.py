@@ -17,14 +17,21 @@ from src.pc_game import Game
 from src.pc_npc import NPC, RedGhosts
 from src.pc_entity import FrameType
 from src.pc_artifact import PowerPellet, Pellet
+from src.parser import Config, Parser
 
 # RES = WIDTH, HEIGHT = 1000, 800
 # FPS = 0
 
 
 def main() -> int:
+    if len(sys.argv) != 2:
+        print("\nError: Invalid program launch format" +
+              "\nUsage 'python3 ./pac-man.py <config-file-path>'")
+        sys.exit(1)
 
-    pacgum = 1421
+    config: Config = Parser.get_config(sys.argv[1])
+    print(config.levels[0])
+    sys.exit(0)
 
     maze_ = []
 
@@ -37,7 +44,7 @@ def main() -> int:
     #     # print("Error with mazegen library connection:", err_msg)
     #     # sys.exit(1)
 
-    random.seed(1)
+    # random.seed(1)
 
     # try shcool maze generator
     try:
@@ -51,10 +58,13 @@ def main() -> int:
         sys.exit(1)
 
     print("Maze generation - start  ...")
-    maze_ = MazeGenerator(size=(11, 11), perfect=False).maze
+    # temporary first level (config.levels[0])
+    maze_ = MazeGenerator(
+        size=config.levels[0].size, exit_cell=(0, 1), seed=config.levels[0].seed).maze
     print("Maze generation - end")
 
-    game = Game()
+    game = Game(config)
+    Pellet.sound_init()
     # print(game.map.world_map)
     print("*"*30)
 
@@ -106,13 +116,14 @@ def main() -> int:
     for a_ in game.artifacts:
         place_set.remove((a_.x, a_.y))
 
-    if pacgum <= 0:
+    if config.pacgum <= 0:
         for s_ in place_set:
             game.artifacts.append(Pellet(game, s_))
     else:
-        for p in range(0, pacgum):
+        for p in range(0, config.pacgum):
             if (len(place_set) < 1):
-                print(f"All Pellets can't be placed ({p+1} from {pacgum}).")
+                print(
+                    f"All Pellets can't be placed ({p+1} from {config.pacgum}).")
                 break
             x, y = random.choice(tuple(place_set))
             game.artifacts.append(Pellet(game, (x, y)))
