@@ -1,28 +1,28 @@
-import pygame
+import pygame as pg
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
-pygame.init()
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Pac-Man")
-clock = pygame.time.Clock()
-pacman_icon = pygame.image.load("src/inc/img/pacman/stay/S01.png").convert_alpha()
-# pacman_icon = pygame.transform.scale(pacman_icon, (24, 24))
-font_large = pygame.font.Font(None, 80)
-font_medium = pygame.font.Font(None, 40)
-font_small = pygame.font.Font(None, 30)
+pg.init()
+screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pg.display.set_caption("Pac-Man")
+clock = pg.time.Clock()
+pacman_icon = pg.image.load("src/inc/img/pacman/stay/S01.png").convert_alpha()
+# pacman_icon = pg.transform.scale(pacman_icon, (24, 24))
+font_large = pg.font.Font(None, 80)
+font_medium = pg.font.Font(None, 40)
+font_small = pg.font.Font(None, 30)
 
 
 class Button:
     def __init__(self, x, y, width, height, text):
-        self.rect = pygame.Rect(x, y, width, height)
+        self.rect = pg.Rect(x, y, width, height)
         self.text = text
         self.hovered = False
         self.selected = False
     
     def draw(self, surface):
         # Draw button border
-        pygame.draw.rect(surface, "yellow", self.rect, 2)
+        pg.draw.rect(surface, "yellow", self.rect, 2)
         
         # Draw image on the left if selected
         if self.selected:
@@ -54,24 +54,24 @@ def start_menu():
     running = True
     while running:
         clock.tick(60)
-        mouse_pos = pygame.mouse.get_pos()
+        mouse_pos = pg.mouse.get_pos()
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
                 running = False
 
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_UP:
                     buttons[selected_index].selected = False
                     selected_index = (selected_index - 1) % len(buttons)
                     buttons[selected_index].selected = True
                 
-                elif event.key == pygame.K_DOWN:
+                elif event.key == pg.K_DOWN:
                     buttons[selected_index].selected = False
                     selected_index = (selected_index + 1) % len(buttons)
                     buttons[selected_index].selected = True
                 
-                elif event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+                elif event.key == pg.K_RETURN or event.key == pg.K_SPACE:
                     selected_button = buttons[selected_index]
                     if selected_button.text == "START GAME":
                         print("Starting game...")
@@ -83,10 +83,10 @@ def start_menu():
                     elif selected_button.text == "EXIT":
                         running = False
 
-                elif event.key == pygame.K_ESCAPE:
+                elif event.key == pg.K_ESCAPE:
                     running = False
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pg.MOUSEBUTTONDOWN:
                 for i, button in enumerate(buttons):
                     if button.is_clicked(mouse_pos):
                         buttons[selected_index].selected = False
@@ -114,8 +114,8 @@ def start_menu():
         for button in buttons:
             button.draw(screen)
         
-        pygame.display.flip()
+        pg.display.flip()
 
 if __name__ == "__main__":
     start_menu()
-    pygame.quit()
+    pg.quit()
