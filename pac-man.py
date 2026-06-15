@@ -17,7 +17,9 @@ from src.pc_game import Game
 from src.pc_npc import NPC, RedGhosts
 from src.pc_entity import FrameType
 from src.pc_artifact import PowerPellet, Pellet
-from src.parser import Config, Parser
+from src.parser import Parser
+from src.config import Config
+from src.screens.main_menu import start_menu
 
 # RES = WIDTH, HEIGHT = 1000, 800
 # FPS = 0
@@ -138,7 +140,10 @@ def main() -> int:
          + game.map.wall_thickness, 550),
          (game.map.rows + 3)*(game.map.step)))
     # print(dir(pg.draw))
-    game.run()
+
+#    game.run()
+
+    start_menu()
 
     return (0)
 

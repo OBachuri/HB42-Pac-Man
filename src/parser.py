@@ -1,6 +1,8 @@
 import json
 from typing import Any
-from src.config import Config
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from src.config import Config
 
 
 class Parser:
@@ -22,7 +24,9 @@ class Parser:
         return result
 
     @classmethod
-    def get_config(cls, path: str) -> Config:
+    def get_config(cls, path: str) -> "Config":
+        from src.config import Config
+
         cfg_data = cls._get_config_data(path)
 
         if not cfg_data:
