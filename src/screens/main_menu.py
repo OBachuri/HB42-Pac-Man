@@ -1,13 +1,10 @@
 import pygame as pg
+from src.constants import SCREEN_HEIGHT, SCREEN_WIDTH
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 800
-pg.init()
 screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pg.display.set_caption("Pac-Man")
 clock = pg.time.Clock()
 pacman_icon = pg.image.load("src/inc/img/pacman/stay/S01.png").convert_alpha()
-# pacman_icon = pg.transform.scale(pacman_icon, (24, 24))
 font_large = pg.font.Font(None, 80)
 font_medium = pg.font.Font(None, 40)
 font_small = pg.font.Font(None, 30)
