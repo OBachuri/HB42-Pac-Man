@@ -45,7 +45,7 @@ class Sound:
             files = sorted(
                 f for f in os.listdir(path_)
                 if f.lower().endswith(
-                    (".mp3", ".ogg", ".wav")
+                    (".ogg")
                 )
             )
             if len(sounds.get(sound_type, [])) == 0:

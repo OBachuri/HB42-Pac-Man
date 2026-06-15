@@ -48,6 +48,8 @@ help:
 	@echo "  install        Install dependencies and set up the virtual environment"
 	@echo "  run            Run the application"
 	@echo "                 $$ make run config.json"
+	@echo "  rebuild        Build pakage for web run (pygbag)
+	@echo "  webrun         Run webserver (pygbag)
 	@echo "  lint           Run flake8 and mypy checks"
 	@echo "  lint-strict    Run flake8 and strict mypy checks"
 	@echo "  clean          Remove caches and temporary files"
@@ -55,14 +57,23 @@ help:
 	@echo "  debug          Run the debugger "	
 
 
-# re-build:
-# 	@$(ACTIVATE_VENV)
-	
-# 	$(PIP) uninstall -y mazegen-0.1.0-py3-none-any.whl
-# 	$(PYTHON) -m build $(BUILD_SOURCE_DIR)
-# 	mv $(WHEEL) .
-# 	$(RM) $(BUILD_SOURCE_DIR)/dist
-# 	$(PIP) install mazegen-0.1.0-py3-none-any.whl
+rebuild:
+	@$(ACTIVATE_VENV)
+	@$(RM) $(BUILD_SOURCE_DIR)/build
+	@if [ ! -d "src/mazegenerator" ]; then \
+		echo "Unpack mazegenerator....whl."; \
+		unzip mazegenerator-00001-py3-none-any.whl -x mazegenerator-2.0.1.dist-info/{METADATA,WHEEL,top_level.txt,RECORD} -d src
+	fi
+	pygbag --build $(BUILD_SOURCE_DIR)/
+	# rm -rf $(BUILD_SOURCE_DIR)/mazegenerator
+
+webrun:    # build
+	@$(ACTIVATE_VENV)
+	@if [ ! -d "src/build" ]; then \
+		echo "Run 'make rebuild' first!"; \
+	else \
+		$(PYTHON) -m http.server -b 127.0.0.1 8000 -d src/build/web ; \
+	fi
 
 run:
 	@$(ACTIVATE_VENV)
@@ -70,7 +81,7 @@ run:
 
 debug:
 	@$(ACTIVATE_VENV)
-	python3 -m pdb ./$(NAME) $(RUN_ARGS)
+	$(PYTHON) -m pdb ./$(NAME) $(RUN_ARGS)
 
 check-venv:
 	@if [ -z "$$VIRTUAL_ENV" ]; then \
@@ -94,7 +105,8 @@ venv:
 clean:
 	@$(RM) .mypy_cache
 	@$(RM) __pycache__
-	@$(RM) $(BUILD_SOURCE_DIR)/dist
+	@$(RM) $(BUILD_SOURCE_DIR)/build
+	@$(RM) $(BUILD_SOURCE_DIR)/mazegenerator
 	find . -type d -name __pycache__ -exec rm -rf {} +
 	find . -type d -name .mypy_cache -exec rm -rf {} +
 	find . -type d -name *.egg-info -exec rm -rf {} +
@@ -142,5 +154,6 @@ install:
 	$(PIP) install pydantic flake8 mypy pygame-ce numpy 
 	$(PIP) install mazegenerator-00001-py3-none-any.whl
 #	$(PIP) install mazegen-0.1.0-py3-none-any.whl
+	$(PIP) install pygbag --upgrade
 
-.PHONY:	clean run debug install lint-strict lint $(RUN_ARGS) venv check-venv help fclean
+.PHONY:	clean run debug install lint-strict lint $(RUN_ARGS) venv check-venv help fclean build
