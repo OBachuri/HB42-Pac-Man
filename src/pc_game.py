@@ -14,8 +14,6 @@ import random
 
 class Game:
     def __init__(self, config: Config):
-        pg.init()
-        pg.mixer.init()
         # pg.mouse.set_visible(False)
         self.screen = pg.display.set_mode((800, 800))
         # pg.display.set_caption("Pac-Man 42")

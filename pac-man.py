@@ -62,6 +62,10 @@ def main() -> int:
                           seed=config.levels[0].seed).maze
     print("Maze generation - end")
 
+    pg.init()
+    pg.font.init()
+    pg.mixer.init()
+
     game = Game(config)
     Pellet.sound_init()
     # print(game.map.world_map)

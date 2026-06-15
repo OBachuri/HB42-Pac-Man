@@ -158,7 +158,7 @@ class Entity:
             files = sorted(
                 f for f in os.listdir(path_)
                 if f.lower().endswith(
-                    (".png", ".jpg", ".jpeg", ".bmp", ".webp")
+                    (".png", ".jpg", ".jpeg", ".webp")
                 )
             )
             if len(self.frames.get(frame_type, [])) == 0:
