@@ -9,6 +9,7 @@ class LevelWeb:
         self.width: int = data.setdefault("width", 14)
         self.height: int = data.setdefault("height", 12)
         self.seed: int = data.setdefault("seed", 0)
+        self.pacgum: int = data.setdefault("pacgum", 42)
         self.level_max_time: int = data.setdefault("level_max_time", 90)
         self.speed_factor_player: float = data.setdefault("speed_factor_player", 0.01)
         self.speed_factor_ghost: float = data.setdefault("speed_factor_ghost", 0.02)
@@ -18,7 +19,6 @@ class ConfigWeb:
     def __init__(self, cfg_data: dict[str, Any] = {}) -> None:
         self.highscores_filename: str = cfg_data.setdefault("highscores_filename", "highscores.json")
         self.lives: int = cfg_data.setdefault("lives", 3)
-        self.pacgum: int = cfg_data.setdefault("pacgum", 42)
         self.points_per_pacgum: int = cfg_data.setdefault("points_per_pacgum", 10)
         self.points_per_super_pacgum: int = cfg_data.setdefault("points_per_super_pacgum", 50)
         self.points_per_ghost: int = cfg_data.setdefault("points_per_ghost", 200)
