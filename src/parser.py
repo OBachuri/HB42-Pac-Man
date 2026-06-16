@@ -3,6 +3,7 @@ from typing import Any
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from src.config import Config
+    from src.config_web import ConfigWeb
 
 
 class Parser:
@@ -33,3 +34,14 @@ class Parser:
             print("Using default demo config settings")
 
         return Config(**cfg_data)
+
+    @classmethod
+    def get_config_web(cls, path: str = "src/config_web.json") -> "ConfigWeb":
+        from src.config_web import ConfigWeb
+
+        cfg_data = cls._get_config_data(path)
+
+        if not cfg_data:
+            print("Using default demo config settings")
+
+        return ConfigWeb(cfg_data)

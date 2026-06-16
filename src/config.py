@@ -11,6 +11,7 @@ class Level(BaseModel):
     width: PositiveInt = 14
     height: PositiveInt = 12
     seed: int = 0
+    pacgum: NonNegativeInt = 42
     level_max_time: PositiveInt = 90
     speed_factor_player: PositiveFloat = 0.01
     speed_factor_ghost: PositiveFloat = 0.02
@@ -77,6 +78,19 @@ class Level(BaseModel):
             print("Wrong type of the seed. Using default value")
             return 0
 
+    @field_validator("pacgum", mode="before")
+    @classmethod
+    def fix_pacgum(cls, value: Any) -> NonNegativeInt:
+        try:
+            int_val = int(value)
+            if int_val < 0:
+                print("'pacgum' is < 0. Using default value")
+                int_val = 42
+            return int_val
+        except (TypeError, ValueError):
+            print("Wrong type of 'pacgum'. Using default value")
+            return 42
+
     @field_validator("level_max_time", mode="before")
     @classmethod
     def fix_level_max_time(cls, value: Any) -> PositiveInt:
@@ -125,7 +139,6 @@ class Config(BaseModel):
     highscores_filename: str = default_highscores_filename
     levels: list[Level] = [Level()]
     lives: PositiveInt = 3
-    pacgum: NonNegativeInt = 42
     points_per_pacgum: PositiveInt = 10
     points_per_super_pacgum: PositiveInt = 50
     points_per_ghost: PositiveInt = 200
@@ -169,19 +182,6 @@ class Config(BaseModel):
         except (TypeError, ValueError):
             print("Wrong type of 'lives'. Using default value")
             return 3
-
-    @field_validator("pacgum", mode="before")
-    @classmethod
-    def fix_pacgum(cls, value: Any) -> NonNegativeInt:
-        try:
-            int_val = int(value)
-            if int_val < 0:
-                print("'pacgum' is < 0. Using default value")
-                int_val = 42
-            return int_val
-        except (TypeError, ValueError):
-            print("Wrong type of 'pacgum'. Using default value")
-            return 42
 
     @field_validator("points_per_pacgum", mode="before")
     @classmethod
