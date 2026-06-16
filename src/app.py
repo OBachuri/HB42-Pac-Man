@@ -1,11 +1,9 @@
 import asyncio
 import pygame as pg
 from src.constants import *
-from src.screens.main_menu import MainMenuScreen
 from src.pc_game import Game
 from src.config import Config
-from src.screens.base_screen import BaseScreen
-from src.screens.screen_types import ScreenTypes
+from src.screens import *
 
 
 class App:
@@ -19,7 +17,7 @@ class App:
         self.running = True
 
         self.screens: dict[ScreenTypes, BaseScreen] = {}
-        # self.current_screen = None
+        self.current_screen = None
 
     def move_to(self, screen: ScreenTypes) -> None:
         match screen:
@@ -27,6 +25,8 @@ class App:
                 self.current_screen = self.screens.setdefault(screen, MainMenuScreen(self))
             case ScreenTypes.GAME:
                 self.current_screen = self.screens.setdefault(screen, Game(self.config, self))
+            case ScreenTypes.INSTRUCTIONS:
+                self.current_screen = self.screens.setdefault(screen, InstructionsScreen(self.config, self))
 
     def quit(self) -> None:
         pg.quit()
