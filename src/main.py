@@ -19,6 +19,8 @@ g_error_txt: str = ""
 
 try:
     import pygame as pg
+#    from src.pc_game import Game
+#    from src.pc_artifact import Pellet
 except ModuleNotFoundError as e:
     g_error_txt = (f"\nError: One of the dependencies is missing\n{e}\n"
                    "Please run 'make install'\n")
@@ -26,33 +28,20 @@ except ModuleNotFoundError as e:
 #    sys.exit(1)  # can't use with pygbag
 
 
-async def load_web_dependencies():
-    # Create an async function to handle the web installation
-    if sys.platform == "emscripten":
-        # This import is safe here because it only triggers in the browser
-        import micropip
-        await micropip.install("lib/mazegenerator-00001-py3-none-any.whl")
-
-
-async def run(screen, clock):
+async def run_error(screen, clock):
     # The game loop must reside inside an async function
-
-    global MazeGenerator
-    global g_error_txt
-
-    try:
-        from mazegenerator.mazegenerator import MazeGenerator
-    except Exception as ex:
-        g_error_txt += f"\n Error: {ex}\n"
-
-    g_error_txt += f"\n Platform: {sys.platform} "
+    # global g_error_txt
 
     running = True
     # font = pg.font.SysFont(['Nimbus Mono PS', 'couriernew', 'arial'], 20)
     font = pg.font.Font(None, 20)
 
     while running:
-        for event in pg.get_event_loop() if hasattr(pg, "get_event_loop") else pg.event.get():
+        events = (pg.get_event_loop()
+                  if hasattr(pg, "get_event_loop")
+                  else pg.event.get()
+                  )
+        for event in events:
             # Standard pygame event fetching fallback
             if event.type == pg.QUIT:
                 running = False
@@ -100,15 +89,36 @@ async def run(screen, clock):
 
 
 def main():
-    # Initialize pygame normally
-    pg.init()
-    pg.font.init()
-    pg.mixer.init()
+    global MazeGenerator
+    global g_error_txt
 
-    screen = pg.display.set_mode((640, 480))
-    clock = pg.time.Clock()
+    if g_error_txt == "":
 
-    asyncio.run(run(screen, clock))
+        # Initialize pygame normally
+
+        try:
+            from mazegenerator.mazegenerator import MazeGenerator
+            from parser import Parser
+            from app import App
+            from pc_game import Game
+
+        except Exception as ex:
+            g_error_txt += f"\n Error: {ex}\n"
+
+        if g_error_txt != "":
+            g_error_txt += f"\n Platform: {sys.platform} "
+            pg.init()
+            pg.font.init()
+            pg.mixer.init()
+
+            screen = pg.display.set_mode((640, 480))
+            clock = pg.time.Clock()
+            asyncio.run(run_error(screen, clock))
+        else:
+            config = Parser.get_config_web()
+            app = App(config)
+            game = Game(app)
+            asyncio.run(game.run())
 
 
 main()

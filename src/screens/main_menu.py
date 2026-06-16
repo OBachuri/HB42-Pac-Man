@@ -2,10 +2,10 @@ import asyncio
 import pygame as pg
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from src.app import App
+    from app import App
 
-from src.constants import *
-from src.screens import BaseScreen, ScreenTypes
+from constants import *
+from screens import BaseScreen, ScreenTypes
 
 
 class Button:
@@ -47,7 +47,7 @@ class Button:
 
 class MainMenuScreen(BaseScreen):
     def __init__(self, app: "App"):
-        from src.app import App
+        from app import App
         self.app = app
 
     async def run(self) -> None:

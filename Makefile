@@ -48,8 +48,8 @@ help:
 	@echo "  install        Install dependencies and set up the virtual environment"
 	@echo "  run            Run the application"
 	@echo "                 $$ make run config.json"
-	@echo "  rebuild        Build pakage for web run (pygbag)
-	@echo "  webrun         Run webserver (pygbag)
+	@echo "  rebuild        Build pakage for web run (pygbag)"
+	@echo "  webrun         Run webserver (pygbag)"
 	@echo "  lint           Run flake8 and mypy checks"
 	@echo "  lint-strict    Run flake8 and strict mypy checks"
 	@echo "  clean          Remove caches and temporary files"

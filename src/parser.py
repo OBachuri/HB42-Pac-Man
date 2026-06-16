@@ -2,8 +2,8 @@ import json
 from typing import Any
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from src.config import Config
-    from src.config_web import ConfigWeb
+    from config import Config
+    from config_web import ConfigWeb
 
 
 class Parser:
@@ -26,7 +26,7 @@ class Parser:
 
     @classmethod
     def get_config(cls, path: str) -> "Config":
-        from src.config import Config
+        from config import Config
 
         cfg_data = cls._get_config_data(path)
 
@@ -36,8 +36,8 @@ class Parser:
         return Config(**cfg_data)
 
     @classmethod
-    def get_config_web(cls, path: str = "src/config_web.json") -> "ConfigWeb":
-        from src.config_web import ConfigWeb
+    def get_config_web(cls, path: str = "config_web.json") -> "ConfigWeb":
+        from config_web import ConfigWeb
 
         cfg_data = cls._get_config_data(path)
 

@@ -1,7 +1,7 @@
 import pygame as pg
 import random
 # from enum import Enum
-from src.pc_entity import Entity, FrameType, GhostMode
+from pc_entity import Entity, FrameType, GhostMode
 
 
 class NPC(Entity):

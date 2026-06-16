@@ -1,13 +1,18 @@
+from __future__ import annotations
+
 import asyncio
 import pygame as pg
-from src.constants import *
-from src.pc_game import Game
-from src.config import Config
-from src.screens import *
+from constants import *
+from pc_game import Game
+from screens import *
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from config import Config
+    from config_web import ConfigWeb
 
 
 class App:
-    def __init__(self, config: Config) -> None:
+    def __init__(self, config: Config | ConfigWeb) -> None:
         self.config = config
         pg.init()
         pg.font.init()
@@ -24,9 +29,11 @@ class App:
             case ScreenTypes.MAIN_MENU:
                 self.current_screen = self.screens.setdefault(screen, MainMenuScreen(self))
             case ScreenTypes.GAME:
-                self.current_screen = self.screens.setdefault(screen, Game(self.config, self))
+                # self.current_screen = self.screens.setdefault(screen, Game(self.config, self))
+                self.current_screen = self.screens.setdefault(screen, Game(self))
             case ScreenTypes.INSTRUCTIONS:
-                self.current_screen = self.screens.setdefault(screen, InstructionsScreen(self.config, self))
+                pass
+                # self.current_screen = self.screens.setdefault(screen, InstructionsScreen(self.config, self))
 
     def quit(self) -> None:
         pg.quit()

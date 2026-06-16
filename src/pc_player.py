@@ -2,7 +2,7 @@ import pygame as pg
 import pygame.gfxdraw as pggf
 import math
 
-from src.pc_entity import Entity, FrameType
+from pc_entity import Entity, FrameType
 
 
 class Player(Entity):
