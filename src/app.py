@@ -1,3 +1,4 @@
+import asyncio
 import pygame as pg
 from src.constants import *
 from src.screens.main_menu import MainMenuScreen
@@ -34,7 +35,7 @@ class App:
     def run(self) -> None:
         self.move_to(ScreenTypes.MAIN_MENU)
         while self.running:
-            self.current_screen.run()
+            asyncio.run(self.current_screen.run())
 
             pg.display.update()
             self.clock.tick(FPS)

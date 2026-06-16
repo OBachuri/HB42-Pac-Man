@@ -1,3 +1,4 @@
+import asyncio
 import pygame as pg
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -49,7 +50,7 @@ class MainMenuScreen(BaseScreen):
         from src.app import App
         self.app = app
 
-    def run(self) -> None:
+    async def run(self) -> None:
         global screen
         global clock
         global pacman_icon
@@ -148,3 +149,5 @@ class MainMenuScreen(BaseScreen):
                 button.draw(screen)
 
             pg.display.flip()
+
+            await asyncio.sleep(0)
