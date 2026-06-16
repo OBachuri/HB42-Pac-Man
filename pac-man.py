@@ -76,7 +76,7 @@ def main() -> int:
     # print(pg.font.get_fonts())
     game.map.print(maze_)
 
-    maze_ = game.map.do_not_prefect(maze_)
+    maze_ = game.map.do_not_perfect(maze_)
 
     # game.map.get_map_form_file(c_mz_param.output_file)
     game.map.get_map(maze_)
@@ -121,14 +121,14 @@ def main() -> int:
     for a_ in game.artifacts:
         place_set.remove((a_.x, a_.y))
 
-    if config.pacgum <= 0:
+    if config.levels[0].pacgum <= 0:
         for s_ in place_set:
             game.artifacts.append(Pellet(game, s_))
     else:
-        for p in range(0, config.pacgum):
+        for p in range(0, config.levels[0].pacgum):
             if (len(place_set) < 1):
                 print("All Pellets can't be placed "
-                      f"({p+1} from {config.pacgum}).")
+                      f"({p+1} from {config.levels[0].pacgum}).")
                 break
             x, y = random.choice(tuple(place_set))
             game.artifacts.append(Pellet(game, (x, y)))

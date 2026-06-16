@@ -143,7 +143,7 @@ class Map:
                               self.wall_thickness), 0)
 
     @classmethod
-    def do_not_prefect(cls, maze: list[list[int]]) -> list[list[int]]:
+    def do_not_perfect(cls, maze: list[list[int]]) -> list[list[int]]:
         for y in range(0, len(maze)):
             for x in range(0, len(maze[0])):
                 # check for dead end - there is 3 wall

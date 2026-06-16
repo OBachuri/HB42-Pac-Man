@@ -1,5 +1,5 @@
 import pygame as pg
-from src.constants import SCREEN_HEIGHT, SCREEN_WIDTH
+from src.constants import * #SCREEN_HEIGHT, SCREEN_WIDTH
 
 screen = None
 clock = None
