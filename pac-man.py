@@ -19,7 +19,7 @@ from src.pc_entity import FrameType
 from src.pc_artifact import PowerPellet, Pellet
 from src.parser import Parser
 from src.config import Config
-from src.screens.main_menu import start_menu
+from src.app import App
 
 # RES = WIDTH, HEIGHT = 1000, 800
 # FPS = 0
@@ -64,86 +64,88 @@ def main() -> int:
                           seed=config.levels[0].seed).maze
     print("Maze generation - end")
 
-    pg.init()
-    pg.font.init()
-    pg.mixer.init()
+    # pg.init()
+    # pg.font.init()
+    # pg.mixer.init()
 
-    game = Game(config)
-    Pellet.sound_init()
-    # print(game.map.world_map)
-    print("*"*30)
+    app = App(config)
+    app.run()
+#     game = Game(config)
+#     Pellet.sound_init()
+#     # print(game.map.world_map)
+#     print("*"*30)
 
-    # print(pg.font.get_fonts())
-    game.map.print(maze_)
+#     # print(pg.font.get_fonts())
+#     game.map.print(maze_)
 
-    maze_ = game.map.do_not_prefect(maze_)
+#     maze_ = game.map.do_not_prefect(maze_)
 
-    # game.map.get_map_form_file(c_mz_param.output_file)
-    game.map.get_map(maze_)
-    game.map.print()
+#     # game.map.get_map_form_file(c_mz_param.output_file)
+#     game.map.get_map(maze_)
+#     game.map.print()
 
-    game.player.teleport()
-    game.npcs.append(RedGhosts(game))
+#     game.player.teleport()
+#     game.npcs.append(RedGhosts(game))
 
-    pink = NPC(game, (game.map.cols - 1, 0),
-               (240, 24, 140), "Pink gost (Speedy)")
-    game.npcs.append(pink)
-    pink.read_frames_from_file("inc/img/pink/run/", FrameType.RUN)
+#     pink = NPC(game, (game.map.cols - 1, 0),
+#                (240, 24, 140), "Pink gost (Speedy)")
+#     game.npcs.append(pink)
+#     pink.read_frames_from_file("inc/img/pink/run/", FrameType.RUN)
 
-    cyan = NPC(game,
-               (game.map.cols - 1, game.map.rows - 1),
-               (100, 250, 250), "Cyan gost (Inky, Bashful)")
-    game.npcs.append(cyan)
-    cyan.read_frames_from_file("inc/img/cyan/run/", FrameType.RUN)
+#     cyan = NPC(game,
+#                (game.map.cols - 1, game.map.rows - 1),
+#                (100, 250, 250), "Cyan gost (Inky, Bashful)")
+#     game.npcs.append(cyan)
+#     cyan.read_frames_from_file("inc/img/cyan/run/", FrameType.RUN)
 
-    orange = NPC(game,
-                 (0, game.map.rows - 1),
-                 (250, 120, 10), "Orange gost (Clyde, Pockey)")
-    game.npcs.append(orange)
-    orange.read_frames_from_file("inc/img/orange/run/", FrameType.RUN)
+#     orange = NPC(game,
+#                  (0, game.map.rows - 1),
+#                  (250, 120, 10), "Orange gost (Clyde, Pockey)")
+#     game.npcs.append(orange)
+#     orange.read_frames_from_file("inc/img/orange/run/", FrameType.RUN)
 
-    game.npcs[0].goal = (game.player.x, game.player.y)
-    game.npcs[1].goal = (game.player.x, game.player.y)
-    game.npcs[2].goal = (game.player.x, game.player.y)
-    game.npcs[3].goal = (game.player.x, game.player.y)
+#     game.npcs[0].goal = (game.player.x, game.player.y)
+#     game.npcs[1].goal = (game.player.x, game.player.y)
+#     game.npcs[2].goal = (game.player.x, game.player.y)
+#     game.npcs[3].goal = (game.player.x, game.player.y)
 
-    #  Add PowerPellet and Pellet
-    game.artifacts.append(PowerPellet(game, (0, 0)))
-    game.artifacts.append(PowerPellet(game, (game.map.cols - 1, 0)))
-    game.artifacts.append(PowerPellet(game,
-                                      (game.map.cols - 1, game.map.rows - 1)))
-    game.artifacts.append(PowerPellet(game, (0, game.map.rows - 1)))
+#     #  Add PowerPellet and Pellet
+#     game.artifacts.append(PowerPellet(game, (0, 0)))
+#     game.artifacts.append(PowerPellet(game, (game.map.cols - 1, 0)))
+#     game.artifacts.append(PowerPellet(game,
+#                                       (game.map.cols - 1, game.map.rows - 1)))
+#     game.artifacts.append(PowerPellet(game, (0, game.map.rows - 1)))
 
-    place_set = {(x, y) for x in range(0, game.map.cols)
-                 for y in range(0, game.map.rows)
-                 if (game.map.world_map.get((x, y), 0) & 15 != 15)}
+#     place_set = {(x, y) for x in range(0, game.map.cols)
+#                  for y in range(0, game.map.rows)
+#                  if (game.map.world_map.get((x, y), 0) & 15 != 15)}
 
-    for a_ in game.artifacts:
-        place_set.remove((a_.x, a_.y))
+#     for a_ in game.artifacts:
+#         place_set.remove((a_.x, a_.y))
 
-    if config.pacgum <= 0:
-        for s_ in place_set:
-            game.artifacts.append(Pellet(game, s_))
-    else:
-        for p in range(0, config.pacgum):
-            if (len(place_set) < 1):
-                print("All Pellets can't be placed "
-                      f"({p+1} from {config.pacgum}).")
-                break
-            x, y = random.choice(tuple(place_set))
-            game.artifacts.append(Pellet(game, (x, y)))
-            place_set.remove((x, y))
+#     if config.pacgum <= 0:
+#         for s_ in place_set:
+#             game.artifacts.append(Pellet(game, s_))
+#     else:
+#         for p in range(0, config.pacgum):
+#             if (len(place_set) < 1):
+#                 print("All Pellets can't be placed "
+#                       f"({p+1} from {config.pacgum}).")
+#                 break
+#             x, y = random.choice(tuple(place_set))
+#             game.artifacts.append(Pellet(game, (x, y)))
+#             place_set.remove((x, y))
 
-    # print(game.map.world_map)
-    game.screen = pg.display.set_mode(
-        (max(game.map.cols*game.map.step
-         + game.map.wall_thickness, 550),
-         (game.map.rows + 3)*(game.map.step)))
-    # print(dir(pg.draw))
+#     # print(game.map.world_map)
+#     game.screen = pg.display.set_mode(
+#         (max(game.map.cols*game.map.step
+#          + game.map.wall_thickness, 550),
+#          (game.map.rows + 3)*(game.map.step)))
+#     # print(dir(pg.draw))
 
-#    game.run()
+# #    game.run()
 
-    start_menu()
+#     start_menu()
 
     return (0)
 

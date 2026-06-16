@@ -4,6 +4,10 @@ from src.pc_npc import NPC  # , GhostMode
 from src.pc_artifact import PC_Artifacts
 from src.pc_artifact import PowerPellet, Pellet
 from src.config import Config
+from src.constants import *
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from src.app import App
 import pygame as pg
 import sys
 import os
@@ -13,24 +17,28 @@ import random
 
 
 class Game:
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, app: "App"):
+        from src.app import App
+        self.app = app
         # pg.mouse.set_visible(False)
-        self.screen = pg.display.set_mode((800, 800))
+
+        # self.screen = pg.display.set_mode((800, 800))
+
         # pg.display.set_caption("Pac-Man 42")
         pg.event.set_grab(True)
-        self.clock = pg.time.Clock()
+        # self.clock = pg.time.Clock()
         self.delta_time = 1
         self.game_time = 110   # sec
         self.global_trigger = False
         self.global_event = pg.USEREVENT + 0
         self.score = 0
         self.level = 1
-        self.fps = 60
+        # self.fps = 60
         self.gost_edible = 17  # sec - frightened time
         pg.time.set_timer(self.global_event, 40)
 
         # fonts
-        pg.font.init()
+        # pg.font.init()
         path_ = os.path.join(
                 os.path.dirname(os.path.abspath(__file__)),
                 "inc/fonts/PressStart2P-Regular.ttf",
@@ -105,10 +113,11 @@ class Game:
         # self.object_handler.update()
         # self.weapon.update()
         pg.display.flip()
-        self.delta_time = self.clock.tick(self.fps)
+        self.delta_time = self.app.clock.tick(FPS) #self.clock.tick(self.fps)
         self.game_time -= self.delta_time / 1000
         pg.display.set_caption('Pac-man  42 '
-                               f'(fps:{self.clock.get_fps(): 6.1f})')
+                            #    f'(fps:{self.clock.get_fps(): 6.1f})')
+                               f'(fps:{self.app.clock.get_fps(): 6.1f})')
         if len(self.artifacts) <= 0:
             self.next_level()
 
