@@ -7,7 +7,7 @@ from pydantic import field_validator
 class Level(BaseModel):
     map_filename: str = ""
     number: PositiveInt = 1
-    is_perfect: bool = False
+    remove_deadends: bool = True
     width: PositiveInt = 14
     height: PositiveInt = 12
     seed: int = 0
@@ -33,15 +33,15 @@ class Level(BaseModel):
             print("Wrong type of the level number. Using default value")
             return 1
 
-    @field_validator("is_perfect", mode="before")
+    @field_validator("remove_deadends", mode="before")
     @classmethod
     def fix_is_perfect(cls, value: Any) -> bool:
         try:
             return bool(value)
         except (TypeError, ValueError):
-            print("Wrong type of the 'is_perfect' parameter."
+            print("Wrong type of the 'remove_deadends' parameter."
                   " Using default value")
-            return False
+            return True
 
     @field_validator("width", mode="before")
     @classmethod
@@ -131,6 +131,16 @@ class Level(BaseModel):
             print("Wrong type of the 'speed_factor_ghost'."
                   " Using default value")
             return 0.02
+
+    # def print(self):
+    #     print("--Level:")
+    #     print("Number:", self.number)
+    #     print("Width:", self.width)
+    #     print("Height:", self.height)
+    #     print("Map File:", self.map_filename)
+    #     print("Seed:", self.seed)
+    #     print("Remove deadends:", self.remove_deadends)
+    #     print("Time max:", self.level_max_time, "s")
 
 
 class Config(BaseModel):
@@ -240,3 +250,11 @@ class Config(BaseModel):
         except (TypeError, ValueError):
             print("Wrong type of 'cheat'. Using default value")
             return False
+
+    # def print(self):
+    #     print("--Config:")
+    #     print("Seed:", self.seed)
+    #     print("Cheat:", self.cheat)
+    #     print("Levels: ", len(self.levels))
+    #     for l_ in self.levels:
+    #         l_.print()

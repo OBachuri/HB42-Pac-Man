@@ -8,4 +8,3 @@ class ScreenTypes(Enum):
     # END_OF_GAME = "end_of_game" # "game_over"/"victory"
     # PAUSE_MENU = "pause_menu"
     # HIGH_SCORES = "high_scores"
-    # TIME_LIMIT = "time_limit"

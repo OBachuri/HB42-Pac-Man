@@ -1,19 +1,16 @@
 import asyncio
 import pygame as pg
 
-from src.constants import SCREEN_HEIGHT, SCREEN_WIDTH, FPS
-from src.screens import BaseScreen, ScreenTypes
-from src.config import Config
+from constants import SCREEN_HEIGHT, SCREEN_WIDTH, FPS
+from screens import BaseScreen, ScreenTypes
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from src.app import App
+    from app import App
 
 
 class InstructionsScreen(BaseScreen):
-    def __init__(self, config: Config, app: "App"):
-        from src.app import App
-        self.config: Config = config
-        self.app: App = app
+    def __init__(self, app: "App"):
+        self.app = app
         self.text: str = (
             "Basic Rules:\n- Press the corresponding direction (Up, Down, " +
             "Left, Right / W, A, S, D) to steer Pac-Man through the maze.\n" +
@@ -62,7 +59,7 @@ class InstructionsScreen(BaseScreen):
 
         return lines
 
-    async def run(self):
+    async def run(self) -> None:
         font = pg.font.SysFont("carlito", 30)
         text_rect = pg.Rect(
             5, 5, SCREEN_WIDTH - 10, SCREEN_HEIGHT - font.get_height() * 2
@@ -79,11 +76,13 @@ class InstructionsScreen(BaseScreen):
 
             for event in pg.event.get():
                 if event.type == pg.QUIT:
-                    self.app.quit()
+                    running = False
+                    # self.app.quit()
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
                         running = False
                         self.app.move_to(ScreenTypes.MAIN_MENU)
+                        print("=============ESK")
                     elif event.key == pg.K_DOWN:
                         scroll_y = min(scroll_y + line_height, max_scroll)
                     elif event.key == pg.K_UP:

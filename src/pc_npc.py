@@ -1,7 +1,7 @@
 import pygame as pg
 import random
 # from enum import Enum
-from src.pc_entity import Entity, FrameType, GhostMode
+from pc_entity import Entity, FrameType, GhostMode
 
 
 class NPC(Entity):
@@ -174,6 +174,10 @@ class RedGhosts(NPC):
                  name="Red gost (Blinky, Shadow)"):
         super().__init__(game, point, color, name)
         self.read_frames_from_file("inc/img/red/run/", FrameType.RUN)
+
+    def reset(self):
+        super().reset()
+        self.mode = GhostMode.CHASE
 
     def find_goal(self):
         x = int(round(self.x, 0))
