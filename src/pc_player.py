@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pygame as pg
 import pygame.gfxdraw as pggf
 import math
@@ -5,17 +7,21 @@ import math
 from pc_entity import Entity, FrameType
 from screens import *
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from pc_game import Game
+
+
 class Player(Entity):
     """ Player = PacMan """
-    def __init__(self, game, point=(0, 0),
-                 color=(250, 250, 10),
-                 name="PacMan", size=21, lives=3):
+    def __init__(self, game: Game,
+                 point: tuple[int | float, int | float] = (0, 0),
+                 color: tuple[int, int, int] = (250, 250, 10),
+                 name: str = "PacMan", size: int = 21, lives: int = 3):
         super().__init__(game, point=point, color=color, name=name, size=size)
-        self.game = game
-        self.angle = 0
-        self.health = 100
-        self.speed_factor = 0.01
-        self.lives = lives
+        self.angle: float | int = 0
+        self.speed_factor: float = 0.01
+        self.lives: int = lives
 
         try:
             self.teleport()
@@ -26,7 +32,7 @@ class Player(Entity):
         self.read_frames_from_file("inc/img/pacman/stay/", FrameType.STAY)
         self.read_frames_from_file("inc/img/pacman/death/", FrameType.DEATH)
 
-    def teleport(self, x: int = -1, y: int = -1):
+    def teleport(self, x: int = -1, y: int = -1) -> None:
         if x < 0:
             x = int(self.game.map.cols / 2)
         if y < 0:
@@ -39,7 +45,8 @@ class Player(Entity):
         self.x = int(x)
         self.y = int(y)
 
-    def check_walls(self, new_x, new_y, max_shift) -> bool:
+    def check_walls(self, new_x: float, new_y: float,
+                    max_shift: float) -> bool:
         """ Returned True if there is wall on new palace """
 
         new_x_int = int(round(new_x, 0))
@@ -91,21 +98,22 @@ class Player(Entity):
                 return True
         return False
 
-    def after_death(self):
+    def after_death(self) -> None:
         self.lives -= 1
         self.reset()
         for n in self.game.npcs:
             n.reset()
         self.game.pause = True
+        self.game.game_time = self.game.game_max_time
         if self.lives <= 0:
             # change to ScreenTypes.VICTORY or GAME OVER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             self.game.app.move_to(ScreenTypes.MAIN_MENU)
             self.game.runing = False
 
-    def movement(self):
+    def movement(self) -> None:
         num_key_pressed = -1
-        dx = self.dx
-        dy = self.dy
+        dx: int = self.dx
+        dy: int = self.dy
         if self.alive:
             keys = pg.key.get_pressed()
             if keys[pg.K_w] or keys[pg.K_UP]:
@@ -297,7 +305,7 @@ class Player(Entity):
         #  print(f"after - cur:({self.x},{self.y}),int:({x},{y},
         #          max_shift:{max_shift}, df({dx},{dy})")
 
-    def draw(self):
+    def draw(self) -> None:
 
         x = (self.x * (self.game.map.cell_size
                        + self.game.map.wall_thickness)
@@ -358,7 +366,7 @@ class Player(Entity):
 
         self.game.screen.blit(self.game.font.render(
             f'x:{self.x}, y:{self.y}, a:{self.angle} ', False, (10, 10, 200)),
-            (10, (self.game.map.rows + 1)
+            (10, 5 + (self.game.map.rows + 1)
              * (self.game.map.step) + self.game.map.top))
 
         # x = (int(self.x) * (self.game.map.cell_size

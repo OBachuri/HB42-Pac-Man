@@ -132,15 +132,15 @@ class Level(BaseModel):
                   " Using default value")
             return 0.02
 
-    # def print(self):
-    #     print("--Level:")
-    #     print("Number:", self.number)
-    #     print("Width:", self.width)
-    #     print("Height:", self.height)
-    #     print("Map File:", self.map_filename)
-    #     print("Seed:", self.seed)
-    #     print("Remove deadends:", self.remove_deadends)
-    #     print("Time max:", self.level_max_time, "s")
+    def print(self) -> None:
+        print("--Level:")
+        print("Number:", self.number)
+        print("Width:", self.width)
+        print("Height:", self.height)
+        print("Map File:", self.map_filename)
+        print("Seed:", self.seed)
+        print("Remove deadends:", self.remove_deadends)
+        print("Time max:", self.level_max_time, "s")
 
 
 class Config(BaseModel):
@@ -251,10 +251,10 @@ class Config(BaseModel):
             print("Wrong type of 'cheat'. Using default value")
             return False
 
-    # def print(self):
-    #     print("--Config:")
-    #     print("Seed:", self.seed)
-    #     print("Cheat:", self.cheat)
-    #     print("Levels: ", len(self.levels))
-    #     for l_ in self.levels:
-    #         l_.print()
+    def print(self) -> None:
+        print("--Config:")
+        print("Seed:", self.seed)
+        print("Cheat:", self.cheat)
+        print("Levels: ", len(self.levels))
+        for l_ in self.levels:
+            l_.print()

@@ -20,7 +20,7 @@ class LevelWeb:
     def size(self) -> tuple[int, int]:
         return (self.width, self.height)
 
-    def print(self):
+    def print(self) -> None:
         print("--Level:")
         print("Number:", self.number)
         print("Width:", self.width)
@@ -49,7 +49,7 @@ class ConfigWeb:
 
         self.levels: list[LevelWeb] = levels if levels else [LevelWeb()]
 
-    def print(self):
+    def print(self) -> None:
         print("--Config:")
         print("Seed:", self.seed)
         print("Cheat:", self.cheat)

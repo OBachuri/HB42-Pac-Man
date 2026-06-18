@@ -47,7 +47,7 @@ class NPC(Entity):
                          int(round(self.game.player.y, 0)))
         elif (((self.mode == GhostMode.STROLL)
                 and ((self.game.player.x - x) ** 2
-                     + (self.game.player.y - y) ** 2)
+=======                     + (self.game.player.y - y) ** 2)
                 < self.start_chase_if_near ** 2)):
             self.goal = (int(round(self.game.player.x, 0)),
                          int(round(self.game.player.y, 0)))
@@ -176,8 +176,8 @@ class RedGhosts(NPC):
     """ Red gost (Blinky, Shadow)
         Blinky always chase his prey :)
     """
-    def __init__(self, game: Game,
-                 point: tuple[float, float] = (0, 0),
+    def __init__(self, game,
+                 point: tuple[int | float, int | float] = (0, 0),
                  color: tuple[int, int, int] = (250, 20, 20),
                  name: str = "Red gost (Blinky, Shadow)"):
         super().__init__(game, point, color, name)

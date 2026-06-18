@@ -18,7 +18,7 @@ def main() -> int:
         sys.exit(1)
 
     path_to_src = os.path.join(os.path.dirname(__file__), 'src')
-    print("="*30, path_to_src)
+    # print("="*30, path_to_src)
     sys.path.append(path_to_src)
 
     from src.parser import Parser
@@ -28,7 +28,6 @@ def main() -> int:
     # try shcool maze generator
     try:
         from mazegenerator.mazegenerator import MazeGenerator
-        # from mazegenerator import MazeGenerator
     except Exception as err_msg:
         print("Error with mazegen library connection:", err_msg)
         print("Check for the presence of the package " +
@@ -37,7 +36,7 @@ def main() -> int:
 
     if len(sys.argv) != 2:
         print("\nError: Invalid program launch format" +
-              "\nUsage 'python3 ./pac-man.py <config-file-path>'")
+              "\nUsage 'python3 pac-man.py <config-file.json>'")
         # sys.exit(1)
 
     if len(sys.argv) > 1:
