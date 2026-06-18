@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from src.app import App
 
-from src.constants import *
+from src.constants import SCREEN_WIDTH, FPS
 from src.screens import BaseScreen, ScreenTypes
 
 
@@ -15,8 +15,8 @@ class Button:
             width,
             text,
             icon: pg.Surface,
-            x = SCREEN_WIDTH//2 - 75,
-            height = 50) -> None:
+            x=SCREEN_WIDTH//2 - 75,
+            height=50) -> None:
         self.rect = pg.Rect(x, y, width, height)
         self.text = text
         self.icon = icon
@@ -48,12 +48,11 @@ class Button:
 class MainMenuScreen(BaseScreen):
     def __init__(self, app: "App"):
         from src.app import App
-        self.app = app
+        self.app: App = app
 
     async def run(self) -> None:
-        screen = self.app.screen
         pg.display.set_caption("Pac-Man")
-        clock = pg.time.Clock()
+        clock = self.app.clock
         pacman_icon = pg.image.load(
             "src/inc/img/pacman/stay/S01.png").convert_alpha()
 
@@ -67,9 +66,12 @@ class MainMenuScreen(BaseScreen):
         selected_index = 0
         buttons[selected_index].selected = True
 
+        title = pg.font.Font(None, 80).render("PAC-MAN", True, "yellow")
+        title_rect = title.get_rect(center=(SCREEN_WIDTH//2, 80))
+
         running = True
         while running:
-            clock.tick(60)
+            clock.tick(FPS)
             mouse_pos = pg.mouse.get_pos()
 
             for event in pg.event.get():
@@ -129,14 +131,11 @@ class MainMenuScreen(BaseScreen):
                     selected_index = i
                     buttons[selected_index].selected = True
 
-
-            screen.fill("black")
-            title = pg.font.Font(None, 80).render("PAC-MAN", True, "yellow")
-            title_rect = title.get_rect(center=(SCREEN_WIDTH//2, 80))
-            screen.blit(title, title_rect)
+            self.app.screen.fill("black")
+            self.app.screen.blit(title, title_rect)
 
             for button in buttons:
-                button.draw(screen)
+                button.draw(self.app.screen)
 
             pg.display.flip()
 
