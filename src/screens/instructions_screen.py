@@ -82,7 +82,6 @@ class InstructionsScreen(BaseScreen):
                     if event.key == pg.K_ESCAPE:
                         running = False
                         self.app.move_to(ScreenTypes.MAIN_MENU)
-                        print("=============ESK")
                     elif event.key == pg.K_DOWN:
                         scroll_y = min(scroll_y + line_height, max_scroll)
                     elif event.key == pg.K_UP:

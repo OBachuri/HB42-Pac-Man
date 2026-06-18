@@ -1,3 +1,4 @@
+import sys
 import asyncio
 import pygame as pg
 from typing import TYPE_CHECKING
@@ -45,19 +46,20 @@ class Button:
 class MainMenuScreen(BaseScreen):
     def __init__(self, app: "App"):
         self.app = app
+        self.pacman_icon = pg.image.load(
+            self.app.path_to_inc + "img/pacman/stay/S01.png").convert_alpha()
 
     async def run(self) -> None:
         pg.display.set_caption("Pac-Man")
         clock = self.app.clock
-        pacman_icon = pg.image.load(
-            self.app.path_to_inc + "img/pacman/stay/S01.png").convert_alpha()
 
         buttons = [
-            Button(y=200, width=150, text="START GAME", icon=pacman_icon),
-            Button(y=300, width=220, text="VIEW HIGHSCORES", icon=pacman_icon),
-            Button(y=400, width=200, text="INSTRUCTIONS", icon=pacman_icon),
-            Button(y=500, width=150, text="EXIT", icon=pacman_icon)
+            Button(y=200, width=150, text="START GAME", icon=self.pacman_icon),
+            Button(y=300, width=220, text="VIEW HIGHSCORES", icon=self.pacman_icon),
+            Button(y=400, width=200, text="INSTRUCTIONS", icon=self.pacman_icon)
         ]
+        if sys.platform != "emscripten":
+            buttons.append(Button(y=500, width=150, text="EXIT", icon=self.pacman_icon))
 
         selected_index = 0
         buttons[selected_index].selected = True
@@ -100,7 +102,7 @@ class MainMenuScreen(BaseScreen):
                             self.app.quit()
                             running = False
 
-                    elif event.key == pg.K_ESCAPE:
+                    elif event.key == pg.K_ESCAPE and sys.platform != "emscripten":
                         self.app.quit()
                         running = False
 
