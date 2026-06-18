@@ -175,6 +175,10 @@ class RedGhosts(NPC):
         super().__init__(game, point, color, name)
         self.read_frames_from_file("inc/img/red/run/", FrameType.RUN)
 
+    def reset(self):
+        super().reset()
+        self.mode = GhostMode.CHASE
+
     def find_goal(self):
         x = int(round(self.x, 0))
         y = int(round(self.y, 0))

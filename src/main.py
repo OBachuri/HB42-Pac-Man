@@ -1,6 +1,6 @@
 """
 ---
-requires-python = ">=3.12"
+requires-python = ">=3.10"
 dependencies = [
     "pygame-ce",
     "mazegenerator",
@@ -10,10 +10,6 @@ dependencies = [
 
 import asyncio
 import sys
-
-# from typing import cast
-# import os
-# import pygame as pg
 
 g_error_txt: str = ""
 
@@ -100,7 +96,7 @@ def main():
             from mazegenerator.mazegenerator import MazeGenerator
             from parser import Parser
             from app import App
-            from pc_game import Game
+            # from pc_game import Game
 
         except Exception as ex:
             g_error_txt += f"\n Error: {ex}\n"
@@ -116,12 +112,10 @@ def main():
             asyncio.run(run_error(screen, clock))
         else:
             config = Parser.get_config_web()
+            config.print()
             app = App(config)
-            game = Game(app)
-            asyncio.run(game.run())
+            # Run the async loop
+            asyncio.run(app.run())
 
 
 main()
-
-# Run the async loop
-# asyncio.run(main())

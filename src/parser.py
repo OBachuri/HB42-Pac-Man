@@ -25,7 +25,7 @@ class Parser:
         return result
 
     @classmethod
-    def get_config(cls, path: str) -> "Config":
+    def get_config(cls, path: str = "config.json") -> "Config":
         from config import Config
 
         cfg_data = cls._get_config_data(path)

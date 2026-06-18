@@ -5,16 +5,30 @@ class LevelWeb:
     def __init__(self, data: dict[str, Any] = {}) -> None:
         self.map_filename: str = data.get("map_filename", "")
         self.number: int = data.get("number", 1)
-        self.rmv_deadends: bool = data.get("remove_deadends", False)
-        self.width: int = data.get("width", 14)
-        self.height: int = data.get("height", 12)
+        self.remove_deadends: bool = data.get("remove_deadends", True)
+        self.width: int = max(data.get("width", 14), 3)
+        self.height: int = max(data.get("height", 12), 3)
         self.seed: int = data.get("seed", 0)
-        self.pacgum: int = data.get("pacgum", 42)
+        self.pacgum: int = data.get("pacgum", 0)
         self.level_max_time: int = data.get("level_max_time", 90)
         self.speed_factor_player: float = data.get(
             "speed_factor_player", 0.01)
         self.speed_factor_ghost: float = data.get(
             "speed_factor_ghost", 0.02)
+
+    @property
+    def size(self) -> tuple[int, int]:
+        return (self.width, self.height)
+
+    def print(self):
+        print("--Level:")
+        print("Number:", self.number)
+        print("Width:", self.width)
+        print("Height:", self.height)
+        print("Map File:", self.map_filename)
+        print("Seed:", self.seed)
+        print("Remove deadends:", self.remove_deadends)
+        print("Time max:", self.level_max_time, "s")
 
 
 class ConfigWeb:
@@ -26,7 +40,7 @@ class ConfigWeb:
         self.points_per_super_pacgum: int = cfg_data.get(
             "points_per_super_pacgum", 50)
         self.points_per_ghost: int = cfg_data.get("points_per_ghost", 200)
-        self.seed: int = cfg_data.get("seed", 42)
+        self.seed: int = cfg_data.get("seed", 0)
         self.cheat: bool = cfg_data.get("cheat", False)
 
         levels: list[LevelWeb] = [LevelWeb(level_data)
@@ -34,3 +48,11 @@ class ConfigWeb:
                                   in cfg_data.get("levels", [])]
 
         self.levels: list[LevelWeb] = levels if levels else [LevelWeb()]
+
+    def print(self):
+        print("--Config:")
+        print("Seed:", self.seed)
+        print("Cheat:", self.cheat)
+        print("Levels: ", len(self.levels))
+        for l_ in self.levels:
+            l_.print()

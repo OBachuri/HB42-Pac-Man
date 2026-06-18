@@ -4,26 +4,26 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from app import App
 
-from constants import *
+from constants import SCREEN_WIDTH  # , SCREEN_HEIGHT
 from screens import BaseScreen, ScreenTypes
 
 
 class Button:
     def __init__(
             self,
-            y,
-            width,
-            text,
+            y: int,
+            width: int,
+            text: str,
             icon: pg.Surface,
-            x = SCREEN_WIDTH//2 - 75,
-            height = 50) -> None:
+            x: int = SCREEN_WIDTH // 2 - 75,
+            height: int = 50) -> None:
         self.rect = pg.Rect(x, y, width, height)
         self.text = text
         self.icon = icon
         self.hovered = False
         self.selected = False
 
-    def draw(self, surface):
+    def draw(self, surface) -> None:
         # Draw button border
         pg.draw.rect(surface, "yellow", self.rect, 2)
 
@@ -38,16 +38,16 @@ class Button:
         text_rect = text_surf.get_rect(center=self.rect.center)
         surface.blit(text_surf, text_rect)
 
-    def is_clicked(self, pos):
+    def is_clicked(self, pos) -> bool:
         return self.rect.collidepoint(pos)
 
-    def update(self, pos):
+    def update(self, pos) -> None:
         self.hovered = self.rect.collidepoint(pos)
 
 
 class MainMenuScreen(BaseScreen):
     def __init__(self, app: "App"):
-        from app import App
+        # from app import App
         self.app = app
 
     async def run(self) -> None:
@@ -55,7 +55,7 @@ class MainMenuScreen(BaseScreen):
         pg.display.set_caption("Pac-Man")
         clock = pg.time.Clock()
         pacman_icon = pg.image.load(
-            "src/inc/img/pacman/stay/S01.png").convert_alpha()
+            self.app.path_to_inc + "img/pacman/stay/S01.png").convert_alpha()
 
         buttons = [
             Button(y=200, width=150, text="START GAME", icon=pacman_icon),
@@ -129,10 +129,9 @@ class MainMenuScreen(BaseScreen):
                     selected_index = i
                     buttons[selected_index].selected = True
 
-
             screen.fill("black")
             title = pg.font.Font(None, 80).render("PAC-MAN", True, "yellow")
-            title_rect = title.get_rect(center=(SCREEN_WIDTH//2, 80))
+            title_rect = title.get_rect(center=(SCREEN_WIDTH // 2, 80))
             screen.blit(title, title_rect)
 
             for button in buttons:

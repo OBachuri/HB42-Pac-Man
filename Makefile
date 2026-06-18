@@ -11,7 +11,7 @@ TARGETS_WITH_ARGS := run debug
 
 VENV_DIR := .venv
 PYTHON := python3
-PIP := pip
+PIP := pip3
 C_DIR := pwd
 
 BUILD_SOURCE_DIR := "src"
@@ -21,7 +21,7 @@ BUILD_SOURCE_DIR := "src"
 #MLX_ORIG := mlx-2.2-py3-ubuntu-any.whl
 #MLX_FIXED := mlx-2.2-py3-none-any.whl
 
-OUTPUT_FILE := $(shell grep -i output_file config.txt | cut -d= -f2 | xargs)
+#OUTPUT_FILE := $(shell grep -i output_file config.txt | cut -d= -f2 | xargs)
 
 define ACTIVATE_VENV
 if [ -z "$$VIRTUAL_ENV" ]; then \
@@ -54,7 +54,7 @@ help:
 	@echo "  lint-strict    Run flake8 and strict mypy checks"
 	@echo "  clean          Remove caches and temporary files"
 	@echo "  fclean         clean + remove wheel file + remove folder of virtual environment"
-	@echo "  debug          Run the debugger "	
+	@echo "  debug          Run the debugger "
 
 
 rebuild:
@@ -113,9 +113,9 @@ clean:
 	find . -name .pytest_cache -exec rm -rf {} +
 	find . -name "*.pyc" -delete
 	find . -name "*.pyo" -delete
-	@if [ -f config.txt ]; then \
-		rm -f "$(OUTPUT_FILE)"; \
-	fi
+# 	@if [ -f config.txt ]; then \
+# 		rm -f "$(OUTPUT_FILE)"; \
+# 	fi
 
 
 fclean: clean
@@ -148,12 +148,13 @@ lint-strict:
 # 		wget -O $(MLX_ORIG) $(MLX_URL)
 # 		mv -f $(MLX_ORIG) $(MLX_FIXED)
 
-install: 
+install:
 	@$(ACTIVATE_VENV)
-#	$(PIP) install pydantic dotenv build flake8 mypy pygame-ce numpy 
-	$(PIP) install pydantic flake8 mypy pygame-ce numpy 
+#	$(PIP) install pydantic dotenv build flake8 mypy pygame-ce numpy
+	$(PIP) install pydantic flake8 mypy pygame-ce numpy
 	$(PIP) install mazegenerator-00001-py3-none-any.whl
 #	$(PIP) install mazegen-0.1.0-py3-none-any.whl
-	$(PIP) install pygbag --upgrade
+#	$(PIP) install pygbag --upgrade
+	$(PIP) install pygbag
 
 .PHONY:	clean run debug install lint-strict lint $(RUN_ARGS) venv check-venv help fclean build
