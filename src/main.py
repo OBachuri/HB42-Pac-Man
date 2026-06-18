@@ -84,7 +84,7 @@ async def run_error(screen, clock):
         await asyncio.sleep(0)
 
 
-def main():
+def main() -> None:
     global MazeGenerator
     global g_error_txt
 

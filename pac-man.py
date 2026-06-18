@@ -45,7 +45,7 @@ def main() -> int:
     else:
         config = Parser.get_config()
 
-    config.print()
+    # config.print()
 
     app = App(config)
     # Run the async loop

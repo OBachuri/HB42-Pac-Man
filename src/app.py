@@ -4,19 +4,13 @@ import os
 import asyncio
 import pygame as pg
 
-# relative_dir = os.path.dirname(__file__)
-# os.path.join(os.path.dirname(__file__), '')
-# print("=========", relative_dir)
-
-# sys.path.append(os.path.dirname(__file__))
-
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from pc_game import Game
-from screens import *
+from screens import ScreenTypes, BaseScreen, MainMenuScreen, InstructionsScreen
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from .config import Config
-    from .config_web import ConfigWeb
+    from config import Config
+    from config_web import ConfigWeb
 
 
 class App:
@@ -38,14 +32,19 @@ class App:
     def move_to(self, screen: ScreenTypes) -> None:
         match screen:
             case ScreenTypes.MAIN_MENU:
-                self.current_screen = self.screens.setdefault(screen, MainMenuScreen(self))
+                self.current_screen = self.screens.setdefault(
+                    screen, MainMenuScreen(self))
             case ScreenTypes.GAME:
-                # self.current_screen = self.screens.setdefault(screen, Game(self.config, self))
                 self.current_screen = self.screens.setdefault(
                     screen, self.game)
             case ScreenTypes.INSTRUCTIONS:
-                pass
-                # self.current_screen = self.screens.setdefault(screen, InstructionsScreen(self.config, self))
+                self.current_screen = self.screens.setdefault(
+                    screen, InstructionsScreen(self))
+            # case ScreenTypes.END_OF_GAME:
+            #     if self.current_screen == ScreenTypes.GAME:
+            #         self.current_score = self.game.score
+            #     self.current_screen = self.screens.setdefault(
+            #         screen, EndOfGameScreen(self))
 
     def quit(self) -> None:
         self.running = False
@@ -55,7 +54,6 @@ class App:
     async def run(self) -> None:
         self.move_to(ScreenTypes.MAIN_MENU)
         while self.running:
-            await self.current_screen.run()
+            if self.current_screen:
+                await self.current_screen.run()
             await asyncio.sleep(0)
-            # pg.display.update()
-            # self.clock.tick(FPS)

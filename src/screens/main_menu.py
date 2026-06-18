@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from app import App
 
-from constants import SCREEN_WIDTH  # , SCREEN_HEIGHT
+from constants import SCREEN_WIDTH, FPS
 from screens import BaseScreen, ScreenTypes
 
 
@@ -23,37 +23,32 @@ class Button:
         self.hovered = False
         self.selected = False
 
-    def draw(self, surface) -> None:
-        # Draw button border
+    def draw(self, surface: pg.Surface) -> None:
         pg.draw.rect(surface, "yellow", self.rect, 2)
 
-        # Draw image on the left if selected
         if self.selected or self.hovered:
             img_rect = self.icon.get_rect(
                 center=(self.rect.left - 40, self.rect.centery))
             surface.blit(self.icon, img_rect)
 
-        # Draw text
         text_surf = pg.font.Font(None, 30).render(self.text, True, "yellow")
         text_rect = text_surf.get_rect(center=self.rect.center)
         surface.blit(text_surf, text_rect)
 
-    def is_clicked(self, pos) -> bool:
+    def is_clicked(self, pos: tuple[int, int]) -> bool:
         return self.rect.collidepoint(pos)
 
-    def update(self, pos) -> None:
+    def update(self, pos: tuple[int, int]) -> None:
         self.hovered = self.rect.collidepoint(pos)
 
 
 class MainMenuScreen(BaseScreen):
     def __init__(self, app: "App"):
-        # from app import App
         self.app = app
 
     async def run(self) -> None:
-        screen = self.app.screen
         pg.display.set_caption("Pac-Man")
-        clock = pg.time.Clock()
+        clock = self.app.clock
         pacman_icon = pg.image.load(
             self.app.path_to_inc + "img/pacman/stay/S01.png").convert_alpha()
 
@@ -67,14 +62,18 @@ class MainMenuScreen(BaseScreen):
         selected_index = 0
         buttons[selected_index].selected = True
 
+        title = pg.font.Font(None, 80).render("PAC-MAN", True, "yellow")
+        title_rect = title.get_rect(center=(SCREEN_WIDTH//2, 80))
+
         running = True
         while running:
-            clock.tick(60)
+            clock.tick(FPS)
             mouse_pos = pg.mouse.get_pos()
 
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     self.app.quit()
+                    running = False
 
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_UP:
@@ -99,9 +98,11 @@ class MainMenuScreen(BaseScreen):
                             running = False
                         elif selected_button.text == "EXIT":
                             self.app.quit()
+                            running = False
 
                     elif event.key == pg.K_ESCAPE:
                         self.app.quit()
+                        running = False
 
                 if event.type == pg.MOUSEBUTTONDOWN:
                     for i, button in enumerate(buttons):
@@ -121,6 +122,7 @@ class MainMenuScreen(BaseScreen):
                                 running = False
                             elif button.text == "EXIT":
                                 self.app.quit()
+                                running = False
 
             for i, button in enumerate(buttons):
                 button.update(mouse_pos)
@@ -129,14 +131,16 @@ class MainMenuScreen(BaseScreen):
                     selected_index = i
                     buttons[selected_index].selected = True
 
-            screen.fill("black")
-            title = pg.font.Font(None, 80).render("PAC-MAN", True, "yellow")
-            title_rect = title.get_rect(center=(SCREEN_WIDTH // 2, 80))
-            screen.blit(title, title_rect)
+            if running:
+                self.app.screen.fill("black")
+                title = pg.font.Font(None, 80).render("PAC-MAN",
+                                                      True, "yellow")
+                title_rect = title.get_rect(center=(SCREEN_WIDTH // 2, 80))
+                self.app.screen.blit(title, title_rect)
 
-            for button in buttons:
-                button.draw(screen)
+                for button in buttons:
+                    button.draw(self.app.screen)
 
-            pg.display.flip()
+                pg.display.flip()
 
             await asyncio.sleep(0)
