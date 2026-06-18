@@ -7,8 +7,8 @@ class Map:
     def __init__(self, game):
         self.game = game
         self.world_map = {}
-        self.rows = 1
-        self.cols = 1
+        self.rows = 3
+        self.cols = 3
         self.cell_size = 55
         self.wall_thickness = 4
         self.step = self.cell_size + self.wall_thickness
@@ -142,8 +142,20 @@ class Map:
                               self.cell_size + self.wall_thickness * 2,
                               self.wall_thickness), 0)
 
+    def del_deadends(self) -> None:
+        maze: list[list[int]] = []
+        for y in range(0, self.rows):
+            l_ = []
+            for x in range(0, self.cols):
+                l_.append(self.world_map.get((x, y), 0))
+            maze.append(l_)
+        maze = self.do_not_perfect(maze)
+        self.get_map(maze)
+
     @classmethod
-    def do_not_perfect(cls, maze: list[list[int]]) -> list[list[int]]:
+    def do_not_perfect(cls, maze: list[list[int]] = []) -> list[list[int]]:
+        # dell all deadends
+
         for y in range(0, len(maze)):
             for x in range(0, len(maze[0])):
                 # check for dead end - there is 3 wall
@@ -231,6 +243,8 @@ class Map:
                 for x in range(0, self.cols):
                     l_.append(self.world_map.get((x, y), 0))
                 maze_.append(l_)
+        # else:
+        #     print("Maze size:", len(maze_))
 
         if len(maze_) > 0:
             print("Maze size (x,y):", (len(maze_[0]), len(maze_)))

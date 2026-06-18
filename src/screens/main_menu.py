@@ -1,136 +1,142 @@
+import asyncio
 import pygame as pg
-from src.constants import * #SCREEN_HEIGHT, SCREEN_WIDTH
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from app import App
 
-screen = None
-clock = None
-pacman_icon = None
-font_large = None
-font_medium = None
-font_small = None
+from constants import SCREEN_WIDTH  # , SCREEN_HEIGHT
+from screens import BaseScreen, ScreenTypes
 
 
 class Button:
-    def __init__(self, x, y, width, height, text):
+    def __init__(
+            self,
+            y: int,
+            width: int,
+            text: str,
+            icon: pg.Surface,
+            x: int = SCREEN_WIDTH // 2 - 75,
+            height: int = 50) -> None:
         self.rect = pg.Rect(x, y, width, height)
         self.text = text
+        self.icon = icon
         self.hovered = False
         self.selected = False
 
-    def draw(self, surface):
+    def draw(self, surface) -> None:
         # Draw button border
         pg.draw.rect(surface, "yellow", self.rect, 2)
 
         # Draw image on the left if selected
-        if self.selected:
-            img_rect = pacman_icon.get_rect(
+        if self.selected or self.hovered:
+            img_rect = self.icon.get_rect(
                 center=(self.rect.left - 40, self.rect.centery))
-            surface.blit(pacman_icon, img_rect)
+            surface.blit(self.icon, img_rect)
 
         # Draw text
-        text_surf = font_small.render(self.text, True, "yellow")
+        text_surf = pg.font.Font(None, 30).render(self.text, True, "yellow")
         text_rect = text_surf.get_rect(center=self.rect.center)
         surface.blit(text_surf, text_rect)
 
-    def is_clicked(self, pos):
+    def is_clicked(self, pos) -> bool:
         return self.rect.collidepoint(pos)
 
-    def update(self, pos):
+    def update(self, pos) -> None:
         self.hovered = self.rect.collidepoint(pos)
 
 
-def start_menu():
-    global screen
-    global clock
-    global pacman_icon
-    global font_large
-    global font_medium
-    global font_small
+class MainMenuScreen(BaseScreen):
+    def __init__(self, app: "App"):
+        # from app import App
+        self.app = app
 
-    screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pg.display.set_caption("Pac-Man")
-    clock = pg.time.Clock()
-    pacman_icon = pg.image.load(
-        "src/inc/img/pacman/stay/S01.png").convert_alpha()
-    font_large = pg.font.Font(None, 80)
-    font_medium = pg.font.Font(None, 40)
-    font_small = pg.font.Font(None, 30)
+    async def run(self) -> None:
+        screen = self.app.screen
+        pg.display.set_caption("Pac-Man")
+        clock = pg.time.Clock()
+        pacman_icon = pg.image.load(
+            self.app.path_to_inc + "img/pacman/stay/S01.png").convert_alpha()
 
-    buttons = [
-        Button(SCREEN_WIDTH//2 - 75, 200, 150, 50, "START GAME"),
-        Button(SCREEN_WIDTH//2 - 75, 300, 220, 50, "VIEW HIGHSCORES"),
-        Button(SCREEN_WIDTH//2 - 75, 400, 200, 50, "INSTRUCTIONS"),
-        Button(SCREEN_WIDTH//2 - 75, 500, 150, 50, "EXIT"),
-    ]
+        buttons = [
+            Button(y=200, width=150, text="START GAME", icon=pacman_icon),
+            Button(y=300, width=220, text="VIEW HIGHSCORES", icon=pacman_icon),
+            Button(y=400, width=200, text="INSTRUCTIONS", icon=pacman_icon),
+            Button(y=500, width=150, text="EXIT", icon=pacman_icon)
+        ]
 
-    selected_index = 0
-    buttons[selected_index].selected = True
+        selected_index = 0
+        buttons[selected_index].selected = True
 
-    running = True
-    while running:
-        clock.tick(60)
-        mouse_pos = pg.mouse.get_pos()
+        running = True
+        while running:
+            clock.tick(60)
+            mouse_pos = pg.mouse.get_pos()
 
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                running = False
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    self.app.quit()
 
-            if event.type == pg.KEYDOWN:
-                if event.key == pg.K_UP:
-                    buttons[selected_index].selected = False
-                    selected_index = (selected_index - 1) % len(buttons)
-                    buttons[selected_index].selected = True
-
-                elif event.key == pg.K_DOWN:
-                    buttons[selected_index].selected = False
-                    selected_index = (selected_index + 1) % len(buttons)
-                    buttons[selected_index].selected = True
-
-                elif event.key == pg.K_RETURN or event.key == pg.K_SPACE:
-                    selected_button = buttons[selected_index]
-                    if selected_button.text == "START GAME":
-                        print("Starting game...")
-                        # Call game function here
-                    elif selected_button.text == "VIEW HIGHSCORES":
-                        print("Opening highscores...")
-                    elif selected_button.text == "INSTRUCTIONS":
-                        print("Opening instructions...")
-                    elif selected_button.text == "EXIT":
-                        running = False
-
-                elif event.key == pg.K_ESCAPE:
-                    running = False
-
-            if event.type == pg.MOUSEBUTTONDOWN:
-                for i, button in enumerate(buttons):
-                    if button.is_clicked(mouse_pos):
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_UP:
                         buttons[selected_index].selected = False
-                        selected_index = i
+                        selected_index = (selected_index - 1) % len(buttons)
                         buttons[selected_index].selected = True
 
-                        # Trigger button action
-                        if button.text == "START GAME":
-                            print("Starting game...")
-                        elif button.text == "VIEW HIGHSCORES":
-                            print("Opening highscores...")
-                        elif button.text == "INSTRUCTIONS":
-                            print("Opening instructions...")
-                        elif button.text == "EXIT":
+                    elif event.key == pg.K_DOWN:
+                        buttons[selected_index].selected = False
+                        selected_index = (selected_index + 1) % len(buttons)
+                        buttons[selected_index].selected = True
+
+                    elif event.key == pg.K_RETURN or event.key == pg.K_SPACE:
+                        selected_button = buttons[selected_index]
+                        if selected_button.text == "START GAME":
+                            self.app.move_to(ScreenTypes.GAME)
                             running = False
+                        elif selected_button.text == "VIEW HIGHSCORES":
+                            print("Opening highscores...")
+                        elif selected_button.text == "INSTRUCTIONS":
+                            self.app.move_to(ScreenTypes.INSTRUCTIONS)
+                            running = False
+                        elif selected_button.text == "EXIT":
+                            self.app.quit()
 
-        for button in buttons:
-            button.update(mouse_pos)
+                    elif event.key == pg.K_ESCAPE:
+                        self.app.quit()
 
-        screen.fill("black")
-        title = font_large.render("PAC-MAN", True, "yellow")
-        title_rect = title.get_rect(center=(SCREEN_WIDTH//2, 80))
-        screen.blit(title, title_rect)
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    for i, button in enumerate(buttons):
+                        if button.is_clicked(mouse_pos):
+                            buttons[selected_index].selected = False
+                            selected_index = i
+                            buttons[selected_index].selected = True
 
-        for button in buttons:
-            button.draw(screen)
+                            # Trigger button action
+                            if button.text == "START GAME":
+                                self.app.move_to(ScreenTypes.GAME)
+                                running = False
+                            elif button.text == "VIEW HIGHSCORES":
+                                print("Opening highscores...")
+                            elif button.text == "INSTRUCTIONS":
+                                self.app.move_to(ScreenTypes.INSTRUCTIONS)
+                                running = False
+                            elif button.text == "EXIT":
+                                self.app.quit()
 
-        pg.display.flip()
+            for i, button in enumerate(buttons):
+                button.update(mouse_pos)
+                if button.hovered:
+                    buttons[selected_index].selected = False
+                    selected_index = i
+                    buttons[selected_index].selected = True
 
+            screen.fill("black")
+            title = pg.font.Font(None, 80).render("PAC-MAN", True, "yellow")
+            title_rect = title.get_rect(center=(SCREEN_WIDTH // 2, 80))
+            screen.blit(title, title_rect)
 
-if __name__ == "__main__":
-    start_menu()
-    pg.quit()
+            for button in buttons:
+                button.draw(screen)
+
+            pg.display.flip()
+
+            await asyncio.sleep(0)

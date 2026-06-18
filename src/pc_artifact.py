@@ -1,6 +1,6 @@
 import pygame as pg
-from src.pc_entity import FrameType, GhostMode
-from src.pc_sound import SoundType, Sound
+from pc_entity import FrameType, GhostMode
+from pc_sound import SoundType, Sound
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
