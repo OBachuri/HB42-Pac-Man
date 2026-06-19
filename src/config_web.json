@@ -7,7 +7,7 @@
 	"height": 15,
 	"seed": 12,
 	"pacgum" : 0,
-	"level_max_time": 190,
+	"level_max_time": 50,
 	"remove_deadends": true,
 	"map_filename": "inc/maps/maze-1.txt"
 	},

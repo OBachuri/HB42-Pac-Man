@@ -1,6 +1,12 @@
+from __future__ import annotations
+
 import pygame as pg
 from enum import Enum
 import os
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from pc_game import Game
 
 
 class FrameType(Enum):
@@ -29,27 +35,33 @@ class GhostMode(Enum):
 class Entity:
     """Parent Class for NPC (Gosts) + Player (Pac-man) """
 
-    def __init__(self, game, point=(0, 0),
-                 color=(50, 50, 50), name="Entity", size=11):
+    def __init__(self,
+                 game: Game,
+                 point: tuple[float, float] = (0, 0),
+                 color: tuple[int, int, int] = (50, 50, 50),
+                 name: str = "Entity",
+                 size: int = 11):
         self.game = game
+        self.x: float
+        self.y: float
         self.x, self.y = point
         self.start_x, self.start_y = point
         self.name = name
         self.size = size  # radius
-        self.alive = True
-        self.dx = 0
-        self.dy = 0
+        self.alive: bool = True
+        self.dx: int = 0
+        self.dy: int = 0
         self.color = color  # (R,G,B)
         self.frames: dict[FrameType, list[pg.Surface]] = {}
         self.mode: GhostMode = GhostMode.STROLL
-        self.frame_index = 0
-        self.animation_timer = 0
-        self.event_timer = 0
-        self.speed_factor = 0.04
-        self.visible = True
-        self.max_d = 5  # max dx + dy
+        self.frame_index: int = 0
+        self.animation_timer: float = 0
+        self.event_timer: float = 0
+        self.speed_factor: float = 0.04
+        self.visible: bool = True
+        self.max_d: int = 5  # max dx + dy
 
-    def reset(self):
+    def reset(self) -> None:
         self.dx = 0
         self.dy = 0
         self.teleport()
@@ -58,7 +70,7 @@ class Entity:
         self.alive = True
         self.visible = True
 
-    def teleport(self, x: int = -1, y: int = -1):
+    def teleport(self, x: int | float = -1, y: int | float = -1) -> None:
         if x < 0:
             x = self.start_x
         if y < 0:
@@ -66,10 +78,10 @@ class Entity:
         self.x = int(x)
         self.y = int(y)
 
-    def movement(self):
+    def movement(self) -> None:
         pass
 
-    def update(self):
+    def update(self) -> None:
         self.movement()
         if self.alive:
             self.animation_timer += 0.1
@@ -80,7 +92,7 @@ class Entity:
             self.animation_timer = 0
             self.frame_index += 1
 
-    def collide_check(self, o_: "Entity"):
+    def collide_check(self, o_: "Entity") -> bool:
         x = o_.x
         y = o_.y
         s = o_.size
@@ -88,11 +100,15 @@ class Entity:
         # " c(x,y,s)", self.x,self.y,self.size)
         # print(((self.x - x)**2 + (self.y - y)**2))
         # print(((self.size + s)/self.game.map.step)**2)
-        return (((self.x - x)**2
-                + (self.y - y)**2)
-                < ((self.size + s)/self.game.map.step)**2)
+        # return ((((self.x - x)**2
+        #         + (self.y - y)**2)
+        #         < ((self.size + s)/self.game.map.step)**2))
+        if (((self.x - x)**2 + (self.y - y)**2)
+                < ((self.size + s)/self.game.map.step)**2):
+            return (True)
+        return (False)
 
-    def draw(self):
+    def draw(self) -> None:
 
         if not (self.visible):
             return
@@ -146,10 +162,11 @@ class Entity:
                            self.color,
                            (x, y), self.size)
 
-    def after_death(self):
+    def after_death(self) -> None:
         pass
 
-    def read_frames_from_file(self, file_path: str, frame_type: FrameType):
+    def read_frames_from_file(
+            self, file_path: str, frame_type: FrameType) -> None:
         path_ = os.path.join(
                 os.path.dirname(os.path.abspath(__file__)),
                 file_path,

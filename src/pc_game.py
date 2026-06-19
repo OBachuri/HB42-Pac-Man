@@ -42,7 +42,8 @@ class Game:
         else:
             self.config = config
         self.delta_time = 1
-        self.game_time: float = 110   # sec
+        self.game_max_time: float = 110   # sec
+        self.game_time: float = self.game_max_time   # sec
         self.global_trigger = False
         # self.global_event = pg.USEREVENT + 0
         self.global_event = pg.event.custom_type()
@@ -83,18 +84,23 @@ class Game:
                    (240, 24, 140), "Pink gost (Speedy)")
         self.npcs.append(pink)
         pink.read_frames_from_file("inc/img/pink/run/", FrameType.RUN)
+        pink.read_frames_from_file("inc/img/pink/stay/", FrameType.STAY)
 
         cyan = NPC(self,
                    (self.map.cols - 1, self.map.rows - 1),
                    (100, 250, 250), "Cyan gost (Inky, Bashful)")
         self.npcs.append(cyan)
         cyan.read_frames_from_file("inc/img/cyan/run/", FrameType.RUN)
+        cyan.read_frames_from_file("inc/img/cyan/stay/", FrameType.STAY)
 
         orange = NPC(self,
                      (0, self.map.rows - 1),
                      (250, 120, 10), "Orange gost (Clyde, Pockey)")
         self.npcs.append(orange)
         orange.read_frames_from_file("inc/img/orange/run/", FrameType.RUN)
+        orange.read_frames_from_file("inc/img/orange/stay/", FrameType.STAY)
+
+        self.player.lives = self.config.lives
 
         # print("-new-game")
 
@@ -137,6 +143,8 @@ class Game:
             return
 
         config = l_config[0]
+
+        self.artifacts = []
 
         if config.map_filename:
             self.map.get_map_form_file(config.map_filename)
@@ -206,10 +214,12 @@ class Game:
                 self.artifacts.append(Pellet(self, (x, y)))
                 place_set.remove((x, y))
 
-        self.game_time = config.level_max_time
+        self.game_max_time = config.level_max_time
+        self.game_time = self.game_max_time
 
     def update(self) -> None:
         if self.pause:
+            self.delta_time = self.clock.tick(self.fps)
             return
         self.player.update()
         for npc in self.npcs:
@@ -221,7 +231,16 @@ class Game:
         # self.weapon.update()
         self.delta_time = self.clock.tick(self.fps)
         self.game_time -= self.delta_time / 1000
-        pg.display.set_caption('Pac-man  42 '
+        # check for end of time
+        if self.game_time <= 0:
+            self.game_time = 0
+            if self.player.alive:
+                self.player.frame_index = 0
+            self.player.alive = False
+        cheat = ""
+        if self.config.cheat:
+            cheat = "(CHEAT MODE)"
+        pg.display.set_caption(f'Pac-man 42 {cheat}'
                                f'(fps:{self.clock.get_fps(): 6.1f})')
         if len(self.artifacts) <= 0:
             self.next_level()
@@ -236,14 +255,20 @@ class Game:
             npc.draw()
 
         if self.pause:
+            txt_ = "PRESS SPACE - to run \nESC - to return to the menu"
             if int(self.animation_timer) % 2 == 0:
                 w = self.screen.get_width()
                 h = self.screen.get_height()
                 surf = self.font.render(
-                    "PRESS SPACE - to run \nESC - to return to the menu",
+                    txt_,
                     color=(255, 255, 255), antialias=True)
                 self.screen.blit(surf, ((w - surf.get_width()) // 2, h // 2))
             self.animation_timer += 0.15/self.fps
+            self.screen.blit(self.font.render(
+                txt_,
+                False, (10, 10, 200)),
+                (10, 10 + self.map.top + (self.map.rows)
+                 * (self.map.step)))
 
         else:
             self.screen.blit(self.font.render(
@@ -289,6 +314,11 @@ class Game:
     async def run(self) -> None:
         #        pg.time.set_timer(self.global_event, 40)
         pg.display.set_caption('Pac-man 42')
+        if self.player.lives < 1:
+            self.score = 0
+            self.level = 1
+            self.player.lives = self.config.lives
+            self.next_level(0)
         while self.runing:
             self.check_events()
             self.update()

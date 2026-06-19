@@ -30,7 +30,7 @@ class PC_Artifacts():
         self.color = color
         self.points = points  # score add
 
-    def draw(self):
+    def draw(self) -> None:
         x = (self.x * self.game.map.step
              + self.game.map.cell_size / 2
              + self.game.map.wall_thickness)
@@ -45,7 +45,7 @@ class PC_Artifacts():
                            self.color,
                            (x, y), self.size)
 
-    def event(self):
+    def event(self) -> None:
         self.game.score += self.points
         self.points = 0
         self.color = (255, 255, 255)
@@ -54,7 +54,7 @@ class PC_Artifacts():
         # self.game.player.dy = max(0, self.game.player.dy - 0.1)
         self.game.artifacts.remove(self)
 
-    def update(self):
+    def update(self) -> None:
         x = int(round(self.game.player.x, 0))
         y = int(round(self.game.player.y, 0))
         if (x, y) == (self.x, self.y):
@@ -74,7 +74,7 @@ class PowerPellet(PC_Artifacts):
         super().__init__(game, point, points, color)
         self.size: int = 6  # radius
 
-    def event(self):
+    def event(self) -> None:
         super().event()
         self.game.player.dx = max(0, self.game.player.dx - 3)
         self.game.player.dy = max(0, self.game.player.dy - 3)

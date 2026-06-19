@@ -7,7 +7,7 @@
 	"height": 12,
 	"pacgum" : 0,
 	"seed": 1,
-	"level_max_time": 90
+	"level_max_time": 30
 	},
 	{
 	"number": 2,
@@ -15,16 +15,17 @@
 	"height": 15,
 	"pacgum" : 0,
 	"level_max_time" : 180
+	},
+	{
+	"number": 3,
+	"name": "maze_txt_3",
+	"maze_file": "maze_txt_3.txt"
 	}
-#	{
-#	"name": "maze_txt_3",
-#	"maze_file": "maze_txt_3.txt"
-#	}
 ],
 "lives": 3,
 "points_per_pacgum" : 10,
 "points_per_super_pacgum" : 50,
 "points_per_ghost" : 200,
 "seed" : 42,
-"cheat": false
+"cheat": true
 }

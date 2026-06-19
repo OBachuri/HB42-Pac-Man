@@ -1,21 +1,27 @@
+from __future__ import annotations
+
 import pygame as pg
 from collections import deque
 import random
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from pc_game import Game
+
 
 class Map:
-    def __init__(self, game):
+    def __init__(self, game: Game):
         self.game = game
-        self.world_map = {}
-        self.rows = 3
-        self.cols = 3
-        self.cell_size = 55
-        self.wall_thickness = 4
-        self.step = self.cell_size + self.wall_thickness
-        self.top = self.step
+        self.world_map: dict[tuple[int, int], int] = {}
+        self.rows: int = 3
+        self.cols: int = 3
+        self.cell_size: int = 55
+        self.wall_thickness: int = 4
+        self.step: int = self.cell_size + self.wall_thickness
+        self.top: int = self.step
 
-    # get map from list
-    def get_map(self, maze_: list[list[int]]):
+    def get_map(self, maze_: list[list[int]]) -> None:
+        # get map from list
         self.world_map = {}
         for y, row in enumerate(maze_):
             for x, value in enumerate(row):
@@ -26,7 +32,7 @@ class Map:
         if self.rows > 0:
             self.cols = len(maze_[0])
 
-    def get_map_form_file(self, file_name: str):
+    def get_map_form_file(self, file_name: str) -> None:
         self.world_map = {}
         y: int = 0
         with open(file_name, "r", encoding="utf-8") as f:
@@ -106,7 +112,7 @@ class Map:
                     queue.append((nx, ny))
         return path_
 
-    def draw(self):
+    def draw(self) -> None:
         pg.draw.rect(self.game.screen, 'green', (0, self.top,
                      self.wall_thickness,
                      self.rows * self.step
@@ -234,7 +240,7 @@ class Map:
 
         return maze
 
-    def print(self, maze_=[]):
+    def print(self, maze_: list[list[int]] = []) -> None:
 
         print("*"*30)
         if len(maze_) <= 0:
