@@ -33,7 +33,8 @@ class PC_Artifacts():
     def draw(self) -> None:
         x = (self.x * self.game.map.step
              + self.game.map.cell_size / 2
-             + self.game.map.wall_thickness)
+             + self.game.map.wall_thickness
+             + self.game.screen_left_shift)
 
         y = (self.y * (self.game.map.step)
              + self.game.map.cell_size / 2
@@ -116,3 +117,13 @@ class Pellet(PC_Artifacts):
             type(self).sound_index += 1
 
         super().event()
+
+
+class Fruit(PC_Artifacts):
+    def __init__(self, game: "Game",
+                 point: tuple[int | float, int | float] = (0, 0),
+                 points: int = 100,
+                 color: tuple[int, int, int] = (120, 250, 120)) -> None:
+        super().__init__(game, point, points, color)
+        self.size: int = 15     # radius
+        self.event_timer = 9    # s - time of live

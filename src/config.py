@@ -14,6 +14,7 @@ class Level(BaseModel):
     pacgum: NonNegativeInt = 42
     level_max_time: PositiveInt = 90
     speed_factor_player: PositiveFloat = 0.01
+    max_player_acceleration: PositiveInt = 5  # max_d = max(dx+dy)
     speed_factor_ghost: PositiveFloat = 0.02
 
     @property
@@ -90,6 +91,20 @@ class Level(BaseModel):
         except (TypeError, ValueError):
             print("Wrong type of 'pacgum'. Using default value")
             return 42
+
+    @field_validator("max_player_acceleration", mode="before")
+    @classmethod
+    def fix_max_player_acceleration(cls, value: Any) -> PositiveInt:
+        try:
+            int_val = int(value)
+            if int_val < 1:
+                print("'max_player_acceleration' is < 1. Using default value")
+                int_val = 5
+            return int_val
+        except (TypeError, ValueError):
+            print("Wrong type of the 'max_player_acceleration'."
+                  "Using default value")
+            return 5
 
     @field_validator("level_max_time", mode="before")
     @classmethod

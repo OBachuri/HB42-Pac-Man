@@ -15,6 +15,8 @@ class LevelWeb:
             "speed_factor_player", 0.01)
         self.speed_factor_ghost: float = data.get(
             "speed_factor_ghost", 0.02)
+        self.max_player_acceleration: int = data.get(
+            "max_player_acceleration", 5)
 
     @property
     def size(self) -> tuple[int, int]:

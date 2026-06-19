@@ -10,6 +10,7 @@ dependencies = [
 
 import asyncio
 import sys
+from typing import Any
 
 g_error_txt: str = ""
 
@@ -23,8 +24,7 @@ except ModuleNotFoundError as e:
     print(g_error_txt, file=sys.stderr)
 #    sys.exit(1)  # can't use with pygbag
 
-
-async def run_error(screen, clock) -> None:
+async def run_error(screen: Any, clock: Any) -> None:
     # The game loop must reside inside an async function
     # global g_error_txt
 

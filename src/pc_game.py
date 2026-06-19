@@ -22,8 +22,9 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from config import Config
     from config_web import ConfigWeb
-    from src.app import App
+    from app import App
 
+g_error_txt = ""
 
 class Game:
     def __init__(self, app: "App", config: Config | ConfigWeb | None = None):
@@ -33,6 +34,7 @@ class Game:
             self.screen = app.screen
         else:
             self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.screen_left_shift: int = 0
         if app.clock:
             self.clock = app.clock
         else:
@@ -58,16 +60,13 @@ class Game:
         # pg.time.set_timer(self.global_event, 40)
 
         # fonts
-        path_ = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                "inc/fonts/PressStart2P-Regular.ttf",
-            )
+        path_ = os.path.join(self.app.path_to_inc,
+                             "fonts/PressStart2P-Regular.ttf")
         if os.path.exists(path_):
-            self.font = pg.font.SysFont(path_, 40)
+            self.font = pg.font.Font(path_, 20)
         else:
             print(f"The file with font does not exist: {path_} .")
             self.font = pg.font.SysFont('Nimbus Mono PS', 20)
-        # print(path_)
 
         self.npcs: list[NPC] = []
         self.artifacts: list[PC_Artifacts] = []
@@ -167,10 +166,19 @@ class Game:
              + self.map.wall_thickness, SCREEN_WIDTH),
              max((self.map.rows + 3)*(self.map.step), SCREEN_HEIGHT)))
 
+        self.screen_left_shift = 0
+        if ((self.map.cols*self.map.step
+             + self.map.wall_thickness) < SCREEN_WIDTH):
+            self.screen_left_shift = (SCREEN_WIDTH
+                                      - self.map.cols*self.map.step
+                                      - self.map.wall_thickness) // 2
         # PacMan - place in the center
         self.player.dx = 0
         self.player.dy = 0
         self.player.teleport()
+
+        self.player.speed_factor = config.speed_factor_player
+        self.player.max_d = config.max_player_acceleration
 
         # Set NPC
         for i in range(0, len(self.npcs)):
@@ -186,6 +194,7 @@ class Game:
                 n.start_y = self.map.rows - 1
             n.reset()
             n.goal = (self.player.x, self.player.y)
+            n.speed_factor = config.speed_factor_ghost
 
         #  Add Artifacts - PowerPellet and Pellet
         self.artifacts.append(PowerPellet(self, (0, 0)))
@@ -255,15 +264,16 @@ class Game:
             npc.draw()
 
         if self.pause:
-            txt_ = "PRESS SPACE - to run \nESC - to return to the menu"
+            txt_ = "\n PRESS SPACE - to run \n ESC - to return to the menu \n "
             if int(self.animation_timer) % 2 == 0:
                 w = self.screen.get_width()
                 h = self.screen.get_height()
                 surf = self.font.render(
                     txt_,
-                    color=(255, 255, 255), antialias=True)
+                    color='yellow', bgcolor=(10, 10, 0, 40), antialias=True)
                 self.screen.blit(surf, ((w - surf.get_width()) // 2, h // 2))
-            self.animation_timer += 0.15/self.fps
+            self.animation_timer += 1/self.fps
+            txt_ = "PRESS SPACE - to run \nESC - to return to the menu \n "
             self.screen.blit(self.font.render(
                 txt_,
                 False, (10, 10, 200)),

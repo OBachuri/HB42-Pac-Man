@@ -113,12 +113,13 @@ class Map:
         return path_
 
     def draw(self) -> None:
-        pg.draw.rect(self.game.screen, 'green', (0, self.top,
+        pg.draw.rect(self.game.screen, 'green', (
+            self.game.screen_left_shift, self.top,
                      self.wall_thickness,
                      self.rows * self.step
                      + self.wall_thickness), 0)
         pg.draw.rect(self.game.screen, 'green',
-                     (0, self.rows * self.step
+                     (self.game.screen_left_shift, self.rows * self.step
                       + self.top,
                       self.cols * self.step,
                       self.wall_thickness), 0)
@@ -127,7 +128,8 @@ class Map:
             w = self.world_map[pos] & 15
             if w == 15:  # call is part of 42 pattern (isolated cell)
                 pg.draw.rect(self.game.screen, 'white',
-                             (pos[0] * self.step
+                             (self.game.screen_left_shift
+                              + pos[0] * self.step
                               + self.wall_thickness,
                               pos[1] * self.step
                               + self.top + self.wall_thickness,
@@ -135,14 +137,16 @@ class Map:
                               self.cell_size), 0)
             if (w & 2) == 2:
                 pg.draw.rect(self.game.screen, 'green',
-                             ((pos[0] + 1) * self.step,
+                             (self.game.screen_left_shift
+                              + (pos[0] + 1) * self.step,
                               pos[1] * self.step
                               + self.top,
                               self.wall_thickness,
                               self.cell_size + self.wall_thickness * 2), 0)
             if (w & 1) == 1:
                 pg.draw.rect(self.game.screen, 'green',
-                             (pos[0] * self.step,
+                             (self.game.screen_left_shift
+                              + pos[0] * self.step,
                               pos[1] * self.step
                               + self.top,
                               self.cell_size + self.wall_thickness * 2,
