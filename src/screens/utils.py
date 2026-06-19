@@ -121,16 +121,13 @@ class Button(PCUIElement):
         self.lines = self.wrap_text(SCREEN_WIDTH // 2 - 42)
         self.line_height = self.font.get_height()
         self.total_height = len(self.lines) * self.line_height
-
         text_surf = self.font.render(self.text, True, self.text_color)
-        
         self.rect.width = min(text_surf.get_width() + 42, SCREEN_WIDTH // 2)
         self.rect.height = self.total_height + 42
         self.rect.x = (SCREEN_WIDTH - self.rect.width) // 2
 
-
     def draw(self, surface: pg.Surface) -> None:
-        if self.selected or self.hovered:
+        if (self.selected or self.hovered) and self.icon:
             img_rect = self.icon.get_rect(
                 center=(self.rect.left - 42, self.rect.centery))
             surface.blit(self.icon, img_rect)
