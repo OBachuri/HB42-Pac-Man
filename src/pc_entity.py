@@ -59,7 +59,7 @@ class Entity:
         self.event_timer: float = 0
         self.speed_factor: float = 0.04
         self.visible: bool = True
-        self.max_d: int = 5  # max dx + dy
+        self.max_d: int = 5  # max dx + dy = maximum acceleration
 
     def reset(self) -> None:
         self.dx = 0
@@ -115,7 +115,8 @@ class Entity:
 
         x = (self.x * self.game.map.step
              + self.game.map.cell_size / 2
-             + self.game.map.wall_thickness)
+             + self.game.map.wall_thickness
+             + self.game.screen_left_shift)
 
         y = (self.y * (self.game.map.step)
              + self.game.map.cell_size / 2

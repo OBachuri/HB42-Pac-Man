@@ -310,7 +310,8 @@ class Player(Entity):
         x = (self.x * (self.game.map.cell_size
                        + self.game.map.wall_thickness)
              + self.game.map.cell_size / 2
-             + self.game.map.wall_thickness)
+             + self.game.map.wall_thickness
+             + self.game.screen_left_shift)
 
         y = (self.y * (self.game.map.cell_size
                        + self.game.map.wall_thickness)

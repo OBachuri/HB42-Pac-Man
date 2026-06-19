@@ -36,6 +36,8 @@ class NPC(Entity):
         self.read_frames_from_file("inc/img/ghost/eyes/left/", FrameType.LEFT)
         self.read_frames_from_file("inc/img/ghost/eyes/right/",
                                    FrameType.RIGHT)
+        self.alive: bool = True
+        self.visible: bool = True
 
     def find_goal(self) -> None:
         x: int = int(round(self.x, 0))
