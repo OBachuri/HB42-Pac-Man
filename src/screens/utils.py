@@ -118,16 +118,21 @@ class Button(PCUIElement):
         self.update_layout()
 
     def update_layout(self) -> None:
-        self.text_surf = self.font.render(self.text, True, self.text_color)
-        self.rect.width = self.text_surf.get_width() + 42
-        self.rect.height = self.font.get_height() + 42
+        self.lines = self.wrap_text(SCREEN_WIDTH // 2 - 42)
+        self.line_height = self.font.get_height()
+        self.total_height = len(self.lines) * self.line_height
+
+        text_surf = self.font.render(self.text, True, self.text_color)
+        
+        self.rect.width = min(text_surf.get_width() + 42, SCREEN_WIDTH // 2)
+        self.rect.height = self.total_height + 42
         self.rect.x = (SCREEN_WIDTH - self.rect.width) // 2
 
 
     def draw(self, surface: pg.Surface) -> None:
         if self.selected or self.hovered:
             img_rect = self.icon.get_rect(
-                center=(self.rect.left - 40, self.rect.centery))
+                center=(self.rect.left - 42, self.rect.centery))
             surface.blit(self.icon, img_rect)
 
         pg.draw.rect(
@@ -145,9 +150,13 @@ class Button(PCUIElement):
             border_radius=self.border_radius
         )
 
-        # text_surf = self.font.render(self.text, True, self.text_color)
-        text_rect = self.text_surf.get_rect(center=self.rect.center)
-        surface.blit(self.text_surf, text_rect)
+        start_y = self.rect.centery - self.total_height // 2
+
+        for i, line in enumerate(self.lines):
+            text_surf = self.font.render(line, True, self.text_color)
+            text_rect = text_surf.get_rect(centerx=self.rect.centerx,
+                                           y=start_y + i * self.line_height)
+            surface.blit(text_surf, text_rect)
 
     def is_clicked(self, pos: tuple[int, int]) -> bool:
         return self.rect.collidepoint(pos)
