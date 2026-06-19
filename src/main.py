@@ -24,7 +24,7 @@ except ModuleNotFoundError as e:
 #    sys.exit(1)  # can't use with pygbag
 
 
-async def run_error(screen, clock):
+async def run_error(screen, clock) -> None:
     # The game loop must reside inside an async function
     # global g_error_txt
 

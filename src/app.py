@@ -6,7 +6,8 @@ import pygame as pg
 
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from pc_game import Game
-from screens import ScreenTypes, BaseScreen, MainMenuScreen, InstructionsScreen
+from screens import ScreenTypes, BaseScreen, MainMenuScreen
+from screens import InstructionsScreen, HighscoresScreen
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from config import Config
@@ -40,6 +41,9 @@ class App:
             case ScreenTypes.INSTRUCTIONS:
                 self.current_screen = self.screens.setdefault(
                     screen, InstructionsScreen(self))
+            case ScreenTypes.HIGH_SCORES:
+                self.current_screen = self.screens.setdefault(
+                    screen, HighscoresScreen(self))
             # case ScreenTypes.END_OF_GAME:
             #     if self.current_screen == ScreenTypes.GAME:
             #         self.current_score = self.game.score

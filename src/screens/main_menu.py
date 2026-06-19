@@ -54,12 +54,16 @@ class MainMenuScreen(BaseScreen):
         clock = self.app.clock
 
         buttons = [
-            Button(y=200, width=150, text="START GAME", icon=self.pacman_icon),
-            Button(y=300, width=220, text="VIEW HIGHSCORES", icon=self.pacman_icon),
-            Button(y=400, width=200, text="INSTRUCTIONS", icon=self.pacman_icon)
+            Button(y=200, width=150, text="START GAME",
+                   icon=self.pacman_icon),
+            Button(y=300, width=220, text="VIEW HIGHSCORES",
+                   icon=self.pacman_icon),
+            Button(y=400, width=200, text="INSTRUCTIONS",
+                   icon=self.pacman_icon)
         ]
         if sys.platform != "emscripten":
-            buttons.append(Button(y=500, width=150, text="EXIT", icon=self.pacman_icon))
+            buttons.append(Button(y=500, width=150, text="EXIT",
+                                  icon=self.pacman_icon))
 
         selected_index = 0
         buttons[selected_index].selected = True
@@ -94,7 +98,8 @@ class MainMenuScreen(BaseScreen):
                             self.app.move_to(ScreenTypes.GAME)
                             running = False
                         elif selected_button.text == "VIEW HIGHSCORES":
-                            print("Opening highscores...")
+                            self.app.move_to(ScreenTypes.HIGH_SCORES)
+                            running = False
                         elif selected_button.text == "INSTRUCTIONS":
                             self.app.move_to(ScreenTypes.INSTRUCTIONS)
                             running = False
@@ -102,7 +107,8 @@ class MainMenuScreen(BaseScreen):
                             self.app.quit()
                             running = False
 
-                    elif event.key == pg.K_ESCAPE and sys.platform != "emscripten":
+                    elif (event.key == pg.K_ESCAPE and
+                          sys.platform != "emscripten"):
                         self.app.quit()
                         running = False
 
@@ -118,7 +124,8 @@ class MainMenuScreen(BaseScreen):
                                 self.app.move_to(ScreenTypes.GAME)
                                 running = False
                             elif button.text == "VIEW HIGHSCORES":
-                                print("Opening highscores...")
+                                self.app.move_to(ScreenTypes.HIGH_SCORES)
+                                running = False
                             elif button.text == "INSTRUCTIONS":
                                 self.app.move_to(ScreenTypes.INSTRUCTIONS)
                                 running = False
