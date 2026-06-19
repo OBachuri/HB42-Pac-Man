@@ -22,8 +22,8 @@ class InstructionsScreen(BaseScreen):
             "- Avoid the Ghosts: If a ghost touches you while they are " +
             "normal-colored, you lose a life. You start with " +
             f"{app.config.lives} lives.\n" +
-            "- Eat Fruit: Bonus fruits appear twice per level in the center " +
-            "of the screen, offering extra points.\n\n" +
+            "- Eat Fruit: Bonus fruits appear twice per level of the screen, " +
+            "offering extra points.\n\n" +
             f"Scoring Points:\n- Pacgums: {app.config.points_per_pacgum}" +
             " points each\n" +
             f"- Super-pacgums: {app.config.points_per_super_pacgum}" +
