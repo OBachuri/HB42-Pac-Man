@@ -191,9 +191,9 @@ class Fruit(PC_Artifacts):
             return
         # A random place but not near PacMan
         min_dis = 1
-        if self.game.map.cols > 10 and self.game.map.cols > 10:
+        if self.game.map.cols > 10 and self.game.map.rows > 10:
             min_dis = 5
-        elif self.game.map.cols > 6 and self.game.map.cols > 6:
+        elif self.game.map.cols > 6 and self.game.map.rows > 6:
             min_dis = 3
         place_set = {
             (x, y) for x in range(0, self.game.map.cols)
@@ -202,6 +202,14 @@ class Fruit(PC_Artifacts):
                 and abs(x-self.game.player.x) > min_dis
                 and abs(y-self.game.player.y) > min_dis
                 )}
+        if len(place_set) < 2:
+            place_set = {
+                (x, y) for x in range(0, self.game.map.cols)
+                for y in range(0, self.game.map.rows)
+                if (self.game.map.world_map.get((x, y), 0) & 15 != 15)}
+            place_set.remove((int(self.game.player.x),
+                              int(self.game.player.y)))
+
         x, y = random.choice(tuple(place_set))
         self.x = int(x)
         self.y = int(y)
