@@ -13,7 +13,7 @@ from pc_map import Map
 from pc_player import Player
 from pc_npc import NPC, RedGhosts  # , GhostMode
 from pc_artifact import PC_Artifacts
-from pc_artifact import PowerPellet, Pellet
+from pc_artifact import PowerPellet, Pellet, BonusFruitType
 from pc_entity import FrameType
 from screens import ScreenTypes
 
@@ -25,6 +25,7 @@ if TYPE_CHECKING:
     from app import App
 
 g_error_txt = ""
+
 
 class Game:
     def __init__(self, app: "App", config: Config | ConfigWeb | None = None):
@@ -56,6 +57,10 @@ class Game:
         self.pause: bool = True
         self.runing: bool = True
         self.animation_timer: float = 0
+        self.fruits_triger: list[int] = []
+        self.points_per_bonus_fruit: int = 100
+        self.bonus_fruit_type: BonusFruitType = BonusFruitType.CHERRY
+
         # pg.event.set_grab(True)
         # pg.time.set_timer(self.global_event, 40)
 
@@ -195,13 +200,21 @@ class Game:
             n.reset()
             n.goal = (self.player.x, self.player.y)
             n.speed_factor = config.speed_factor_ghost
+            n.points = self.config.points_per_ghost
 
         #  Add Artifacts - PowerPellet and Pellet
-        self.artifacts.append(PowerPellet(self, (0, 0)))
-        self.artifacts.append(PowerPellet(self, (self.map.cols - 1, 0)))
+        self.artifacts.append(
+            PowerPellet(self, (0, 0),
+                        points=self.config.points_per_super_pacgum))
+        self.artifacts.append(
+            PowerPellet(self, (self.map.cols - 1, 0),
+                        points=self.config.points_per_super_pacgum))
         self.artifacts.append(PowerPellet(
-            self, (self.map.cols - 1, self.map.rows - 1)))
-        self.artifacts.append(PowerPellet(self, (0, self.map.rows - 1)))
+            self, (self.map.cols - 1, self.map.rows - 1),
+            points=self.config.points_per_super_pacgum))
+        self.artifacts.append(PowerPellet(
+            self, (0, self.map.rows - 1),
+            points=self.config.points_per_super_pacgum))
 
         place_set = {(x, y) for x in range(0, self.map.cols)
                      for y in range(0, self.map.rows)
@@ -212,7 +225,8 @@ class Game:
 
         if config.pacgum <= 0:
             for s_ in place_set:
-                self.artifacts.append(Pellet(self, s_))
+                self.artifacts.append(Pellet(
+                    self, s_, points=self.config.points_per_pacgum))
         else:
             for p in range(0, config.pacgum):
                 if (len(place_set) < 1):
@@ -220,8 +234,24 @@ class Game:
                           f"({p+1} from {config.pacgum}).")
                     break
                 x, y = random.choice(tuple(place_set))
-                self.artifacts.append(Pellet(self, (x, y)))
+                self.artifacts.append(
+                    Pellet(self, (x, y),
+                           points=self.config.points_per_pacgum))
                 place_set.remove((x, y))
+
+        # ======== Bonus Fruits
+        # Fill array with pellets quantity when bonus fruit must be created.
+        # Bonus fruit appears two times for every level:
+        # when 30% and 70% of Pacgum are eaten
+
+        self.fruits_triger = []
+        pellets_cnt = len(self.artifacts)
+
+        if (pellets_cnt > 9) and (config.points_per_bonus_fruit > 0):
+            self.fruits_triger = [int(0.7 * pellets_cnt),
+                                  int(0.3 * pellets_cnt)]
+            self.points_per_bonus_fruit = config.points_per_bonus_fruit
+            self.bonus_fruit_type = config.bonus_fruit_type
 
         self.game_max_time = config.level_max_time
         self.game_time = self.game_max_time

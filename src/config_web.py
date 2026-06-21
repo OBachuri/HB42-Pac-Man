@@ -1,5 +1,7 @@
 from typing import Any
 
+from pc_artifact import BonusFruitType
+
 
 class LevelWeb:
     def __init__(self, data: dict[str, Any] = {}) -> None:
@@ -17,6 +19,15 @@ class LevelWeb:
             "speed_factor_ghost", 0.02)
         self.max_player_acceleration: int = data.get(
             "max_player_acceleration", 5)
+        self.points_per_bonus_fruit: int = data.get(
+            "points_per_bonus_fruit", 100)
+        try:
+            f_nane = str(data.get("bonus_fruit_type", "cherry"))
+            fruit = BonusFruitType[f_nane.upper()]
+        except KeyError:
+            fruit = BonusFruitType.CERRY
+            print("Can't find fruit: ", f_nane, "!")
+        self.bonus_fruit_type: BonusFruitType = fruit
 
     @property
     def size(self) -> tuple[int, int]:
