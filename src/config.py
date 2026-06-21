@@ -3,6 +3,8 @@ from pydantic import BaseModel
 from pydantic import PositiveInt, NonNegativeInt, PositiveFloat
 from pydantic import field_validator
 
+from pc_artifact import BonusFruitType
+
 
 class Level(BaseModel):
     map_filename: str = ""
@@ -16,10 +18,38 @@ class Level(BaseModel):
     speed_factor_player: PositiveFloat = 0.01
     max_player_acceleration: PositiveInt = 5  # max_d = max(dx+dy)
     speed_factor_ghost: PositiveFloat = 0.02
+    bonus_fruit_type: BonusFruitType = BonusFruitType.CHERRY
+    points_per_bonus_fruit: PositiveInt = 100
 
     @property
     def size(self) -> tuple[PositiveInt, PositiveInt]:
         return (self.width, self.height)
+
+    @field_validator("bonus_fruit_type", mode="before")
+    @classmethod
+    def fix_BonusFruitType(cls, value: Any) -> BonusFruitType:
+        try:
+            f_name = str(value)
+            fruit = BonusFruitType[f_name.upper()]
+        except (KeyError, TypeError, ValueError):
+            fruit = BonusFruitType.CERRY
+            print("Can't find fruit: ", value, "!")
+        return fruit
+
+    @field_validator("points_per_bonus_fruit", mode="before")
+    @classmethod
+    def fix_bonus_points(cls, value: Any) -> PositiveInt:
+        try:
+            int_val = int(value)
+            if int_val < 0:
+                print("Points per bonus fruit is less than 1. "
+                      "Using default value (100)")
+                return 1
+            return int_val
+        except (TypeError, ValueError):
+            print("Wrong type of points_per_bonus_fruit. "
+                  "Using default value (100)")
+            return 1
 
     @field_validator("number", mode="before")
     @classmethod
