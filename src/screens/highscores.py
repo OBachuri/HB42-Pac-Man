@@ -1,6 +1,6 @@
-import json
 import asyncio
 import pygame as pg
+from highscore_handler import HighscoresHandler
 from screens import BaseScreen, ScreenTypes
 from constants import FPS, SCREEN_HEIGHT, SCREEN_WIDTH
 from typing import TYPE_CHECKING
@@ -11,16 +11,7 @@ if TYPE_CHECKING:
 class HighscoresScreen(BaseScreen):
     def __init__(self, app: "App"):
         self.app = app
-        self.highscores = self.read_highscores()
-
-    def read_highscores(self) -> dict[str, int]:
-        result: dict[str, int] = {}
-        try:
-            with open(self.app.config.highscores_filename) as f:
-                result = json.load(f)
-        except Exception:
-            pass
-        return result
+        self.highscores = HighscoresHandler.get_highscores(app.config)
 
     async def run(self) -> None:
         font = pg.font.SysFont("carlito", 30)
@@ -42,6 +33,7 @@ class HighscoresScreen(BaseScreen):
                     if event.key == pg.K_ESCAPE:
                         running = False
                         self.app.move_to(ScreenTypes.MAIN_MENU)
+                        HighscoresHandler.store_highscores(self.app.config, {"Bob": 123})
 
             self.app.screen.fill("black")
             y = 10
@@ -54,8 +46,9 @@ class HighscoresScreen(BaseScreen):
                 self.app.screen.blit(score_surf,
                                      (x - score_surf.width // 2, y))
             else:
-                for highscore in self.highscores.items():
-                    score_str = f"{highscore[0]}: {highscore[1]}"
+                for highscore in self.highscores:
+                    name, score = list(highscore.items())[0]
+                    score_str = name + ": " + str(score)
                     score_surf = font.render(score_str, False, "yellow")
                     self.app.screen.blit(score_surf,
                                          (x - score_surf.width // 2, y))
