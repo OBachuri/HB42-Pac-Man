@@ -9,22 +9,22 @@ class PCUIElement:
         y: int,
         width: int,
         height: int,
+        font: pg.Font,
         text: str = "",
         bg_color: str = "black",
         text_color: str = "yellow",
         border_color: str = "yellow",
         border_radius: int = 12,
-        font: pg.Font | None = None,
         max_lines: int = 2
     ) -> None:
         self.rect = pg.Rect(x, y, width, height)
+        self.font = font
         self.text = text
         self.bg_color = bg_color
         self.text_color = text_color
         self.border_color = border_color
         self.border_radius = border_radius
         self.max_lines = max_lines
-        self.font = font or pg.font.SysFont(None, 30)
 
     def wrap_text(self, max_width: int) -> list[str]:
         """Return a list of lines wrapped to max_width."""
@@ -105,13 +105,14 @@ class PCUIElement:
 class Button(PCUIElement):
     def __init__(
             self,
-            y: int,
             text: str,
+            font: pg.Font,
             x: int = 0,
+            y: int = 0,
             width: int = 0,
             height: int = 0,
             icon: pg.Surface | None = None) -> None:
-        super().__init__(x, y, width, height, text)
+        super().__init__(x=x, y=y, width=width, height=height, font=font, text=text)
         self.icon = icon
         self.hovered = False
         self.selected = False

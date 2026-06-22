@@ -60,7 +60,7 @@ class InstructionsScreen(BaseScreen):
         return lines
 
     async def run(self) -> None:
-        font = pg.font.SysFont("carlito", 30)
+        font = self.app.small_font
         text_rect = pg.Rect(
             5, 5, SCREEN_WIDTH - 10, SCREEN_HEIGHT - font.get_height() * 2
         )

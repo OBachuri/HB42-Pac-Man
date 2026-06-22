@@ -64,14 +64,7 @@ class Game:
         # pg.event.set_grab(True)
         # pg.time.set_timer(self.global_event, 40)
 
-        # fonts
-        path_ = os.path.join(self.app.path_to_inc,
-                             "fonts/PressStart2P-Regular.ttf")
-        if os.path.exists(path_):
-            self.font = pg.font.Font(path_, 20)
-        else:
-            print(f"The file with font does not exist: {path_} .")
-            self.font = pg.font.SysFont('Nimbus Mono PS', 20)
+        self.font = app.small_font
 
         self.npcs: list[NPC] = []
         self.artifacts: list[PC_Artifacts] = []
@@ -333,6 +326,7 @@ class Game:
                                          and event.key == pg.K_ESCAPE):
                 # pg.quit()
                 # sys.exit()
+                self.app.move_to(ScreenTypes.MAIN_MENU)
                 self.runing = False
             elif event.type == self.global_event:
                 self.global_trigger = True
@@ -347,7 +341,7 @@ class Game:
                                      or event.key == pg.K_LEFT
                                      or event.key == pg.K_d
                                      or event.key == pg.K_RIGHT
-                                     )
+                                 )
                                  ):
                 self.pause = False
 
@@ -366,4 +360,4 @@ class Game:
             await asyncio.sleep(0)
         self.pause = True
         self.runing = True
-        self.app.move_to(ScreenTypes.MAIN_MENU)
+        # self.app.move_to(ScreenTypes.MAIN_MENU)

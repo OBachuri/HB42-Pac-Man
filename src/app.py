@@ -28,7 +28,20 @@ class App:
         self.screens: dict[ScreenTypes, BaseScreen] = {}
         self.current_screen = None
         self.path_to_inc = os.path.join(os.path.dirname(__file__), 'inc/')
+
+        # fonts
+        path_ = os.path.join(self.path_to_inc,
+                             "fonts/PressStart2P-Regular.ttf")
+        if os.path.exists(path_):
+            self.large_font = pg.font.Font(path_, 30)
+            self.small_font = pg.font.Font(path_, 20)
+        else:
+            print(f"The file with font does not exist: {path_} .")
+            self.large_font = pg.font.SysFont('Nimbus Mono PS', 30)
+            self.small_font = pg.font.SysFont('Nimbus Mono PS', 20)
+
         self.game = Game(self)
+
 
     def move_to(self, screen: ScreenTypes) -> None:
         match screen:

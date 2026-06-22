@@ -21,18 +21,21 @@ class MainMenuScreen(BaseScreen):
         clock = self.app.clock
 
         buttons = [
-            Button(y=200, text="START GAME", icon=self.pacman_icon),
-            Button(y=300, text="VIEW HIGHSCORES", icon=self.pacman_icon),
-            Button(y=400, text="INSTRUCTIONS", icon=self.pacman_icon)
+            Button(y=200, text="START GAME",
+                   icon=self.pacman_icon, font=self.app.small_font),
+            Button(y=300, text="VIEW HIGHSCORES",
+                   icon=self.pacman_icon, font=self.app.small_font),
+            Button(y=400, text="INSTRUCTIONS",
+                   icon=self.pacman_icon, font=self.app.small_font)
         ]
         if sys.platform != "emscripten":
             buttons.append(Button(y=500, width=150, text="EXIT",
-                                  icon=self.pacman_icon))
+                                  icon=self.pacman_icon, font=self.app.small_font))
 
         selected_index = 0
         buttons[selected_index].selected = True
 
-        title = pg.font.Font(None, 80).render("PAC-MAN", True, "yellow")
+        title = self.app.large_font.render("PAC-MAN", True, "yellow")
         title_rect = title.get_rect(center=(SCREEN_WIDTH//2, 80))
 
         running = True
