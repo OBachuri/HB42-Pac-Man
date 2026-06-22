@@ -11,9 +11,10 @@ if TYPE_CHECKING:
 class HighscoresScreen(BaseScreen):
     def __init__(self, app: "App"):
         self.app = app
-        self.highscores = HighscoresHandler.get_highscores(app.config)
 
     async def run(self) -> None:
+        self.highscores = HighscoresHandler.get_highscores(self.app.config)
+
         font = pg.font.SysFont("carlito", 30)
         title_font = pg.font.SysFont("carlito", 45)
         line_height = font.get_linesize() + 4

@@ -27,5 +27,5 @@ class HighscoresHandler:
             with open(config.highscores_filename, "w") as f:
                 f.write(json.dumps(cls.highscores, indent=2))
         except Exception as e:
-            print("\nERROR!!! Could not store highscores!")
+            print("\nError: Could not store highscores.")
             print(e)
