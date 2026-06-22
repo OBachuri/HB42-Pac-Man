@@ -20,7 +20,9 @@ class HighscoresHandler:
     def store_highscores(cls, config: "Config", score: dict[str, int]) -> None:
         highscores = cls.highscores
         highscores.append(score)
-        sorted_scores = sorted(highscores, key=lambda d: list(d.values())[0], reverse=True)
+        sorted_scores = sorted(highscores,
+                               key=lambda d: list(d.values())[0],
+                               reverse=True)
         cls.highscores = sorted_scores[:5]
 
         try:

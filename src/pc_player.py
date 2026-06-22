@@ -5,7 +5,7 @@ import pygame.gfxdraw as pggf
 import math
 
 from pc_entity import Entity, FrameType
-from screens import *
+from screens import ScreenTypes
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:

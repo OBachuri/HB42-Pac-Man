@@ -34,7 +34,6 @@ class HighscoresScreen(BaseScreen):
                     if event.key == pg.K_ESCAPE:
                         running = False
                         self.app.move_to(ScreenTypes.MAIN_MENU)
-                        HighscoresHandler.store_highscores(self.app.config, {"Bob": 123})
 
             self.app.screen.fill("black")
             y = 10
