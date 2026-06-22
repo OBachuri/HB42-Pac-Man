@@ -9,7 +9,8 @@
 	"pacgum" : 0,
 	"level_max_time": 50,
 	"remove_deadends": true,
-	"map_filename": "inc/maps/maze-1.txt"
+	"map_filename": "inc/maps/maze-1.txt",
+	"bonus_fruit_type": "Strawberry"
 	},
 	{
 	"number": 2,
@@ -19,8 +20,10 @@
 	"seed": 1,
 	"remove_deadends": true,
 	"speed_factor_ghost": 0.04,
-	"max_player_acceleration": 20,
-	"level_max_time": 90
+	"max_player_acceleration": 6,
+	"level_max_time": 90,
+	"bonus_fruit_type":"raspberry",
+	"points_per_bonus_fruit": 300
 	},
 	{
 	"number": 3,

@@ -4,17 +4,20 @@
 	{
 	"number": 1,
 	"width": 14,
-	"height": 12,
+	"height": 10,
 	"pacgum" : 0,
 	"seed": 1,
-	"level_max_time": 30
+	"level_max_time": 130,
+	"bonus_fruit_type": "Strawberry"
 	},
 	{
 	"number": 2,
 	"width": 15,
 	"height": 15,
 	"pacgum" : 0,
-	"level_max_time" : 180
+	"level_max_time" : 180,
+	"bonus_fruit_type":"raspberry",
+	"points_per_bonus_fruit": 300
 	},
 	{
 	"number": 3,

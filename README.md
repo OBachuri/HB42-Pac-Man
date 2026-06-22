@@ -15,6 +15,10 @@ The task: Recreate the famous arcade game Pac-man!
 > [!WARNING]
 > The program does not ready. It is under development now.
 
+## Game screen example
+![Result](result.png)
+
+
 ## Installation
 
 ```bash
@@ -48,6 +52,7 @@ python3 pac-man.py my_config.json
 #### Cheat mode
 
 - **F** - Ghosts SCATTER
+
 
 ### Configuration File
 
