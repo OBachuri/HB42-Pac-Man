@@ -106,8 +106,7 @@ class Player(Entity):
         self.game.pause = True
         self.game.game_time = self.game.game_max_time
         if self.lives <= 0:
-            # change to ScreenTypes.VICTORY or GAME OVER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            self.game.app.move_to(ScreenTypes.MAIN_MENU)
+            self.game.app.game_over(False, self.game)
             self.game.runing = False
 
     def movement(self) -> None:

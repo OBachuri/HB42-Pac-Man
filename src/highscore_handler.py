@@ -13,6 +13,7 @@ class HighscoresHandler:
                 highscores = json.load(f)
                 if not isinstance(highscores, list):
                     return []
+                highscores.sort(key=lambda d: list(d.values())[0], reverse=True)
         except Exception:
             pass
         return highscores
@@ -20,7 +21,7 @@ class HighscoresHandler:
     @classmethod
     def store_highscores(cls, config: "Config", name: str, score: int) -> None:
         highscores = cls.get_highscores(config)
-        highscores.append({name: score})
+        highscores.insert(0, {name: score})
         highscores.sort(key=lambda d: list(d.values())[0], reverse=True)
         highscores = highscores[:10]
 

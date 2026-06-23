@@ -7,7 +7,7 @@ import pygame as pg
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from pc_game import Game
 from screens import ScreenTypes, BaseScreen, MainMenuScreen
-from screens import InstructionsScreen, HighscoresScreen
+from screens import InstructionsScreen, HighscoresScreen, GameEndScreen
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from config import Config
@@ -29,7 +29,6 @@ class App:
         self.current_screen = None
         self.path_to_inc = os.path.join(os.path.dirname(__file__), 'inc/')
 
-        # fonts
         path_ = os.path.join(self.path_to_inc,
                              "fonts/PressStart2P-Regular.ttf")
         if os.path.exists(path_):
@@ -57,11 +56,12 @@ class App:
             case ScreenTypes.HIGH_SCORES:
                 self.current_screen = self.screens.setdefault(
                     screen, HighscoresScreen(self))
-            # case ScreenTypes.END_OF_GAME:
-            #     if self.current_screen == ScreenTypes.GAME:
-            #         self.current_score = self.game.score
-            #     self.current_screen = self.screens.setdefault(
-            #         screen, EndOfGameScreen(self))
+
+    def game_over(self, won: bool, game: Game) -> None:
+        self.current_screen = self.screens.setdefault(
+            ScreenTypes.END_OF_GAME,
+            GameEndScreen(self, won, game.score)
+        )
 
     def quit(self) -> None:
         self.running = False

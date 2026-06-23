@@ -116,8 +116,7 @@ class Game:
 
         if self.level > max_level:
             # End of all Levels = Win of game
-            # change to ScreenTypes.VICTORY or GAME OVER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            self.app.move_to(ScreenTypes.MAIN_MENU)
+            self.app.game_over(True, self)
             self.pause = True
             self.runing = False
             return

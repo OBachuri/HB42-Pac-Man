@@ -6,5 +6,5 @@ class ScreenTypes(Enum):
     GAME = "game"
     INSTRUCTIONS = "instructions"
     HIGH_SCORES = "high_scores"
-    # END_OF_GAME = "end_of_game" # "game_over"/"victory"
+    END_OF_GAME = "end_of_game"
     # PAUSE_MENU = "pause_menu"
