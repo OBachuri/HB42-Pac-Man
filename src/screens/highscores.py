@@ -36,9 +36,9 @@ class HighscoresScreen(BaseScreen):
                         self.app.move_to(ScreenTypes.MAIN_MENU)
 
             self.app.screen.fill("black")
-            y = 10
+            y = 60
             self.app.screen.blit(title_surf, (x - title_surf.width // 2, y))
-            y += title_line_height
+            y += title_line_height * 2
 
             if not self.highscores:
                 score_surf = font.render(
@@ -46,13 +46,13 @@ class HighscoresScreen(BaseScreen):
                 self.app.screen.blit(score_surf,
                                      (x - score_surf.width // 2, y))
             else:
-                for highscore in self.highscores:
+                for nbr, highscore in enumerate(self.highscores, start=1):
                     name, score = list(highscore.items())[0]
-                    score_str = name + ": " + str(score)
+                    score_str = f"{nbr}. {name} - {score}"
                     score_surf = font.render(score_str, False, "yellow")
                     self.app.screen.blit(score_surf,
                                          (x - score_surf.width // 2, y))
-                    y += line_height
+                    y += line_height * 1.5
 
             hint_surf = font.render("ESC: back", True, "white")
             self.app.screen.blit(hint_surf, (x - hint_surf.width // 2,
