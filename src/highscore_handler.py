@@ -5,29 +5,28 @@ if TYPE_CHECKING:
 
 
 class HighscoresHandler:
-    highscores: list[dict[str, int]] = []
-
-    @classmethod
-    def get_highscores(cls, config: "Config") -> list[dict[str, int]]:
+    @staticmethod
+    def get_highscores(config: "Config") -> list[dict[str, int]]:
+        highscores: list[dict[str, int]] = []
         try:
             with open(config.highscores_filename) as f:
-                cls.highscores = json.load(f)
+                highscores = json.load(f)
+                if not isinstance(highscores, list):
+                    return []
         except Exception:
             pass
-        return cls.highscores
+        return highscores
 
     @classmethod
-    def store_highscores(cls, config: "Config", score: dict[str, int]) -> None:
-        highscores = cls.highscores
-        highscores.append(score)
-        sorted_scores = sorted(highscores,
-                               key=lambda d: list(d.values())[0],
-                               reverse=True)
-        cls.highscores = sorted_scores[:5]
+    def store_highscores(cls, config: "Config", name: str, score: int) -> None:
+        highscores = cls.get_highscores(config)
+        highscores.append({name: score})
+        highscores.sort(key=lambda d: list(d.values())[0], reverse=True)
+        highscores = highscores[:10]
 
         try:
             with open(config.highscores_filename, "w") as f:
-                f.write(json.dumps(cls.highscores, indent=2))
+                json.dump(highscores, f, indent=2)
         except Exception as e:
             print("\nError: Could not store highscores.")
             print(e)

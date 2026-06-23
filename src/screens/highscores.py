@@ -17,8 +17,8 @@ class HighscoresScreen(BaseScreen):
 
         font = self.app.small_font
         title_font = self.app.large_font
-        line_height = font.get_linesize() + 4
-        title_line_height = title_font.get_linesize() + 4
+        line_height = font.get_linesize() + 8
+        title_line_height = title_font.get_linesize() + 8
         title_surf = title_font.render("Highscores:", False, "yellow")
 
         x = SCREEN_WIDTH // 2
