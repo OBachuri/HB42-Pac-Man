@@ -25,7 +25,7 @@ class LevelWeb:
             f_nane = str(data.get("bonus_fruit_type", "cherry"))
             fruit = BonusFruitType[f_nane.upper()]
         except KeyError:
-            fruit = BonusFruitType.CERRY
+            fruit = BonusFruitType.CHERRY
             print("Can't find fruit: ", f_nane, "!")
         self.bonus_fruit_type: BonusFruitType = fruit
 

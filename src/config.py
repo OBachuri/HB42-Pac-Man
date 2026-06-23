@@ -32,7 +32,7 @@ class Level(BaseModel):
             f_name = str(value)
             fruit = BonusFruitType[f_name.upper()]
         except (KeyError, TypeError, ValueError):
-            fruit = BonusFruitType.CERRY
+            fruit = BonusFruitType.CHERRY
             print("Can't find fruit: ", value, "!")
         return fruit
 

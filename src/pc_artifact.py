@@ -26,15 +26,15 @@ class BonusFruitType(Enum):
     13+ Key 5000
     """
 
-    CHERRY = 100
-    RASPBERRY = 200
-    STRAWBERRY = 300
-    ORANGE = 500
-    APPLE = 700
-    BANANA = 800
-    MELON = 1000
+    CHERRY = 100        # +-
+    RASPBERRY = 200     # +
+    STRAWBERRY = 300    # +
+    ORANGE = 500        # +
+    APPLE = 700         # +
+    BANANA = 800        # +
+    MELON = 1000        # +
     BELL = 3000
-    KEY = 5000
+    KEY = 5000          # +
 
 
 class PC_Artifacts():
@@ -172,7 +172,7 @@ class Fruit(PC_Artifacts):
                  name: str = "Fruit",
                  type: BonusFruitType = BonusFruitType.CHERRY) -> None:
         super().__init__(game, point, points, color, name=name)
-        self.size: int = 15     # radius
+        self.size: int = 20     # radius
         self.event_timer = 9    # s - time of live
         self.frames: dict[FrameType, list[pg.Surface]] = {}
         self.frame_index: int = 0
