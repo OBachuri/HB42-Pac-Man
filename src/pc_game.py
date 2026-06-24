@@ -117,7 +117,7 @@ class Game:
 
         if self.level > max_level:
             # End of all Levels = Win of game
-            self.app.game_over(True)
+            self.app.move_to(ScreenTypes.END_OF_GAME)
             self.pause = True
             self.runing = False
             return

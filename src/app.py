@@ -41,7 +41,6 @@ class App:
 
         self.game = Game(self)
 
-
     def move_to(self, screen: ScreenTypes) -> None:
         match screen:
             case ScreenTypes.MAIN_MENU:
@@ -56,11 +55,11 @@ class App:
             case ScreenTypes.HIGH_SCORES:
                 self.current_screen = self.screens.setdefault(
                     screen, HighscoresScreen(self))
-
-    def game_over(self, won: bool) -> None:
-        self.current_screen = GameEndScreen(self, won, self.game.score)
-        self.game.level = 1
-        self.game.next_level(0)
+            case ScreenTypes.END_OF_GAME:
+                won = True if self.game.player.lives else False
+                self.current_screen = GameEndScreen(self, won, self.game.score)
+                self.game.level = 1
+                self.game.next_level(0)
 
     def quit(self) -> None:
         self.running = False
