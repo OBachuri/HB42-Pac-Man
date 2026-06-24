@@ -13,7 +13,7 @@ from pc_map import Map
 from pc_player import Player
 from pc_npc import NPC, RedGhosts  # , GhostMode
 from pc_artifact import PC_Artifacts
-from pc_artifact import PowerPellet, Pellet, BonusFruitType
+from pc_artifact import PowerPellet, Pellet, BonusFruitType, Fruit
 from pc_entity import FrameType
 from screens import ScreenTypes
 
@@ -69,6 +69,7 @@ class Game:
         self.npcs: list[NPC] = []
         self.artifacts: list[PC_Artifacts] = []
         Pellet.sound_init()
+        Fruit.sound_init()
         self.new_game()
 
     def new_game(self) -> None:
