@@ -1,3 +1,4 @@
+import sys
 import asyncio
 import pygame as pg
 from typing import TYPE_CHECKING
@@ -6,63 +7,35 @@ if TYPE_CHECKING:
 
 from constants import SCREEN_WIDTH, FPS
 from screens import BaseScreen, ScreenTypes
-
-
-class Button:
-    def __init__(
-            self,
-            y: int,
-            width: int,
-            text: str,
-            icon: pg.Surface,
-            x: int = SCREEN_WIDTH // 2 - 75,
-            height: int = 50) -> None:
-        self.rect = pg.Rect(x, y, width, height)
-        self.text = text
-        self.icon = icon
-        self.hovered = False
-        self.selected = False
-
-    def draw(self, surface: pg.Surface) -> None:
-        pg.draw.rect(surface, "yellow", self.rect, 2)
-
-        if self.selected or self.hovered:
-            img_rect = self.icon.get_rect(
-                center=(self.rect.left - 40, self.rect.centery))
-            surface.blit(self.icon, img_rect)
-
-        text_surf = pg.font.Font(None, 30).render(self.text, True, "yellow")
-        text_rect = text_surf.get_rect(center=self.rect.center)
-        surface.blit(text_surf, text_rect)
-
-    def is_clicked(self, pos: tuple[int, int]) -> bool:
-        return self.rect.collidepoint(pos)
-
-    def update(self, pos: tuple[int, int]) -> None:
-        self.hovered = self.rect.collidepoint(pos)
+from screens.utils import Button
 
 
 class MainMenuScreen(BaseScreen):
     def __init__(self, app: "App"):
         self.app = app
+        self.pacman_icon = pg.image.load(
+            self.app.path_to_inc + "img/pacman/stay/S01.png").convert_alpha()
 
     async def run(self) -> None:
         pg.display.set_caption("Pac-Man")
         clock = self.app.clock
-        pacman_icon = pg.image.load(
-            self.app.path_to_inc + "img/pacman/stay/S01.png").convert_alpha()
 
         buttons = [
-            Button(y=200, width=150, text="START GAME", icon=pacman_icon),
-            Button(y=300, width=220, text="VIEW HIGHSCORES", icon=pacman_icon),
-            Button(y=400, width=200, text="INSTRUCTIONS", icon=pacman_icon),
-            Button(y=500, width=150, text="EXIT", icon=pacman_icon)
+            Button(y=200, text="START GAME",
+                   icon=self.pacman_icon, font=self.app.small_font),
+            Button(y=300, text="VIEW HIGHSCORES",
+                   icon=self.pacman_icon, font=self.app.small_font),
+            Button(y=400, text="INSTRUCTIONS",
+                   icon=self.pacman_icon, font=self.app.small_font)
         ]
+        if sys.platform != "emscripten":
+            buttons.append(Button(y=500, width=150, text="EXIT",
+                                  icon=self.pacman_icon, font=self.app.small_font))
 
         selected_index = 0
         buttons[selected_index].selected = True
 
-        title = pg.font.Font(None, 80).render("PAC-MAN", True, "yellow")
+        title = self.app.large_font.render("PAC-MAN", True, "yellow")
         title_rect = title.get_rect(center=(SCREEN_WIDTH//2, 80))
 
         running = True
@@ -92,7 +65,8 @@ class MainMenuScreen(BaseScreen):
                             self.app.move_to(ScreenTypes.GAME)
                             running = False
                         elif selected_button.text == "VIEW HIGHSCORES":
-                            print("Opening highscores...")
+                            self.app.move_to(ScreenTypes.HIGH_SCORES)
+                            running = False
                         elif selected_button.text == "INSTRUCTIONS":
                             self.app.move_to(ScreenTypes.INSTRUCTIONS)
                             running = False
@@ -100,7 +74,8 @@ class MainMenuScreen(BaseScreen):
                             self.app.quit()
                             running = False
 
-                    elif event.key == pg.K_ESCAPE:
+                    elif (event.key == pg.K_ESCAPE and
+                          sys.platform != "emscripten"):
                         self.app.quit()
                         running = False
 
@@ -116,7 +91,8 @@ class MainMenuScreen(BaseScreen):
                                 self.app.move_to(ScreenTypes.GAME)
                                 running = False
                             elif button.text == "VIEW HIGHSCORES":
-                                print("Opening highscores...")
+                                self.app.move_to(ScreenTypes.HIGH_SCORES)
+                                running = False
                             elif button.text == "INSTRUCTIONS":
                                 self.app.move_to(ScreenTypes.INSTRUCTIONS)
                                 running = False
@@ -133,9 +109,6 @@ class MainMenuScreen(BaseScreen):
 
             if running:
                 self.app.screen.fill("black")
-                title = pg.font.Font(None, 80).render("PAC-MAN",
-                                                      True, "yellow")
-                title_rect = title.get_rect(center=(SCREEN_WIDTH // 2, 80))
                 self.app.screen.blit(title, title_rect)
 
                 for button in buttons:

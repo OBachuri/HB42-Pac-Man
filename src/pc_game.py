@@ -13,7 +13,7 @@ from pc_map import Map
 from pc_player import Player
 from pc_npc import NPC, RedGhosts  # , GhostMode
 from pc_artifact import PC_Artifacts
-from pc_artifact import PowerPellet, Pellet, BonusFruitType
+from pc_artifact import PowerPellet, Pellet, BonusFruitType, Fruit
 from pc_entity import FrameType
 from screens import ScreenTypes
 
@@ -64,18 +64,12 @@ class Game:
         # pg.event.set_grab(True)
         # pg.time.set_timer(self.global_event, 40)
 
-        # fonts
-        path_ = os.path.join(self.app.path_to_inc,
-                             "fonts/PressStart2P-Regular.ttf")
-        if os.path.exists(path_):
-            self.font = pg.font.Font(path_, 20)
-        else:
-            print(f"The file with font does not exist: {path_} .")
-            self.font = pg.font.SysFont('Nimbus Mono PS', 20)
+        self.font = app.small_font
 
         self.npcs: list[NPC] = []
         self.artifacts: list[PC_Artifacts] = []
         Pellet.sound_init()
+        Fruit.sound_init()
         self.new_game()
 
     def new_game(self) -> None:
@@ -123,8 +117,7 @@ class Game:
 
         if self.level > max_level:
             # End of all Levels = Win of game
-            # change to ScreenTypes.VICTORY or GAME OVER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            self.app.move_to(ScreenTypes.MAIN_MENU)
+            self.app.move_to(ScreenTypes.END_OF_GAME)
             self.pause = True
             self.runing = False
             return
@@ -333,6 +326,7 @@ class Game:
                                          and event.key == pg.K_ESCAPE):
                 # pg.quit()
                 # sys.exit()
+                self.app.move_to(ScreenTypes.MAIN_MENU)
                 self.runing = False
             elif event.type == self.global_event:
                 self.global_trigger = True
@@ -347,7 +341,7 @@ class Game:
                                      or event.key == pg.K_LEFT
                                      or event.key == pg.K_d
                                      or event.key == pg.K_RIGHT
-                                     )
+                                 )
                                  ):
                 self.pause = False
 
@@ -366,4 +360,4 @@ class Game:
             await asyncio.sleep(0)
         self.pause = True
         self.runing = True
-        self.app.move_to(ScreenTypes.MAIN_MENU)
+        # self.app.move_to(ScreenTypes.MAIN_MENU)

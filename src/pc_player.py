@@ -5,7 +5,7 @@ import pygame.gfxdraw as pggf
 import math
 
 from pc_entity import Entity, FrameType
-from screens import *
+from screens import ScreenTypes
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -106,8 +106,7 @@ class Player(Entity):
         self.game.pause = True
         self.game.game_time = self.game.game_max_time
         if self.lives <= 0:
-            # change to ScreenTypes.VICTORY or GAME OVER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            self.game.app.move_to(ScreenTypes.MAIN_MENU)
+            self.game.app.move_to(ScreenTypes.END_OF_GAME)
             self.game.runing = False
 
     def movement(self) -> None:

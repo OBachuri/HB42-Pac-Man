@@ -6,7 +6,8 @@ import pygame as pg
 
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from pc_game import Game
-from screens import ScreenTypes, BaseScreen, MainMenuScreen, InstructionsScreen
+from screens import ScreenTypes, BaseScreen, MainMenuScreen
+from screens import InstructionsScreen, HighscoresScreen, GameEndScreen
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from config import Config
@@ -27,6 +28,17 @@ class App:
         self.screens: dict[ScreenTypes, BaseScreen] = {}
         self.current_screen = None
         self.path_to_inc = os.path.join(os.path.dirname(__file__), 'inc/')
+
+        path_ = os.path.join(self.path_to_inc,
+                             "fonts/PressStart2P-Regular.ttf")
+        if os.path.exists(path_):
+            self.large_font = pg.font.Font(path_, 30)
+            self.small_font = pg.font.Font(path_, 20)
+        else:
+            print(f"The file with font does not exist: {path_} .")
+            self.large_font = pg.font.SysFont('Nimbus Mono PS', 30)
+            self.small_font = pg.font.SysFont('Nimbus Mono PS', 20)
+
         self.game = Game(self)
 
     def move_to(self, screen: ScreenTypes) -> None:
@@ -40,11 +52,14 @@ class App:
             case ScreenTypes.INSTRUCTIONS:
                 self.current_screen = self.screens.setdefault(
                     screen, InstructionsScreen(self))
-            # case ScreenTypes.END_OF_GAME:
-            #     if self.current_screen == ScreenTypes.GAME:
-            #         self.current_score = self.game.score
-            #     self.current_screen = self.screens.setdefault(
-            #         screen, EndOfGameScreen(self))
+            case ScreenTypes.HIGH_SCORES:
+                self.current_screen = self.screens.setdefault(
+                    screen, HighscoresScreen(self))
+            case ScreenTypes.END_OF_GAME:
+                won = True if self.game.player.lives else False
+                self.current_screen = GameEndScreen(self, won, self.game.score)
+                self.game.level = 1
+                self.game.next_level(0)
 
     def quit(self) -> None:
         self.running = False
