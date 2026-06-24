@@ -161,6 +161,13 @@ class Pellet(PC_Artifacts):
                 for n in self.game.npcs:
                     if n.alive and (n.mode != GhostMode.FRIGHTENED):
                         n.mode = GhostMode.CHASE
+                sound = self.sounds.get(SoundType.REBORN, [])
+                if len(sound) > 0:
+                    if self.sound_index >= len(sound):
+                        type(self).sound_index = 0
+                    sound[type(self).sound_index].play()
+                    type(self).sound_index += 1
+
         super().event()
 
 
@@ -277,3 +284,7 @@ class Fruit(PC_Artifacts):
     def sound_init(cls) -> None:
         cls.sounds = Sound.read_sounds_from_files(
             "inc/sounds/bonusfruit/eaten/", SoundType.EATEN)
+        cls.sounds = Sound.read_sounds_from_files(
+            "inc/sounds/bonusfruit/appear/",
+            SoundType.REBORN,
+            sounds=cls.sounds)
