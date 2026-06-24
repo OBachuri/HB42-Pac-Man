@@ -4,7 +4,7 @@ import pygame as pg
 import random
 # from enum import Enum
 from pc_entity import Entity, FrameType, GhostMode
-
+from pc_sound import SoundType, Sound
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -153,6 +153,9 @@ class NPC(Entity):
         else:
             if self.game.player.alive:
                 self.game.player.frame_index = 0
+                sound = self.game.player.sounds.get(SoundType.EATEN, [])
+                if len(sound) > 0:
+                    sound[0].play()
             self.game.player.alive = False
             self.visible = False
 

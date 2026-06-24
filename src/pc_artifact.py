@@ -283,7 +283,8 @@ class Fruit(PC_Artifacts):
     @classmethod
     def sound_init(cls) -> None:
         cls.sounds = Sound.read_sounds_from_files(
-            "inc/sounds/bonusfruit/eaten/", SoundType.EATEN)
+            "inc/sounds/bonusfruit/eaten/",
+            SoundType.EATEN)
         cls.sounds = Sound.read_sounds_from_files(
             "inc/sounds/bonusfruit/appear/",
             SoundType.REBORN,

@@ -6,6 +6,7 @@ import math
 
 from pc_entity import Entity, FrameType
 from screens import ScreenTypes
+from pc_sound import SoundType, Sound
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -31,6 +32,10 @@ class Player(Entity):
         self.read_frames_from_file("inc/img/pacman/run/", FrameType.RUN)
         self.read_frames_from_file("inc/img/pacman/stay/", FrameType.STAY)
         self.read_frames_from_file("inc/img/pacman/death/", FrameType.DEATH)
+
+        self.sounds = Sound.read_sounds_from_files(
+             "inc/sounds/pacman/death/", SoundType.EATEN, sounds=self.sounds)
+
 
     def teleport(self, x: int = -1, y: int = -1) -> None:
         if x < 0:

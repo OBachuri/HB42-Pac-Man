@@ -4,6 +4,8 @@ import pygame as pg
 from enum import Enum
 import os
 
+from pc_sound import SoundType, Sound
+
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from pc_game import Game
@@ -60,6 +62,8 @@ class Entity:
         self.speed_factor: float = 0.04
         self.visible: bool = True
         self.max_d: int = 5  # max dx + dy = maximum acceleration
+        self.sounds: dict[SoundType, list[Sound]] = {}
+        self.sound_index: int = 0        
 
     def reset(self) -> None:
         self.dx = 0
