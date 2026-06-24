@@ -4,6 +4,7 @@ from .main_menu import MainMenuScreen
 from .instructions_screen import InstructionsScreen
 from .highscores import HighscoresScreen
 from .game_end_screen import GameEndScreen
+from .error_screen import ErrorScreen
 
 __all__ = [
     "ScreenTypes",
@@ -11,5 +12,6 @@ __all__ = [
     "MainMenuScreen",
     "InstructionsScreen",
     "HighscoresScreen",
-    "GameEndScreen"
+    "GameEndScreen",
+    "ErrorScreen"
 ]

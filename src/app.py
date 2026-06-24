@@ -6,7 +6,7 @@ import pygame as pg
 
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from pc_game import Game
-from screens import ScreenTypes, BaseScreen, MainMenuScreen
+from screens import ScreenTypes, BaseScreen, MainMenuScreen, ErrorScreen
 from screens import InstructionsScreen, HighscoresScreen, GameEndScreen
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -17,6 +17,7 @@ if TYPE_CHECKING:
 class App:
     def __init__(self, config: Config | ConfigWeb) -> None:
         self.config = config
+        self.err_msg: str = ""
         pg.init()
         pg.font.init()
         pg.mixer.init()
@@ -60,6 +61,9 @@ class App:
                 self.current_screen = GameEndScreen(self, won, self.game.score)
                 self.game.level = 1
                 self.game.next_level(0)
+            case ScreenTypes.ERROR:
+                self.current_screen = self.screens.setdefault(
+                    screen, ErrorScreen(self))
 
     def quit(self) -> None:
         self.running = False

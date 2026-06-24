@@ -30,7 +30,8 @@ class MainMenuScreen(BaseScreen):
         ]
         if sys.platform != "emscripten":
             buttons.append(Button(y=500, width=150, text="EXIT",
-                                  icon=self.pacman_icon, font=self.app.small_font))
+                                  icon=self.pacman_icon,
+                                  font=self.app.small_font))
 
         selected_index = 0
         buttons[selected_index].selected = True

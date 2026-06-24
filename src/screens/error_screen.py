@@ -9,37 +9,18 @@ from screens import BaseScreen, ScreenTypes
 from screens.utils import wrap_text
 
 
-class InstructionsScreen(BaseScreen):
+class ErrorScreen(BaseScreen):
     def __init__(self, app: "App") -> None:
         self.app = app
-        self.text: str = (
-            "Basic Rules:\n- Press the corresponding direction (Up, Down, " +
-            "Left, Right / W, A, S, D) to steer Pac-Man through the maze.\n" +
-            "- Eat the pacgums: Clear the maze of all small dots placed in " +
-            "most corridors to progress to the next level.\n" +
-            "- Super-pacgums: Eat the power pellets (larger dots) in the " +
-            "corners. This causes the ghosts for a short time to turn blue " +
-            "and run away, allowing you to gobble them up for points.\n" +
-            "- Avoid the Ghosts: If a ghost touches you while they are " +
-            "normal-colored, you lose a life. You start with " +
-            f"{app.config.lives} lives.\n" +
-            "- Eat Fruit: Bonus fruits appear twice per level of the screen," +
-            " offering extra points.\n\n" +
-            f"Scoring Points:\n- Pacgums: {app.config.points_per_pacgum}" +
-            " points each\n" +
-            f"- Super-pacgums: {app.config.points_per_super_pacgum}" +
-            " points each\n" +
-            f"- Ghosts: {app.config.points_per_ghost} points each\n" +
-            "- Fruits: Range from 100 points (Cherry) up to 5,000 points " +
-            "(Key) in higher levels."
-        )
 
     async def run(self) -> None:
+        # global g_error_txt
+
         font = self.app.small_font
         text_rect = pg.Rect(
             5, 5, SCREEN_WIDTH - 10, SCREEN_HEIGHT - font.get_height() * 2
         )
-        lines = wrap_text(self.text, font, text_rect.width - 15)
+        lines = wrap_text(self.app.err_msg, font, text_rect.width - 15)
 
         line_height = font.get_linesize() + 4
         scroll_y = 0

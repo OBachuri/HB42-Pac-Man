@@ -2,6 +2,32 @@ import pygame as pg
 from constants import SCREEN_WIDTH
 
 
+def wrap_text(text: str, font: pg.Font, max_width: int) -> list[str]:
+    """Return a list of lines wrapped to max_width."""
+    lines: list[str] = []
+    paragraphs = text.strip().split("\n")
+
+    for paragraph in paragraphs:
+        if paragraph.strip() == "":
+            lines.append("")
+            continue
+
+        words = paragraph.split(" ")
+        current_line = words[0]
+
+        for word in words[1:]:
+            test_line = current_line + " " + word
+            if font.size(test_line)[0] <= max_width:
+                current_line = test_line
+            else:
+                lines.append(current_line)
+                current_line = word
+
+        lines.append(current_line)
+
+    return lines
+
+
 class PCUIElement:
     def __init__(
         self,
@@ -112,7 +138,9 @@ class Button(PCUIElement):
             width: int = 0,
             height: int = 0,
             icon: pg.Surface | None = None) -> None:
-        super().__init__(x=x, y=y, width=width, height=height, font=font, text=text)
+        super().__init__(x=x, y=y, width=width,
+                         height=height, font=font,
+                         text=text)
         self.icon = icon
         self.hovered = False
         self.selected = False
