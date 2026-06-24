@@ -115,4 +115,4 @@ class GameEndScreen(BaseScreen):
             self.handle_events()
             self.update_cursor()
             self.draw()
-        await asyncio.sleep(0)
+            await asyncio.sleep(0)
