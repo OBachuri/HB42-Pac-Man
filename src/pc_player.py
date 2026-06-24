@@ -36,7 +36,6 @@ class Player(Entity):
         self.sounds = Sound.read_sounds_from_files(
              "inc/sounds/pacman/death/", SoundType.EATEN, sounds=self.sounds)
 
-
     def teleport(self, x: int = -1, y: int = -1) -> None:
         if x < 0:
             x = int(self.game.map.cols / 2)

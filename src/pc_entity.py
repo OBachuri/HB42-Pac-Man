@@ -63,7 +63,7 @@ class Entity:
         self.visible: bool = True
         self.max_d: int = 5  # max dx + dy = maximum acceleration
         self.sounds: dict[SoundType, list[Sound]] = {}
-        self.sound_index: int = 0        
+        self.sound_index: int = 0
 
     def reset(self) -> None:
         self.dx = 0

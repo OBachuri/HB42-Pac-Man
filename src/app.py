@@ -27,7 +27,7 @@ class App:
 
         self.running = True
         self.screens: dict[ScreenTypes, BaseScreen] = {}
-        self.current_screen = None
+        self.current_screen: BaseScreen | None = None
         self.path_to_inc = os.path.join(os.path.dirname(__file__), 'inc/')
 
         path_ = os.path.join(self.path_to_inc,
@@ -54,6 +54,9 @@ class App:
                 self.current_screen = self.screens.setdefault(
                     screen, InstructionsScreen(self))
             case ScreenTypes.HIGH_SCORES:
+                self.score_to_show = -1
+                if isinstance(self.current_screen, GameEndScreen):
+                    self.score_to_show = self.game.score
                 self.current_screen = self.screens.setdefault(
                     screen, HighscoresScreen(self))
             case ScreenTypes.END_OF_GAME:
