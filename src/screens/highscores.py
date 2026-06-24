@@ -61,7 +61,8 @@ class HighscoresScreen(BaseScreen):
                                      (x - score_surf.width // 2, y))
             else:
                 if place_info:
-                    self.app.screen.blit(place_inf_surf, (x - place_inf_surf.width // 2, y))
+                    self.app.screen.blit(place_inf_surf,
+                                         (x - place_inf_surf.width // 2, y))
                     y += line_height * 1.5
                 for nbr, highscore in enumerate(highscores, start=1):
                     name, score = list(highscore.items())[0]
