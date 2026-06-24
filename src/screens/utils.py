@@ -138,7 +138,9 @@ class Button(PCUIElement):
             width: int = 0,
             height: int = 0,
             icon: pg.Surface | None = None) -> None:
-        super().__init__(x=x, y=y, width=width, height=height, font=font, text=text)
+        super().__init__(x=x, y=y, width=width,
+                         height=height, font=font,
+                         text=text)
         self.icon = icon
         self.hovered = False
         self.selected = False

@@ -10,13 +10,13 @@ from constants import SCREEN_HEIGHT, SCREEN_WIDTH, FPS
 
 
 class GameEndScreen(BaseScreen):
-    def __init__(self, app: "App", won: bool=False, score: int=0):
+    def __init__(self, app: "App", won: bool = False, score: int = 0):
         self.app = app
         self.won = won
         self.score = score
 
         self.max_name_len = 10
-        self.name_chars = []
+        self.name_chars: list[str] = []
         self.message = "YOU WON!" if won else "GAME OVER"
         self.msg_clr = "green" if won else "red"
 
@@ -75,23 +75,26 @@ class GameEndScreen(BaseScreen):
 
         y = self.app.large_font.get_height()
         title_surf = self.app.large_font.render(self.message,
-                                               False,
-                                               self.msg_clr)
+                                                False,
+                                                self.msg_clr)
         title_rect = title_surf.get_rect(center=(SCREEN_WIDTH // 2, y))
         self.app.screen.blit(title_surf, title_rect)
 
         y += self.app.large_font.get_height() * 2
-        score_surf = self.app.small_font.render(f"SCORE: {self.score}", False, "yellow")
+        score_surf = self.app.small_font.render(f"SCORE: {self.score}",
+                                                False, "yellow")
         score_rect = score_surf.get_rect(center=(SCREEN_WIDTH // 2, y))
         self.app.screen.blit(score_surf, score_rect)
 
-
-        y += self.app.small_font.get_height() + self.app.large_font.get_height()
+        y += (self.app.small_font.get_height() +
+              self.app.large_font.get_height())
         name_field = ""
         if self.cursor_visible and len(self.name_chars) < self.max_name_len:
-            name_field = "".join(self.name_chars) + "|" + "_" * (self.max_name_len - len(self.name_chars) - 1)
+            name_field = ("".join(self.name_chars) + "|" +
+                          "_" * (self.max_name_len - len(self.name_chars) - 1))
         else:
-            name_field = "".join(self.name_chars) + "_" * (self.max_name_len - len(self.name_chars))
+            name_field = ("".join(self.name_chars) +
+                          "_" * (self.max_name_len - len(self.name_chars)))
         name_surf = self.app.large_font.render(name_field, False, "yellow")
         name_rect = name_surf.get_rect(center=(SCREEN_WIDTH // 2, y))
         self.app.screen.blit(name_surf, name_rect)
@@ -107,7 +110,6 @@ class GameEndScreen(BaseScreen):
         self.app.screen.blit(esc_surf, esc_rect)
 
         pg.display.flip()
-
 
     async def run(self) -> None:
         while self.running:
