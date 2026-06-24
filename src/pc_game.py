@@ -24,8 +24,6 @@ if TYPE_CHECKING:
     from config_web import ConfigWeb
     from app import App
 
-g_error_txt = ""
-
 
 class Game:
     def __init__(self, app: "App", config: Config | ConfigWeb | None = None):
@@ -106,7 +104,6 @@ class Game:
 
     def next_level(self, next: int = 1) -> None:
         # global MazeGenerator
-        global g_error_txt
 
         self.pause = True
         self.runing = True
@@ -131,10 +128,9 @@ class Game:
         l_config = [lv for lv in self.config.levels if lv.number == max_level]
 
         if len(l_config) < 1:
-            g_error_txt += f"No config for level {self.level}!"
-            print(g_error_txt)
-            # change to ScreenTypes.ERROR !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            self.app.move_to(ScreenTypes.MAIN_MENU)
+            self.app.err_msg = f"ERROR: No config for level {self.level}!"
+            print(self.app.err_msg)
+            self.app.move_to(ScreenTypes.ERROR)
             self.pause = True
             self.runing = False
             return
