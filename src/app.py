@@ -57,8 +57,10 @@ class App:
                 self.current_screen = self.screens.setdefault(
                     screen, HighscoresScreen(self))
 
-    def game_over(self, won: bool, game: Game) -> None:
-        self.current_screen = GameEndScreen(self, won, game.score)
+    def game_over(self, won: bool) -> None:
+        self.current_screen = GameEndScreen(self, won, self.game.score)
+        self.game.level = 1
+        self.game.next_level(0)
 
     def quit(self) -> None:
         self.running = False
