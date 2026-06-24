@@ -26,15 +26,15 @@ class BonusFruitType(Enum):
     13+ Key 5000
     """
 
-    CHERRY = 100
-    RASPBERRY = 200
-    STRAWBERRY = 300
-    ORANGE = 500
-    APPLE = 700
-    BANANA = 800
-    MELON = 1000
+    CHERRY = 100        # +-
+    RASPBERRY = 200     # +
+    STRAWBERRY = 300    # +
+    ORANGE = 500        # +
+    APPLE = 700         # +
+    BANANA = 800        # +
+    MELON = 1000        # +
     BELL = 3000
-    KEY = 5000
+    KEY = 5000          # +
 
 
 class PC_Artifacts():
@@ -161,6 +161,13 @@ class Pellet(PC_Artifacts):
                 for n in self.game.npcs:
                     if n.alive and (n.mode != GhostMode.FRIGHTENED):
                         n.mode = GhostMode.CHASE
+                sound = self.sounds.get(SoundType.REBORN, [])
+                if len(sound) > 0:
+                    if self.sound_index >= len(sound):
+                        type(self).sound_index = 0
+                    sound[type(self).sound_index].play()
+                    type(self).sound_index += 1
+
         super().event()
 
 
@@ -172,7 +179,7 @@ class Fruit(PC_Artifacts):
                  name: str = "Fruit",
                  type: BonusFruitType = BonusFruitType.CHERRY) -> None:
         super().__init__(game, point, points, color, name=name)
-        self.size: int = 15     # radius
+        self.size: int = 20     # radius
         self.event_timer = 9    # s - time of live
         self.frames: dict[FrameType, list[pg.Surface]] = {}
         self.frame_index: int = 0
@@ -277,3 +284,7 @@ class Fruit(PC_Artifacts):
     def sound_init(cls) -> None:
         cls.sounds = Sound.read_sounds_from_files(
             "inc/sounds/bonusfruit/eaten/", SoundType.EATEN)
+        cls.sounds = Sound.read_sounds_from_files(
+            "inc/sounds/bonusfruit/appear/",
+            SoundType.REBORN,
+            sounds=cls.sounds)
