@@ -16,36 +16,44 @@ class InstructionsScreen(BaseScreen):
         self.text: str = ""
         if app.config.cheat:
             self.text = (
-                "You are in CHEAT mode\n" +
+                "You are in CHEAT mode! "
                 "Available features:\n"
-                "1 - Invincibility (no life lost; ghosts cannot eat the player).\n" +
-                "2 - Level skip (immediately win the current level).\n" +
-                "3 - Ghost freeze (ghosts stop moving).\n" +
-                "4 - Extra lives (add extra lives to the player).\n" +
-                "5 - Increased speed (player moves faster).\n" +
-                "6 - Decreased speed (player moves slower).\n" +
+                "1 - Invincibility (no life lost; "
+                "ghosts cannot eat the player).\n"
+                "2 - Level skip (immediately win the current level).\n"
+                "3 - Ghost freeze (ghosts stop moving).\n"
+                "4 - Extra lives (add extra lives to the player).\n"
+                "5 - Increased speed (player moves faster).\n"
+                "6 - Decreased speed (player moves slower).\n"
                 "7 - Change ghost mode.\n\n"
             )
         self.text += (
-            "Basic Rules:\n- Press the corresponding direction (Up, Down, " +
-            "Left, Right / W, A, S, D) to steer Pac-Man through the maze.\n" +
-            "- Eat the pacgums: Clear the maze of all small dots placed in " +
-            "most corridors to progress to the next level.\n" +
-            "- Super-pacgums: Eat the power pellets (larger dots) in the " +
-            "corners. This causes the ghosts for a short time to turn blue " +
-            "and run away, allowing you to gobble them up for points.\n" +
-            "- Avoid the Ghosts: If a ghost touches you while they are " +
-            "normal-colored, you lose a life. You start with " +
-            f"{app.config.lives} lives.\n" +
-            "- Eat Fruit: Bonus fruits appear twice per level of the screen," +
-            " offering extra points.\n\n" +
-            f"Scoring Points:\n- Pacgums: {app.config.points_per_pacgum}" +
-            " points each\n" +
-            f"- Super-pacgums: {app.config.points_per_super_pacgum}" +
-            " points each\n" +
-            f"- Ghosts: {app.config.points_per_ghost} points each\n" +
-            "- Fruits: Range from 100 points (Cherry) up to 5,000 points " +
-            "(Key) in higher levels."
+            "Focus on navigating a maze to eat all the dots"
+            " (Pellets) while avoiding ghosts. "
+            "By eating large dots (Power Pellets), "
+            "you turn the ghosts blue and vulnerable "
+            "to being eaten for extra points.\n\n"
+
+            "Basic Rules:\n"
+            "- Press the corresponding direction (Up, Down, "
+            "Left, Right / W, A, S, D) to steer Pac-Man through the maze.\n"
+            "- Eat the pacgums: Clear the maze of all small dots placed in "
+            "most corridors to progress to the next level.\n"
+            "- Super-pacgums: Eat the power pellets (larger dots) in the "
+            "corners. This causes the ghosts for a short time to turn blue "
+            "and run away, allowing you to gobble them up for points.\n"
+            "- Avoid the Ghosts: If a ghost touches you while they are "
+            "normal-colored, you lose a life. You start with "
+            f"{app.config.lives} lives.\n"
+            "- Eat Fruit: Bonus fruits appear twice per level of the screen,"
+            " offering extra points.\n\n"
+            f"Scoring Points:\n- Pacgums: {app.config.points_per_pacgum}"
+            " points each\n"
+            f"- Super-pacgums: {app.config.points_per_super_pacgum}"
+            " points each\n"
+            f"- Ghosts: {app.config.points_per_ghost} points each\n"
+            "- Fruits: Range from 100 points (Cherry) up to 5,000 points "
+            "(Key) in higher levels.\n ."
         )
 
     async def run(self) -> None:
@@ -77,7 +85,8 @@ class InstructionsScreen(BaseScreen):
                         scroll_y = max(scroll_y - line_height, 0)
                 if event.type == pg.MOUSEWHEEL:
                     scroll_y = max(
-                        0, min(scroll_y - event.y * line_height, max_scroll)
+                        0, min(scroll_y - event.y
+                               * line_height, max_scroll)
                     )
 
             self.app.screen.fill("black")

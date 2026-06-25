@@ -340,7 +340,7 @@ class Game:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.app.move_to(ScreenTypes.MAIN_MENU)
-                self.runing = False
+                self.running = False
                 return
             elif event.type == self.global_event:
                 self.global_trigger = True
@@ -360,25 +360,33 @@ class Game:
                 self.pause = False
                 if self.new_start:
                     self.new_start = False
-            if event.type == pg.KEYDOWN and self.config.cheat:
+            if event.type == pg.KEYDOWN:
                 keys = pg.key.get_pressed()
                 if self.old_keys != keys:
                     self.old_keys = keys
-                    if keys[pg.K_1]:    # invincibility
-                        self.player.invincibil = not (self.player.invincibil)
-                    if keys[pg.K_2]:    # skip level
-                        self.next_level()
-                    if keys[pg.K_4]:    # Extra lives to the player
-                        self.player.lives += 1
-                    if keys[pg.K_5]:    # Increased speed - player moves faster
-                        self.player.speed_factor = min(
-                            self.player.speed_factor + 0.005,
-                            0.3 / self.player.max_d)
-                    if keys[pg.K_6]:    # Increased speed - player moves faster
-                        self.player.speed_factor = max(
-                            self.player.speed_factor - 0.01,
-                            0.005 / self.player.max_d)
-
+                    if keys[pg.K_ESCAPE]:
+                        if self.pause:
+                            self.app.move_to(ScreenTypes.MAIN_MENU)
+                        else:
+                            self.pause = True
+                        self.running = False
+                        return
+                    if self.config.cheat:
+                        if keys[pg.K_1]:    # invincibility
+                            self.player.invincibil = not (
+                                self.player.invincibil)
+                        if keys[pg.K_2]:    # skip level
+                            self.next_level()
+                        if keys[pg.K_4]:    # Extra lives to the player
+                            self.player.lives += 1
+                        if keys[pg.K_5]:    # Increased speed of player
+                            self.player.speed_factor = min(
+                                self.player.speed_factor + 0.005,
+                                0.3 / self.player.max_d)
+                        if keys[pg.K_6]:    # Decreased speed of player
+                            self.player.speed_factor = max(
+                                self.player.speed_factor - 0.01,
+                                0.005 / self.player.max_d)
             else:
                 self.old_keys = pg.key.get_pressed()
 

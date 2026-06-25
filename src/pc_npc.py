@@ -43,7 +43,6 @@ class NPC(Entity):
 
         self.old_keys: Sequence[bool] = pg.key.get_pressed()
 
-
     def find_goal(self) -> None:
         x: int = int(round(self.x, 0))
         y: int = int(round(self.y, 0))
