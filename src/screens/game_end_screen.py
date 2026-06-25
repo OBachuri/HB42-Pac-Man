@@ -32,7 +32,7 @@ class GameEndScreen(BaseScreen):
             name = "Player"
         HighscoresHandler.store_highscores(self.app.config, name, self.score)
         self.running = False
-        self.app.move_to(ScreenTypes.MAIN_MENU)
+        self.app.move_to(ScreenTypes.HIGH_SCORES)
 
     def handle_text_input(self, event: pg.Event) -> None:
         if len(self.name_chars) >= self.max_name_len:

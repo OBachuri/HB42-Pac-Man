@@ -12,7 +12,21 @@ from screens.utils import wrap_text
 class InstructionsScreen(BaseScreen):
     def __init__(self, app: "App") -> None:
         self.app = app
-        self.text: str = (
+
+        self.text: str = ""
+        if app.config.cheat:
+            self.text = (
+                "You are in CHEAT mode\n" +
+                "Available features:\n"
+                "1 - Invincibility (no life lost; ghosts cannot eat the player).\n" +
+                "2 - Level skip (immediately win the current level).\n" +
+                "3 - Ghost freeze (ghosts stop moving).\n" +
+                "4 - Extra lives (add extra lives to the player).\n" +
+                "5 - Increased speed (player moves faster).\n" +
+                "6 - Decreased speed (player moves slower).\n" +
+                "7 - Change ghost mode.\n\n"
+            )
+        self.text += (
             "Basic Rules:\n- Press the corresponding direction (Up, Down, " +
             "Left, Right / W, A, S, D) to steer Pac-Man through the maze.\n" +
             "- Eat the pacgums: Clear the maze of all small dots placed in " +
