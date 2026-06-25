@@ -3,6 +3,8 @@ from __future__ import annotations
 import pygame as pg
 import random
 import asyncio
+from collections.abc import Sequence
+
 
 # import sys
 # sys.path.append(os.path.dirname(__file__))
@@ -57,6 +59,7 @@ class Game:
         self.fruits_triger: list[int] = []
         self.points_per_bonus_fruit: int = 100
         self.bonus_fruit_type: BonusFruitType = BonusFruitType.CHERRY
+        self.old_keys: Sequence[bool] = pg.key.get_pressed()
 
         # pg.event.set_grab(True)
         # pg.time.set_timer(self.global_event, 40)
@@ -323,6 +326,7 @@ class Game:
                 # sys.exit()
                 self.app.move_to(ScreenTypes.MAIN_MENU)
                 self.runing = False
+                return
             elif event.type == self.global_event:
                 self.global_trigger = True
             elif self.pause and (event.type == pg.KEYDOWN
@@ -339,6 +343,27 @@ class Game:
                                  )
                                  ):
                 self.pause = False
+            if event.type == pg.KEYDOWN and self.config.cheat:
+                keys = pg.key.get_pressed()
+                if self.old_keys != keys:
+                    self.old_keys = keys
+                    if keys[pg.K_1]:    # invincibility
+                        self.player.invincibil = not (self.player.invincibil)
+                    if keys[pg.K_2]:    # skip level
+                        self.next_level()
+                    if keys[pg.K_4]:    # Extra lives to the player
+                        self.player.lives += 1
+                    if keys[pg.K_5]:    # Increased speed - player moves faster
+                        self.player.speed_factor = min(
+                            self.player.speed_factor + 0.005,
+                            0.3 / self.player.max_d)
+                    if keys[pg.K_6]:    # Increased speed - player moves faster
+                        self.player.speed_factor = max(
+                            self.player.speed_factor - 0.01,
+                            0.005 / self.player.max_d)
+
+            else:
+                self.old_keys = pg.key.get_pressed()
 
     async def run(self) -> None:
         #        pg.time.set_timer(self.global_event, 40)
