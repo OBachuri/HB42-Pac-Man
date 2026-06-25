@@ -142,7 +142,6 @@ class Button(PCUIElement):
                          height=height, font=font,
                          text=text)
         self.icon = icon
-        self.hovered = False
         self.selected = False
         self.update_layout()
 
@@ -156,7 +155,7 @@ class Button(PCUIElement):
         self.rect.x = (SCREEN_WIDTH - self.rect.width) // 2
 
     def draw(self, surface: pg.Surface) -> None:
-        if (self.selected or self.hovered) and self.icon:
+        if self.selected and self.icon:
             img_rect = self.icon.get_rect(
                 center=(self.rect.left - 42, self.rect.centery))
             surface.blit(self.icon, img_rect)
@@ -186,6 +185,3 @@ class Button(PCUIElement):
 
     def is_clicked(self, pos: tuple[int, int]) -> bool:
         return self.rect.collidepoint(pos)
-
-    def update(self, pos: tuple[int, int]) -> None:
-        self.hovered = self.rect.collidepoint(pos)

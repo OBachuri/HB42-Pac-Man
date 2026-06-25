@@ -83,11 +83,6 @@ class MainMenuScreen(BaseScreen):
                 if event.type == pg.MOUSEBUTTONDOWN:
                     for i, button in enumerate(buttons):
                         if button.is_clicked(mouse_pos):
-                            buttons[selected_index].selected = False
-                            selected_index = i
-                            buttons[selected_index].selected = True
-
-                            # Trigger button action
                             if button.text == "START GAME":
                                 self.app.move_to(ScreenTypes.GAME)
                                 running = False
@@ -100,13 +95,6 @@ class MainMenuScreen(BaseScreen):
                             elif button.text == "EXIT":
                                 self.app.quit()
                                 running = False
-
-            for i, button in enumerate(buttons):
-                button.update(mouse_pos)
-                if button.hovered:
-                    buttons[selected_index].selected = False
-                    selected_index = i
-                    buttons[selected_index].selected = True
 
             if running:
                 self.app.screen.fill("black")
