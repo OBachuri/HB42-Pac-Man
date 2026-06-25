@@ -40,7 +40,6 @@ class App:
             self.large_font = pg.font.SysFont('Nimbus Mono PS', 30)
             self.small_font = pg.font.SysFont('Nimbus Mono PS', 20)
 
-
     def move_to(self, screen: ScreenTypes) -> None:
         match screen:
             case ScreenTypes.MAIN_MENU:

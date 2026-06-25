@@ -288,7 +288,8 @@ class Game:
             if self.new_start:
                 txt_ = "PRESS SPACE to run\nor ESC to return to the main menu"
             else:
-                txt_ = "PRESS SPACE to resume\nor ESC to return to the main menu"
+                txt_ = ("PRESS SPACE to resume\n" +
+                        "or ESC to return to the main menu")
             text_surf = self.font.render(txt_, False, "white")
             menu = PCUIElement(
                 x=SCREEN_WIDTH // 2 - text_surf.get_width() // 2,
@@ -346,7 +347,17 @@ class Game:
                     else:
                         self.pause = True
                     self.running = False
-                elif self.pause and event.key == pg.K_SPACE:
+                elif self.pause and (
+                    event.key == pg.K_SPACE
+                    or event.key == pg.K_w
+                    or event.key == pg.K_UP
+                    or event.key == pg.K_s
+                    or event.key == pg.K_DOWN
+                    or event.key == pg.K_a
+                    or event.key == pg.K_LEFT
+                    or event.key == pg.K_d
+                    or event.key == pg.K_RIGHT
+                ):
                     if self.new_start:
                         self.new_start = False
                     self.pause = False
