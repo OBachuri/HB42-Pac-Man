@@ -111,7 +111,7 @@ class Player(Entity):
         self.game.game_time = self.game.game_max_time
         if self.lives <= 0:
             self.game.app.move_to(ScreenTypes.END_OF_GAME)
-            self.game.runing = False
+            self.game.running = False
 
     def movement(self) -> None:
         num_key_pressed = -1
