@@ -40,7 +40,6 @@ class App:
             self.large_font = pg.font.SysFont('Nimbus Mono PS', 30)
             self.small_font = pg.font.SysFont('Nimbus Mono PS', 20)
 
-        self.game = Game(self)
 
     def move_to(self, screen: ScreenTypes) -> None:
         match screen:
@@ -48,8 +47,8 @@ class App:
                 self.current_screen = self.screens.setdefault(
                     screen, MainMenuScreen(self))
             case ScreenTypes.GAME:
-                self.current_screen = self.screens.setdefault(
-                    screen, self.game)
+                self.game = Game(self)
+                self.current_screen = self.game
             case ScreenTypes.INSTRUCTIONS:
                 self.current_screen = self.screens.setdefault(
                     screen, InstructionsScreen(self))

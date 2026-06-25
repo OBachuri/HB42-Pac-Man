@@ -15,6 +15,7 @@ from pc_artifact import PC_Artifacts
 from pc_artifact import PowerPellet, Pellet, BonusFruitType, Fruit
 from pc_entity import FrameType
 from screens import ScreenTypes
+from screens.utils import PCUIElement
 
 
 from typing import TYPE_CHECKING
@@ -51,8 +52,9 @@ class Game:
         self.level: int = 1
         self.fps: int = FPS
         self.gost_edible: int = 17  # sec - frightened time
+        self.new_start: bool = True
         self.pause: bool = True
-        self.runing: bool = True
+        self.running: bool = True
         self.animation_timer: float = 0
         self.fruits_triger: list[int] = []
         self.points_per_bonus_fruit: int = 100
@@ -104,8 +106,9 @@ class Game:
     def next_level(self, next: int = 1) -> None:
         # global MazeGenerator
 
+        self.new_start = True
         self.pause = True
-        self.runing = True
+        self.running = True
 
         self.level += next
         max_level = 0
@@ -115,7 +118,7 @@ class Game:
             # End of all Levels = Win of game
             self.app.move_to(ScreenTypes.END_OF_GAME)
             self.pause = True
-            self.runing = False
+            self.running = False
             return
 
         max_level = 0
@@ -131,7 +134,7 @@ class Game:
             print(self.app.err_msg)
             self.app.move_to(ScreenTypes.ERROR)
             self.pause = True
-            self.runing = False
+            self.running = False
             return
 
         config = l_config[0]
@@ -282,21 +285,35 @@ class Game:
             npc.draw()
 
         if self.pause:
-            txt_ = "\n PRESS SPACE - to run \n ESC - to return to the menu \n "
+            if self.new_start:
+                txt_ = "PRESS SPACE to run\nor ESC to return to the main menu"
+            else:
+                txt_ = "PRESS SPACE to resume\nor ESC to return to the main menu"
+            text_surf = self.font.render(txt_, False, "white")
+            menu = PCUIElement(
+                x=SCREEN_WIDTH // 2 - text_surf.get_width() // 2,
+                y=SCREEN_HEIGHT // 2 - text_surf.get_height() // 2,
+                width=text_surf.get_width() + 20,
+                height=text_surf.get_height() + 20,
+                font=self.app.small_font,
+                text=txt_,
+                text_color="white"
+            )
             if int(self.animation_timer) % 2 == 0:
-                w = self.screen.get_width()
-                h = self.screen.get_height()
-                surf = self.font.render(
-                    txt_,
-                    color='yellow', bgcolor=(10, 10, 0, 40), antialias=True)
-                self.screen.blit(surf, ((w - surf.get_width()) // 2, h // 2))
+                menu.draw(self.screen)
+                # w = self.screen.get_width()
+                # h = self.screen.get_height()
+                # surf = self.font.render(
+                #     txt_,
+                #     color='yellow', bgcolor=(10, 10, 0, 40), antialias=True)
+                # self.screen.blit(surf, ((w - surf.get_width()) // 2, h // 2))
             self.animation_timer += 1/self.fps
-            txt_ = "PRESS SPACE - to run \nESC - to return to the menu \n "
-            self.screen.blit(self.font.render(
-                txt_,
-                False, (10, 10, 200)),
-                (10, 10 + self.map.top + (self.map.rows)
-                 * (self.map.step)))
+            # txt_ = "PRESS SPACE - to run \nESC - to return to the menu \n "
+            # self.screen.blit(self.font.render(
+            #     txt_,
+            #     False, (10, 10, 200)),
+            #     (10, 10 + self.map.top + (self.map.rows)
+            #      * (self.map.step)))
 
         else:
             self.screen.blit(self.font.render(
@@ -317,28 +334,22 @@ class Game:
     def check_events(self) -> None:
         self.global_trigger = False
         for event in pg.event.get():
-            if event.type == pg.QUIT or (event.type == pg.KEYDOWN
-                                         and event.key == pg.K_ESCAPE):
-                # pg.quit()
-                # sys.exit()
+            if event.type == pg.QUIT:
                 self.app.move_to(ScreenTypes.MAIN_MENU)
-                self.runing = False
+                self.running = False
             elif event.type == self.global_event:
                 self.global_trigger = True
-            elif self.pause and (event.type == pg.KEYDOWN
-                                 and (
-                                     event.key == pg.K_SPACE
-                                     or event.key == pg.K_w
-                                     or event.key == pg.K_UP
-                                     or event.key == pg.K_s
-                                     or event.key == pg.K_DOWN
-                                     or event.key == pg.K_a
-                                     or event.key == pg.K_LEFT
-                                     or event.key == pg.K_d
-                                     or event.key == pg.K_RIGHT
-                                 )
-                                 ):
-                self.pause = False
+            elif event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE:
+                    if self.pause:
+                        self.app.move_to(ScreenTypes.MAIN_MENU)
+                    else:
+                        self.pause = True
+                    self.running = False
+                elif self.pause and event.key == pg.K_SPACE:
+                    if self.new_start:
+                        self.new_start = False
+                    self.pause = False
 
     async def run(self) -> None:
         #        pg.time.set_timer(self.global_event, 40)
@@ -348,11 +359,11 @@ class Game:
             self.level = 1
             self.player.lives = self.config.lives
             self.next_level(0)
-        while self.runing:
+        while self.running:
             self.check_events()
             self.update()
             self.draw()
             await asyncio.sleep(0)
         self.pause = True
-        self.runing = True
+        self.running = True
         # self.app.move_to(ScreenTypes.MAIN_MENU)
