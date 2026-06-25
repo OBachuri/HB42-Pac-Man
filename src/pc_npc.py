@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import pygame as pg
 import random
+from collections.abc import Sequence
 # from enum import Enum
 from pc_entity import Entity, FrameType, GhostMode
-from pc_sound import SoundType, Sound
+from pc_sound import SoundType  # , Sound
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -38,6 +39,10 @@ class NPC(Entity):
                                    FrameType.RIGHT)
         self.alive: bool = True
         self.visible: bool = True
+        self.freeze: bool = False
+
+        self.old_keys: Sequence[bool] = pg.key.get_pressed()
+
 
     def find_goal(self) -> None:
         x: int = int(round(self.x, 0))
@@ -76,8 +81,24 @@ class NPC(Entity):
     def movement(self) -> None:
 
         keys = pg.key.get_pressed()
-        if keys[pg.K_f] and self.game.config.cheat:
-            self.mode = GhostMode.SCATTER
+
+        if self.old_keys != keys:
+            self.old_keys = keys
+            if self.game.config.cheat:
+                if keys[pg.K_f]:
+                    self.mode = GhostMode.SCATTER
+                if keys[pg.K_7]:
+                    if self.mode == GhostMode.SCATTER:
+                        self.mode = GhostMode.STROLL
+                    elif self.mode == GhostMode.STROLL:
+                        self.mode = GhostMode.CHASE
+                    else:
+                        self.mode = GhostMode.SCATTER
+                if keys[pg.K_3]:
+                    self.freeze = not (self.freeze)
+
+        if self.freeze:
+            return
 
         x = self.x
         y = self.y
@@ -151,6 +172,8 @@ class NPC(Entity):
             self.mode = GhostMode.DEAD
             self.alive = False
         else:
+            if self.game.player.invincibil:
+                return
             if self.game.player.alive:
                 self.game.player.frame_index = 0
                 sound = self.game.player.sounds.get(SoundType.EATEN, [])

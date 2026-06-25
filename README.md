@@ -12,8 +12,6 @@ The task: Recreate the famous arcade game Pac-man!
 - Pac-Man starts from the center of the maze.
 - One ghost appear in each corner of the maze.
 
-> [!WARNING]
-> The program does not ready. It is under development now.
 
 ## Game screen example
 ![Result](result.png)

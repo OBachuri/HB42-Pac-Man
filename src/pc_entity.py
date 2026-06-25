@@ -32,6 +32,7 @@ class GhostMode(Enum):
     STROLL = 4
     DEAD = 9
     SPAWN = 10
+    FREEZE = 99
 
 
 class Entity:
@@ -51,6 +52,8 @@ class Entity:
         self.name = name
         self.size = size  # radius
         self.alive: bool = True
+        self.freeze: bool = False
+        self.invincibil: bool = False
         self.dx: int = 0
         self.dy: int = 0
         self.color = color  # (R,G,B)

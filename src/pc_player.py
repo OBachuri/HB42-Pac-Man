@@ -3,6 +3,7 @@ from __future__ import annotations
 import pygame as pg
 import pygame.gfxdraw as pggf
 import math
+# from collections.abc import Sequence
 
 from pc_entity import Entity, FrameType
 from screens import ScreenTypes
@@ -23,6 +24,8 @@ class Player(Entity):
         self.angle: float | int = 0
         self.speed_factor: float = 0.01
         self.lives: int = lives
+        #      self.old_keys: Sequence[bool] = pg.key.get_pressed()
+        self.invincibil: bool = False
 
         try:
             self.teleport()
@@ -33,6 +36,7 @@ class Player(Entity):
         self.read_frames_from_file("inc/img/pacman/stay/", FrameType.STAY)
         self.read_frames_from_file("inc/img/pacman/death/", FrameType.DEATH)
 
+        self.sounds: dict[SoundType, list[Sound]] = {}
         self.sounds = Sound.read_sounds_from_files(
              "inc/sounds/pacman/death/", SoundType.EATEN, sounds=self.sounds)
 
@@ -119,6 +123,7 @@ class Player(Entity):
         dy: int = self.dy
         if self.alive:
             keys = pg.key.get_pressed()
+
             if keys[pg.K_w] or keys[pg.K_UP]:
                 num_key_pressed += 1
                 dy += -1
@@ -368,8 +373,17 @@ class Player(Entity):
             pggf.pie(self.game.screen, int(x), int(y), self.size,
                      -20, 20, (255, 0, 0))
 
+        if self.invincibil:
+            txt_ = (f'Invincibil - x:{float(self.x):.4}, y:{float(self.y):.4},'
+                    f' s:{float(self.speed_factor):.4}')
+        else:
+            txt_ = f'x:{self.x}, y:{self.y}, a:{self.angle} '
+        if self.game.config.cheat:
+            txt_ += "\n"
+            for n in self.game.npcs:
+                txt_ += f'{n.name[0]}:{n.mode.name} '
         self.game.screen.blit(self.game.font.render(
-            f'x:{self.x}, y:{self.y}, a:{self.angle} ', False, (10, 10, 200)),
+            txt_, False, (10, 10, 200)),
             (10, 5 + (self.game.map.rows + 1)
              * (self.game.map.step) + self.game.map.top))
 
