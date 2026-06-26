@@ -52,7 +52,6 @@ class Game:
         self.global_event = pg.event.custom_type()
         self.score: int = 0
         self.level: int = 1
-        self.fps: int = FPS
         self.gost_edible: int = 17  # sec - frightened time
         self.new_start: bool = True
         self.pause: bool = True
@@ -252,7 +251,7 @@ class Game:
 
     def update(self) -> None:
         if self.pause:
-            self.delta_time = self.clock.tick(self.fps)
+            self.delta_time = self.clock.tick(FPS)
             return
         self.player.update()
         for npc in self.npcs:
@@ -262,7 +261,7 @@ class Game:
         # self.raycasting.update()
         # self.object_handler.update()
         # self.weapon.update()
-        self.delta_time = self.clock.tick(self.fps)
+        self.delta_time = self.clock.tick(FPS)
         self.game_time -= self.delta_time / 1000
         # check for end of time
         if self.game_time <= 0:
@@ -311,7 +310,7 @@ class Game:
                 #     txt_,
                 #     color='yellow', bgcolor=(10, 10, 0, 40), antialias=True)
                 # self.screen.blit(surf, ((w - surf.get_width()) // 2, h // 2))
-            self.animation_timer += 1/self.fps
+            self.animation_timer += 1/FPS
             # txt_ = "PRESS SPACE - to run \nESC - to return to the menu \n "
             # self.screen.blit(self.font.render(
             #     txt_,

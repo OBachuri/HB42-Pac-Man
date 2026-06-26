@@ -3,7 +3,7 @@ import pygame as pg
 from enum import Enum
 import random
 
-
+from constants import FPS
 from pc_entity import FrameType, GhostMode
 from pc_sound import SoundType, Sound
 
@@ -273,7 +273,7 @@ class Fruit(PC_Artifacts):
             self.animation_timer = 0
             self.frame_index += 1
         if self.event_timer > 0:
-            self.event_timer -= 1 / self.game.fps
+            self.event_timer -= 1 / FPS
             if self.event_timer <= 0:
                 self.event_timer = 0
                 self.event_end()

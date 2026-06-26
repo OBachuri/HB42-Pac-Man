@@ -14,15 +14,15 @@ if TYPE_CHECKING:
 class FrameType(Enum):
     # stay / run / left / right / top / bottom / dead / frightened
     STAY = 1
-    RUN = 2,
-    LEFT = 3,
-    RIGHT = 4,
-    UP = 5,
-    DOWN = 6,
-    DEATH = 7,
-    DEAD = 8,
-    FRIGHTENED = 9,
-    END_OF_FRIGHTENED = 10,
+    RUN = 2
+    LEFT = 3
+    RIGHT = 4
+    UP = 5
+    DOWN = 6
+    DEATH = 7
+    DEAD = 8
+    FRIGHTENED = 9
+    END_OF_FRIGHTENED = 10
 
 
 class GhostMode(Enum):

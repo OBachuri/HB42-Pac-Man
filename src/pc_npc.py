@@ -6,6 +6,7 @@ from collections.abc import Sequence
 # from enum import Enum
 from pc_entity import Entity, FrameType, GhostMode
 from pc_sound import SoundType  # , Sound
+from constants import FPS
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -145,7 +146,7 @@ class NPC(Entity):
 
     def update(self) -> None:
         if self.event_timer > 0:
-            self.event_timer -= 1/self.game.fps
+            self.event_timer -= 1/FPS
             if self.event_timer <= 0:
                 self.event_timer = 0
                 self.event_end()
