@@ -12,7 +12,8 @@ from collections.abc import Sequence
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 from pc_map import Map
 from pc_player import Player
-from pc_npc import NPC, RedGhosts  # , GhostMode
+from pc_npc import NPC  # , GhostMode
+from ghosts import RedGhost, PinkGhost, CyanGhost, OrangeGhost
 from pc_artifact import PC_Artifacts
 from pc_artifact import PowerPellet, Pellet, BonusFruitType, Fruit
 from pc_entity import FrameType
@@ -52,7 +53,7 @@ class Game:
         self.global_event = pg.event.custom_type()
         self.score: int = 0
         self.level: int = 1
-        self.gost_edible: int = 17  # sec - frightened time
+        self.ghost_edible: int = 17  # sec - frightened time
         self.new_start: bool = True
         self.pause: bool = True
         self.running: bool = True
@@ -78,26 +79,10 @@ class Game:
         self.player = Player(self)
 
         # Add Ghost
-        self.npcs.append(RedGhosts(self))
-        pink = NPC(self, (self.map.cols - 1, 0),
-                   (240, 24, 140), "Pink gost (Speedy)")
-        self.npcs.append(pink)
-        pink.read_frames_from_file("inc/img/pink/run/", FrameType.RUN)
-        pink.read_frames_from_file("inc/img/pink/stay/", FrameType.STAY)
-
-        cyan = NPC(self,
-                   (self.map.cols - 1, self.map.rows - 1),
-                   (100, 250, 250), "Cyan gost (Inky, Bashful)")
-        self.npcs.append(cyan)
-        cyan.read_frames_from_file("inc/img/cyan/run/", FrameType.RUN)
-        cyan.read_frames_from_file("inc/img/cyan/stay/", FrameType.STAY)
-
-        orange = NPC(self,
-                     (0, self.map.rows - 1),
-                     (250, 120, 10), "Orange gost (Clyde, Pockey)")
-        self.npcs.append(orange)
-        orange.read_frames_from_file("inc/img/orange/run/", FrameType.RUN)
-        orange.read_frames_from_file("inc/img/orange/stay/", FrameType.STAY)
+        self.npcs = [RedGhost(self),
+                     PinkGhost(self),
+                     CyanGhost(self),
+                     OrangeGhost(self)]
 
         self.player.lives = self.config.lives
 

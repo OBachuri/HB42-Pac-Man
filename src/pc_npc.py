@@ -14,11 +14,11 @@ if TYPE_CHECKING:
 
 
 class NPC(Entity):
-    """ Gosts """
+    """ Ghosts """
     def __init__(self, game: Game,
                  point: tuple[int | float, int | float] = (0, 0),
                  color: tuple[int, int, int] = (100, 100, 100),
-                 name: str = "Gost", size: int = 11, points: int = 200):
+                 name: str = "Ghost", size: int = 11, points: int = 200):
         super().__init__(game, point=point, color=color, name=name, size=size)
         self.angle: float | int = 0
         self.speed_factor: float = 0.02
@@ -120,10 +120,10 @@ class NPC(Entity):
                 # We in a center of the cell and must decide where to go
                 self.find_goal()
 
-            # Check if player near and not gosts etable now
+            # Check if player near and not ghosts etable now
 
             P_ = self.game.map.find_path((x, y), self.goal)
-            # print("gost", self.name, "path:", P_)
+            # print("ghost", self.name, "path:", P_)
             if len(P_) > 1:
                 dx = P_[1][0] - x
                 dx = int(dx > 0) - int(dx < 0)
@@ -198,49 +198,3 @@ class NPC(Entity):
         self.dx = 0
         self.dy = 0
         self.teleport()
-
-
-class RedGhosts(NPC):
-    """ Red gost (Blinky, Shadow)
-        Blinky always chase his prey :)
-    """
-    def __init__(self, game: Game,
-                 point: tuple[float, float] = (0, 0),
-                 color: tuple[int, int, int] = (250, 20, 20),
-                 name: str = "Red gost (Blinky, Shadow)"):
-        super().__init__(game, point, color, name)
-        self.read_frames_from_file("inc/img/red/run/", FrameType.RUN)
-        self.read_frames_from_file("inc/img/red/stay/", FrameType.STAY)
-
-    def reset(self) -> None:
-        super().reset()
-        self.mode = GhostMode.CHASE
-
-    def find_goal(self) -> None:
-        x = int(round(self.x, 0))
-        y = int(round(self.y, 0))
-
-        # Check if player near and not gosts etable now
-        if (((self.mode != GhostMode.FRIGHTENED)
-             and (self.mode != GhostMode.SCATTER))):
-            self.goal = (int(round(self.game.player.x, 0)),
-                         int(round(self.game.player.y, 0)))
-        elif ((self.mode == GhostMode.SCATTER)
-              and (self.goal != (self.start_x, self.start_y))):
-            self.goal = (self.start_x, self.start_y)
-        else:
-            if (self.goal is None) or self.goal == (x, y):
-                # We have reached the goal and we need a new one
-                if (self.mode == GhostMode.SCATTER):
-                    self.mode = GhostMode.STROLL
-                x_g = random.randrange(0, self.game.map.cols)
-                y_g = random.randrange(0, self.game.map.rows)
-                i = 20
-                while (self.game.map.world_map.get((x_g, y_g), 0)
-                        & 0xf == 0xf) and (i > 0):
-                    x_g = random.randrange(0, self.game.map.cols)
-                    y_g = random.randrange(0, self.game.map.rows)
-                    i -= 1
-                if i > 0:
-                    self.goal = (x_g, y_g)
-                # print(self.name, " goal=", self.goal)
