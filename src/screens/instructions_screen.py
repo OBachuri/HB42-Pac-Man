@@ -53,7 +53,7 @@ class InstructionsScreen(BaseScreen):
             " points each\n"
             f"- Ghosts: {app.config.points_per_ghost} points each\n"
             "- Fruits: Range from 100 points (Cherry) up to 5,000 points "
-            "(Key) in higher levels.\n ."
+            "(Key) in higher levels.\n"
         )
 
     async def run(self) -> None:
@@ -65,7 +65,7 @@ class InstructionsScreen(BaseScreen):
 
         line_height = font.get_linesize() + 4
         scroll_y = 0
-        max_scroll = max(0, len(lines) * line_height - text_rect.height)
+        max_scroll = max(0, (1 + len(lines)) * line_height - text_rect.height)
 
         running = True
         while running:
