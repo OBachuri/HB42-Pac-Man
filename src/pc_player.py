@@ -24,6 +24,9 @@ class Player(Entity):
         self.angle: float | int = 0
         self.speed_factor: float = 0.01
         self.lives: int = lives
+        self.dx: int = 0
+        self.dy: int = 0
+
         #      self.old_keys: Sequence[bool] = pg.key.get_pressed()
         self.invincibil: bool = False
 

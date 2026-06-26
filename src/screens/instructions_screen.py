@@ -53,7 +53,7 @@ class InstructionsScreen(BaseScreen):
             " points each\n"
             f"- Ghosts: {app.config.points_per_ghost} points each\n"
             "- Fruits: Range from 100 points (Cherry) up to 5,000 points "
-            "(Key) in higher levels.\n ."
+            "(Key) in higher levels.\n."
         )
 
     async def run(self) -> None:

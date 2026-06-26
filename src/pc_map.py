@@ -3,6 +3,7 @@ from __future__ import annotations
 import pygame as pg
 from collections import deque
 import random
+import os
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -35,6 +36,13 @@ class Map:
     def get_map_form_file(self, file_name: str) -> None:
         self.world_map = {}
         y: int = 0
+
+        if file_name[:4].lower() == 'inc/':
+            file_name = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                file_name,
+                )
+
         with open(file_name, "r", encoding="utf-8") as f:
             for line in f:
                 l_ = line.strip()

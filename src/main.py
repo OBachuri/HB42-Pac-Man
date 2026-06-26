@@ -95,7 +95,7 @@ def main() -> None:
 
         try:
             from mazegenerator.mazegenerator import MazeGenerator
-            from parser import Parser
+            from pc_parser import Parser
             from app import App
             # from pc_game import Game
 

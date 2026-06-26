@@ -2,13 +2,13 @@
 
 ---
 
-# Pac-Man
+# Pac-Man 42
 
 This project is part of the 42.fr curriculum.
 
 The task: Recreate the famous arcade game Pac-man!
 
-- Use external library for maze generation (‘A-Maze-ing‘ package from other "42" piople)
+- Use external library for maze generation (‘A-Maze-ing‘ package from other "42" people)
 - Pac-Man starts from the center of the maze.
 - One ghost appear in each corner of the maze.
 
@@ -40,15 +40,23 @@ python3 pac-man.py my_config.json
 
 ### Controls
 
-- **W** - Move Up
-- **A** - Move Left
-- **S** - Move Down
-- **D** - Move Right
+- **W** or **⇧** - Move Up
+- **A** or **⇦** - Move Left
+- **S** or **⇩** - Move Down
+- **D** or **⇨** - Move Right
 - **Space** - Stop
-- **Esc** - Exit game
+- **Esc** - Pause / Exit game
 
 #### Cheat mode
 
+If you started game with ``` "cheat":  true ``` in config.json - for you available the following additional options:
+- **1** - Invincibility (no life lost; ghosts cannot eat the player).
+- **2** - Level skip (immediately win the current level).
+- **3** - Ghost freeze (ghosts stop moving).
+- **4** - Extra lives (add extra lives to the player).
+- **5** - Increased speed (player moves faster).
+- **6** - Decreased speed (player moves slower).
+- **7** - Change ghost mode.
 - **F** - Ghosts SCATTER
 
 
@@ -59,16 +67,30 @@ The configuration file controls the maze generation physics and rules.
 ```json
 {
 "highscore_filename": "pc_score.json",
-"level": ["Level 1","Level 2","Level 3"],
-"width": [22,25,30],
-"height": [15,18,20],
 "lives": 3,
-"pacgum" : 42,
 "points_per_pacgum" : 10,
 "points_per_super_pacgum" : 50,
 "points_per_ghost" : 200,
-"seed" : 42,
-"level_max_time" : 90
+"cheat": true,
+"levels": [
+	{
+	"number": 1,
+	"width": 14,
+	"height": 10,
+	"pacgum" : 42,
+	"seed": 42,
+	"level_max_time": 130,
+	"bonus_fruit_type": "Strawberry",
+	"points_per_bonus_fruit": 300,
+	"remove_deadends": true,
+	"speed_factor_ghost": 0.04,
+	"max_player_acceleration": 6
+	},
+	{
+	"number": 100,
+	"map_filename": "inc/maps/maze-3.txt"
+	}
+	]
 }
 ```
 
@@ -77,7 +99,7 @@ The configuration file controls the maze generation physics and rules.
 - Python 3.10 or later
 - Pygame
 - Pydantic
-- Pip (for instaqll script)
+- Pip (for install)
 
 ## Resources
 
@@ -116,11 +138,15 @@ Team Members
 
 Obachuri:
 - Main architecture design
+- Maze creating and drawing
 - Pac-Man's movements and animation
 
 IIunusov:
 - Project management
-
+- Main menu
+- Highscore system
+- Parsing and error handling
+- Ghost movement algorithm 
 
 ## License
 

@@ -59,6 +59,7 @@ help:
 
 rebuild:
 	@$(ACTIVATE_VENV)
+	@$(RM) dist
 	@$(RM) $(BUILD_SOURCE_DIR)/build
 	@if [ ! -d "src/mazegenerator" ]; then \
 		echo "Unpack mazegenerator....whl."; \
@@ -67,6 +68,13 @@ rebuild:
 	pygbag --build $(BUILD_SOURCE_DIR)/
 	# rm -rf $(BUILD_SOURCE_DIR)/mazegenerator
 
+	pyinstaller \
+    	--windowed \
+		--collect-submodules=src \
+    	--add-data "src/inc:src/inc" \
+    	--add-data "config.json:config.json" \
+    	pac-man.py
+
 webrun:    # build
 	@$(ACTIVATE_VENV)
 	@if [ ! -d "src/build" ]; then \
@@ -74,7 +82,6 @@ webrun:    # build
 	else \
 		$(PYTHON) -m http.server -b 127.0.0.1 8000 -d src/build/web ; \
 	fi
-
 run:
 	@$(ACTIVATE_VENV)
 	$(PYTHON) ./$(NAME) $(RUN_ARGS)
@@ -107,6 +114,7 @@ clean:
 	@$(RM) __pycache__
 	@$(RM) $(BUILD_SOURCE_DIR)/build
 	@$(RM) $(BUILD_SOURCE_DIR)/mazegenerator
+	@$(RM) dist
 	find . -type d -name __pycache__ -exec rm -rf {} +
 	find . -type d -name .mypy_cache -exec rm -rf {} +
 	find . -type d -name *.egg-info -exec rm -rf {} +
@@ -156,5 +164,5 @@ install:
 #	$(PIP) install mazegen-0.1.0-py3-none-any.whl
 #	$(PIP) install pygbag --upgrade
 	$(PIP) install pygbag
-
-.PHONY:	clean run debug install lint-strict lint $(RUN_ARGS) venv check-venv help fclean build
+	$(PIP) install pyinstaller
+.PHONY:	clean run debug install lint-strict lint $(RUN_ARGS) venv check-venv help fclean rebuild webrun
