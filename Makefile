@@ -65,15 +65,10 @@ rebuild:
 		echo "Unpack mazegenerator....whl."; \
 		unzip mazegenerator-00001-py3-none-any.whl -x mazegenerator-2.0.1.dist-info/{METADATA,WHEEL,top_level.txt,RECORD} -d src
 	fi
-	pygbag --build $(BUILD_SOURCE_DIR)/
+	pygbag --build $(BUILD_SOURCE_DIR)  
 	# rm -rf $(BUILD_SOURCE_DIR)/mazegenerator
 
-	pyinstaller \
-    	--windowed \
-		--collect-submodules=src \
-    	--add-data "src/inc:src/inc" \
-    	--add-data "config.json:config.json" \
-    	pac-man.py
+#	pyinstaller -n "PacMan-42" --windowed -p src/ --add-data="src/inc:inc"  src/main.py
 
 webrun:    # build
 	@$(ACTIVATE_VENV)
@@ -121,6 +116,7 @@ clean:
 	find . -name .pytest_cache -exec rm -rf {} +
 	find . -name "*.pyc" -delete
 	find . -name "*.pyo" -delete
+	find . -name "*.spec" -delete
 # 	@if [ -f config.txt ]; then \
 # 		rm -f "$(OUTPUT_FILE)"; \
 # 	fi

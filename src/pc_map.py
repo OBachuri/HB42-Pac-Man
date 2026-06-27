@@ -48,14 +48,80 @@ class Map:
                 l_ = line.strip()
                 if y == 0:
                     self.cols = len(l_)
-                if len(l_) < self.cols:
+                elif len(l_) < self.cols:
                     self.rows = y
-                    return
+                    break
                 for x in range(0, len(l_)):
                     v = int(l_[x], 16)
                     if v > 0:
                         self.world_map[(x, y)] = v
                 y += 1
+
+        error_ = self.map_check()
+        if len(error_) > 0:
+            print(f"Error in maze file {file_name}:")
+            print("(X,Y)=Walls (Walls = 1-Top + 2-Right + 4-Bottom + 8-Left)")
+            for e_ in error_:
+                print(e_)
+
+    def map_check(self) -> list[str]:
+        error_: list[str] = []
+        for x in range(0, self.cols):
+            for y in range(0, self.rows):
+                w = self.world_map.get((x, y), 0)
+                if (x == 0):
+                    if ((w & 8) == 0):
+                        # left edge of maze without wall
+                        error_.append(f"({x+1},{y+1})={w}"
+                                      " - left edge of maze without wall")
+                        w += 8
+                        self.world_map[(x, y)] = w
+                else:
+                    if (x + 1 == self.cols) and ((w & 2) == 0):
+                        # right edge of maze without wall
+                        error_.append(f"({x+1},{y+1})={w}"
+                                      " - right edge of maze without wall")
+                        w += 2
+                        self.world_map[(x, y)] = w
+                    w1 = self.world_map.get((x - 1, y), 0)
+                    if ((w1 & 2) > 0) ^ ((w & 8) > 0):
+                        error_.append(
+                            f"({x},{y+1})={w1} and ({x+1},{y+1})={w}"
+                            " - vertical wall exist only on one side")
+                        if (w1 & 2) > 0:
+                            w += 8
+                            self.world_map[(x, y)] = w
+                        else:
+                            w1 += 2
+                            self.world_map[(x - 1, y)] = w1
+
+                if (y == 0):
+                    if ((w & 1) == 0):
+                        # top edge of maze without wall
+                        error_.append(f"({x+1},{y+1})={w}"
+                                      " - top edge of maze without wall")
+                        w += 1
+                        self.world_map[(x, y)] = w
+                else:
+                    w1 = self.world_map.get((x, y - 1), 0)
+                    if ((w1 & 4) > 0) ^ ((w & 1) > 0):
+                        error_.append(
+                            f"({x+1},{y})={w1} and ({x+1},{y+1})={w}"
+                            " - horizontal wall exist only on one side")
+                        if (w1 & 4) > 0:
+                            w += 1
+                            self.world_map[(x, y)] = w
+                        else:
+                            w1 += 4
+                            self.world_map[(x, y - 1)] = w1
+                    if (y + 1 == self.rows) and ((w & 4) == 0):
+                        # bottom edge of maze without wall
+                        error_.append(f"({x+1},{y+1})={w}"
+                                      " - bottom edge of maze without wall")
+                        w += 4
+                        self.world_map[(x, y)] = w
+
+        return (error_)
 
     def find_path(self,
                   start: tuple[int, int] = (0, 0),
