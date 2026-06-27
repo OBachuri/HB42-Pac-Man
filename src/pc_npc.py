@@ -6,7 +6,7 @@ from collections.abc import Sequence
 # from enum import Enum
 from pc_entity import Entity, FrameType, GhostMode
 from pc_sound import SoundType  # , Sound
-from constants import FPS
+from pc_constants import FPS
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:

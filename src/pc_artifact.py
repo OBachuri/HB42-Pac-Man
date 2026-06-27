@@ -3,7 +3,7 @@ import pygame as pg
 from enum import Enum
 import random
 
-from constants import FPS
+from pc_constants import FPS
 from pc_entity import FrameType, GhostMode
 from pc_sound import SoundType, Sound
 

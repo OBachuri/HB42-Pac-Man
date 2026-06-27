@@ -4,10 +4,10 @@ import os
 import asyncio
 import pygame as pg
 
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT
+from pc_constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from pc_game import Game
-from screens import ScreenTypes, BaseScreen, MainMenuScreen, ErrorScreen
-from screens import InstructionsScreen, HighscoresScreen, GameEndScreen
+from pc_screens import ScreenTypes, BaseScreen, MainMenuScreen, ErrorScreen
+from pc_screens import InstructionsScreen, HighscoresScreen, GameEndScreen
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from config import Config

@@ -21,9 +21,9 @@ def main() -> int:
     # print("="*30, path_to_src)
     sys.path.append(path_to_src)
 
-    from src.parser import Parser
+    from src.pc_parser import Parser
     from src.config import Config
-    from src.app import App
+    from src.pc_app import App
 
     # try shcool maze generator
     try:

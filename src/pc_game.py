@@ -9,16 +9,16 @@ from collections.abc import Sequence
 # import sys
 # sys.path.append(os.path.dirname(__file__))
 
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
+from pc_constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 from pc_map import Map
 from pc_player import Player
 from pc_npc import NPC  # , GhostMode
-from ghosts import RedGhost, PinkGhost, CyanGhost, OrangeGhost
+from pc_ghosts import RedGhost, PinkGhost, CyanGhost, OrangeGhost
 from pc_artifact import PC_Artifacts
 from pc_artifact import PowerPellet, Pellet, BonusFruitType, Fruit
 from pc_entity import FrameType
-from screens import ScreenTypes
-from screens.utils import PCUIElement
+from pc_screens import ScreenTypes
+from pc_screens.pc_utils import PCUIElement
 
 
 from typing import TYPE_CHECKING

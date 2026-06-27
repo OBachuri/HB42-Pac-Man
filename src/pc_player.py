@@ -6,7 +6,7 @@ import math
 # from collections.abc import Sequence
 
 from pc_entity import Entity, FrameType
-from screens import ScreenTypes
+from pc_screens import ScreenTypes
 from pc_sound import SoundType, Sound
 
 from typing import TYPE_CHECKING
