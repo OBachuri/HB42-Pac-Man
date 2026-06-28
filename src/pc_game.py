@@ -144,11 +144,17 @@ class Game:
 
         self.artifacts = []
 
-        if config.map_filename:
-            self.map.get_map_form_file(config.map_filename)
-            if config.remove_deadends:
-                self.map.del_deadends()
-        else:
+        if len(config.map_filename) > 1:
+            try:
+                self.map.get_map_form_file(config.map_filename)
+                if config.remove_deadends:
+                    self.map.del_deadends()
+            except Exception as ex:
+                print("Error - Can't read map from file "
+                      f"({config.map_filename}):\n", ex)
+                config.map_filename = ""
+
+        if len(config.map_filename) <= 1:
             from mazegenerator.mazegenerator import MazeGenerator
             maze_ = MazeGenerator(
                 size=config.size,
@@ -164,6 +170,7 @@ class Game:
             (max(self.map.cols*self.map.step
              + self.map.wall_thickness, SCREEN_WIDTH),
              max((self.map.rows + 3)*(self.map.step), SCREEN_HEIGHT)))
+        #     ,pg.SCALED | pg.FULLSCREEN)
 
         self.screen_left_shift = 0
         if ((self.map.cols*self.map.step

@@ -5,11 +5,28 @@ from pc_artifact import BonusFruitType
 
 class LevelWeb:
     def __init__(self, data: dict[str, Any] = {}) -> None:
-        self.map_filename: str = data.get("map_filename", "")
-        self.number: int = data.get("number", 1)
+        self.number: int = 1
+        try:
+            n = int(data.get("number", 1))
+            if n < 0:
+                raise ValueError("Number of level must be positive integer")
+            self.number = n
+        except Exception as ex:
+            print("Error in config in level number =",
+                  data.get("number", 1), ":", ex)
+
+        self.map_filename: str = ""
+        try:
+            str_ = str(data.get("map_filename", ""))
+            self.map_filename = str_
+        except Exception as ex:
+            print(f"Error in config for level {self.number} "
+                  "- wrong map file name",
+                  data.get("map_filename", ""), ":", ex)
+
         self.remove_deadends: bool = data.get("remove_deadends", True)
         self.width: int = max(data.get("width", 14), 3)
-        self.height: int = max(data.get("height", 12), 3)
+        self.height: int = max(data.get("height", 10), 3)
         self.seed: int = data.get("seed", 0)
         self.pacgum: int = data.get("pacgum", 0)
         self.level_max_time: int = data.get("level_max_time", 90)
@@ -56,9 +73,18 @@ class ConfigWeb:
         self.seed: int = cfg_data.get("seed", 0)
         self.cheat: bool = cfg_data.get("cheat", False)
 
-        levels: list[LevelWeb] = [LevelWeb(level_data)
-                                  for level_data
-                                  in cfg_data.get("levels", [])]
+        try:
+            levels: list[LevelWeb] = [LevelWeb(level_data)
+                                      for level_data
+                                      in cfg_data.get("levels", [])]
+            min_level = 0
+            min_level = min({l_.number for l_ in levels})
+            if min_level != 1:
+                print("Error: in config must be Level number 1!")
+                levels.append(LevelWeb())
+        except Exception as ex:
+            print("Error in config for levels:", ex)
+            levels = []
 
         self.levels: list[LevelWeb] = levels if levels else [LevelWeb()]
 
