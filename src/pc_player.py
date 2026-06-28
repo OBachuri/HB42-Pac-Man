@@ -17,18 +17,23 @@ if TYPE_CHECKING:
 class Player(Entity):
     """ Player = PacMan """
     def __init__(self, game: Game,
-                 point: tuple[int | float, int | float] = (0, 0),
+                 point: tuple[float, float] = (0, 0),
                  color: tuple[int, int, int] = (250, 250, 10),
                  name: str = "PacMan", size: int = 21, lives: int = 3):
-        super().__init__(game, point=point, color=color, name=name, size=size)
+
+        super().__init__(game, color=color, name=name, size=size)
+
+        self.x: float = 0
+        self.y: float = 0
+        self.x, self.y = point
         self.angle: float | int = 0
         self.speed_factor: float = 0.01
         self.lives: int = lives
         self.dx: int = 0
         self.dy: int = 0
-
-        #      self.old_keys: Sequence[bool] = pg.key.get_pressed()
         self.invincibil: bool = False
+        self.frame_index: int = 0
+        self.avto_shift: float = 0.25    # coefficient
 
         try:
             self.teleport()
@@ -163,6 +168,9 @@ class Player(Entity):
                            / (self.game.map.cell_size
                               + self.game.map.wall_thickness)), 10)
 
+        old_dx = dx
+        old_dy = dy
+
         # limit on max speed
         if abs(dx) + abs(dy) > self.max_d:
             # print("d--in(x,y)",dx,dy)
@@ -229,6 +237,51 @@ class Player(Entity):
                 # move to the top but there is a wall
                 new_y = y_int - max_shift + 1e-10
 
+            if (self.x == new_x) and (self.y == new_y):
+                # we can't move, check if we can shift
+                try:
+                    shift_ = (
+                        self.avto_shift * self.size / self.game.map.cell_size)
+                except Exception as ex_:
+                    print("Error calculating PacMan shift:", ex_)
+                    shift_ = 0.0916
+                if ((dx_sf > 0) and not (w & 2)):  # move right
+                    if (((y_int - self.y) > 0) and (
+                         (y_int - self.y) < (max_shift + shift_ - 1e-10))):
+                        new_y = y_int - max_shift + 1e-10
+                        dx = max(1, old_dx - 3)
+                    elif (((self.y - y_int) > 0) and (
+                         (self.y - y_int) < (max_shift + shift_ - 1e-10))):
+                        new_y = y_int + max_shift - 1e-10
+                        dx = max(1, old_dx - 3)
+                elif ((dx_sf < 0) and not (w & 8)):  # move left
+                    if (((y_int - self.y) > 0) and (
+                         (y_int - self.y) < (max_shift + shift_ - 1e-10))):
+                        new_y = y_int - max_shift + 1e-10
+                        dx = min(-1, old_dx + 3)
+                    elif (((self.y - y_int) > 0) and (
+                         (self.y - y_int) < (max_shift + shift_ - 1e-10))):
+                        new_y = y_int + max_shift - 1e-10
+                        dx = min(-1, old_dx + 3)
+                elif ((dy_sf > 0) and not (w & 4)):  # move down
+                    if (((x_int - self.x) > 0) and (
+                         (x_int - self.x) < (max_shift + shift_ - 1e-10))):
+                        new_x = x_int - max_shift + 1e-10
+                        dy = max(1, old_dy - 3)
+                    elif (((self.x - x_int) > 0) and (
+                         (self.x - x_int) < (max_shift + shift_ - 1e-10))):
+                        new_x = x_int + max_shift - 1e-10
+                        dy = max(1, old_dy - 3)
+                elif ((dy_sf < 0) and not (w & 1)):  # move up
+                    if (((x_int - self.x) > 0) and (
+                         (x_int - self.x) < (max_shift + shift_ - 1e-10))):
+                        new_x = x_int - max_shift + 1e-10
+                        dy = min(-1, old_dy + 3)
+                    elif (((self.x - x_int) > 0) and (
+                         (self.x - x_int) < (max_shift + shift_ - 1e-10))):
+                        new_x = x_int + max_shift - 1e-10
+                        dy = min(-1, old_dy + 3)
+
         self.x = new_x
         self.y = new_y
 
@@ -278,7 +331,7 @@ class Player(Entity):
             angle = 0
         else:
             frames = self.frames.get(FrameType.RUN, [])
-            angle = self.angle
+            angle = int(self.angle)
         if len(frames) > 0:
             if self.frame_index >= len(frames):
                 if not (self.alive):
@@ -328,18 +381,3 @@ class Player(Entity):
             txt_, False, (10, 10, 200)),
             (10, 5 + (self.game.map.rows + 1)
              * (self.game.map.step) + self.game.map.top))
-
-        # x = (int(self.x) * (self.game.map.cell_size
-        #                + self.game.map.wall_thickness)
-        #      + self.game.map.cell_size / 2
-        #      + self.game.map.wall_thickness)
-
-        # y = (int(self.y) * (self.game.map.cell_size
-        #                + self.game.map.wall_thickness)
-        #      + self.game.map.cell_size / 2
-        #      + self.game.map.wall_thickness)
-        # pg.draw.circle(self.game.screen,
-        #                'blue',
-        #                (x,
-        #                 y
-        #                 ), 4)
