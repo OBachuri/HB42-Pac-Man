@@ -95,7 +95,7 @@ def main() -> None:
 
         try:
             from mazegenerator.mazegenerator import MazeGenerator
-            from parser import Parser
+            from pc_parser import Parser
             from app import App
             # from pc_game import Game
 
@@ -113,7 +113,7 @@ def main() -> None:
             asyncio.run(run_error(screen, clock))
         else:
             config = Parser.get_config_web()
-            config.print()
+            # config.print()
             app = App(config)
             # Run the async loop
             asyncio.run(app.run())

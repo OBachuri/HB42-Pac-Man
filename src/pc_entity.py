@@ -45,8 +45,8 @@ class Entity:
                  name: str = "Entity",
                  size: int = 11):
         self.game = game
-        self.x: float
-        self.y: float
+        self.x: float = 0
+        self.y: float = 0
         self.x, self.y = point
         self.start_x, self.start_y = point
         self.name = name
