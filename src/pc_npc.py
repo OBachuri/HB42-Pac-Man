@@ -19,11 +19,20 @@ class NPC(Entity):
                  color: tuple[int, int, int] = (100, 100, 100),
                  name: str = "Gost", size: int = 11, points: int = 200):
         super().__init__(game, point=point, color=color, name=name, size=size)
-        self.angle: float | int = 0
         self.speed_factor: float = 0.02
         self.points = points  # score add
+
+        # for mypy test - it can't check type from Entity
         self.dx: int = 0
         self.dy: int = 0
+        self.x: float | int = 0
+        self.y: float | int = 0
+        self.x, self.y = point
+        self.angle: float | int = 0
+        self.animation_timer: float = 0
+        self.event_timer: float = 0
+        # end of block for mypy
+
         self.goal: tuple[int, int] | None = None
         self.start_chase_if_near: int = 4
         self.mode: GhostMode = GhostMode.STROLL
@@ -96,11 +105,14 @@ class NPC(Entity):
                 if keys[pg.K_3]:
                     self.freeze = not (self.freeze)
 
-        if self.freeze:
-            return
+        x: float = float(self.x)
+        y: float = float(self.y)
 
-        x = self.x
-        y = self.y
+        if self.freeze:
+            if self.mode == GhostMode.SPAWN:
+                if self.goal == (x, y):
+                    self.reborn()
+            return
 
         if self.mode == GhostMode.SPAWN:
             speed_factor = max(0.05, self.speed_factor)
