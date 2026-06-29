@@ -5,7 +5,7 @@ import random
 from collections.abc import Sequence
 # from enum import Enum
 from pc_entity import Entity, FrameType, GhostMode
-from pc_sound import SoundType  # , Sound
+from pc_sound import SoundType, Sound
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -51,6 +51,8 @@ class NPC(Entity):
         self.freeze: bool = False
 
         self.old_keys: Sequence[bool] = pg.key.get_pressed()
+
+        self.sound_init()
 
     def find_goal(self) -> None:
         x: int = int(round(self.x, 0))
@@ -182,6 +184,10 @@ class NPC(Entity):
             self.game.score += self.points
             self.mode = GhostMode.DEAD
             self.alive = False
+            sound = self.sounds.get(SoundType.EATEN, [])
+            if len(sound) > 0:
+                sound[0].play()
+
         else:
             if self.game.player.invincibil:
                 return
@@ -210,6 +216,10 @@ class NPC(Entity):
         self.dy = 0
         self.teleport()
 
+    def sound_init(self) -> None:
+        self.sounds = Sound.read_sounds_from_files(
+            "inc/sounds/ghosts/death/",
+            SoundType.EATEN,self.sounds)
 
 class RedGhosts(NPC):
     """ Red gost (Blinky, Shadow)

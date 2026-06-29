@@ -18,7 +18,7 @@ from pc_artifact import PowerPellet, Pellet, BonusFruitType, Fruit
 from pc_entity import FrameType
 from screens import ScreenTypes
 from screens.utils import PCUIElement
-
+from pc_sound import SoundType, Sound
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -28,6 +28,10 @@ if TYPE_CHECKING:
 
 
 class Game:
+
+    sounds: dict[SoundType, list[Sound]] = {}
+    sound_index: int = 0
+
     def __init__(self, app: "App", config: Config | ConfigWeb | None = None):
         self.app = app
         # pg.mouse.set_visible(False)
@@ -70,8 +74,6 @@ class Game:
 
         self.npcs: list[NPC] = []
         self.artifacts: list[PC_Artifacts] = []
-        Pellet.sound_init()
-        Fruit.sound_init()
         self.new_game()
 
     def new_game(self) -> None:
@@ -271,11 +273,22 @@ class Game:
         # self.weapon.update()
         self.delta_time = self.clock.tick(self.fps)
         self.game_time -= self.delta_time / 1000
+
+        if (self.game_time < 6) and (self.game_time > 0) and (self.sound_index != int(self.game_time)): 
+            # and (round(self.game_time, 0) == self.game_time):
+            sound = self.sounds.get(SoundType.TICK, [])
+            if len(sound) > 0:
+                sound[0].play()
+            Game.sound_index = int(self.game_time)
+            
         # check for end of time
         if self.game_time <= 0:
             self.game_time = 0
             if self.player.alive:
                 self.player.frame_index = 0
+                sound = self.player.sounds.get(SoundType.EATEN, [])
+                if len(sound) > 0:
+                    sound[0].play()
             self.player.alive = False
         cheat = ""
         if self.config.cheat:
@@ -413,3 +426,9 @@ class Game:
         self.pause = True
         self.running = True
         # self.app.move_to(ScreenTypes.MAIN_MENU)
+
+    @classmethod
+    def sound_init(cls) -> None:
+        cls.sounds = Sound.read_sounds_from_files(
+            "inc/sounds/tick/",
+            SoundType.TICK)

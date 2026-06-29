@@ -6,7 +6,8 @@ from pygame import mixer as mx
 class SoundType(Enum):
     EATEN = 1,   # death
     REBORN = 2,
-    DISAPPEAR = 3
+    DISAPPEAR = 3,
+    TICK = 9
 
 
 class Sound:
