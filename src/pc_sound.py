@@ -28,11 +28,17 @@ class Sound:
 
     def play(self, loops: int = 0) -> None:
         if self._sound:
-            mx.Sound.play(self._sound, loops=loops)
+            try:
+                mx.Sound.play(self._sound, loops=loops)
+            except Exception as ex:
+                print("Error with sound play:", ex)
 
     def stop(self) -> None:
         if self._sound:
-            mx.Sound.stop(self._sound)
+            try:
+                mx.Sound.stop(self._sound)
+            except Exception as ex:
+                print("Error with sound play:", ex)
 
     @staticmethod
     def read_sounds_from_files(file_path: str, sound_type: SoundType,

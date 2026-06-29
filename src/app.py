@@ -20,7 +20,10 @@ class App:
         self.err_msg: str = ""
         pg.init()
         pg.font.init()
-        pg.mixer.init()
+        try:
+            pg.mixer.init()
+        except Exception as ex:
+            print("Error - no access to sound device:", ex)
         self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pg.time.Clock()
         pg.display.set_caption('Pac-man 42')

@@ -166,11 +166,11 @@ class Game:
 
         self.map.print()
 
-        pg.display.set_mode(
+        pg.display.set_mode((
             (max(self.map.cols*self.map.step
              + self.map.wall_thickness, SCREEN_WIDTH),
-             max((self.map.rows + 3)*(self.map.step), SCREEN_HEIGHT)))
-        #     ,pg.SCALED | pg.FULLSCREEN)
+             max((self.map.rows + 3)*(self.map.step), SCREEN_HEIGHT))),
+             pg.SCALED)  # pg.FULLSCREEN
 
         self.screen_left_shift = 0
         if ((self.map.cols*self.map.step
