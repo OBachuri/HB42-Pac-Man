@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from pc_app import App
 
-from pc_constants import SCREEN_WIDTH, FPS
+from pc_constants import SCREEN_WIDTH, FPS, SCREEN_HEIGHT
 from pc_screens import BaseScreen, ScreenTypes
 from pc_screens.pc_utils import Button
 
@@ -79,6 +79,13 @@ class MainMenuScreen(BaseScreen):
                           sys.platform != "emscripten"):
                         self.app.quit()
                         running = False
+
+                    elif event.key == pg.K_f:
+                        self.app.fullscreen_mode = not self.app.fullscreen_mode
+                        if self.app.fullscreen_mode:
+                            pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pg.SCALED | pg.FULLSCREEN)
+                        else:
+                            pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
                 if event.type == pg.MOUSEBUTTONDOWN:
                     for i, button in enumerate(buttons):

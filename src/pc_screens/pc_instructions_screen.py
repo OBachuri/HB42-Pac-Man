@@ -83,6 +83,12 @@ class InstructionsScreen(BaseScreen):
                         scroll_y = min(scroll_y + line_height, max_scroll)
                     elif event.key == pg.K_UP:
                         scroll_y = max(scroll_y - line_height, 0)
+                    elif event.key == pg.K_f:
+                        self.app.fullscreen_mode = not self.app.fullscreen_mode
+                        if self.app.fullscreen_mode:
+                            pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pg.SCALED | pg.FULLSCREEN)
+                        else:
+                            pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
                 if event.type == pg.MOUSEWHEEL:
                     scroll_y = max(
                         0, min(scroll_y - event.y

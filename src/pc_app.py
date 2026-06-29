@@ -25,6 +25,7 @@ class App:
         self.clock = pg.time.Clock()
         pg.display.set_caption('Pac-man 42')
 
+        self.fullscreen_mode = False
         self.running = True
         self.screens: dict[ScreenTypes, BaseScreen] = {}
         self.current_screen: BaseScreen | None = None

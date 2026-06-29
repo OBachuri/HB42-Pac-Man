@@ -80,9 +80,9 @@ class Game:
 
         # Add Ghost
         self.npcs = [RedGhost(self),
-                     PinkGhost(self),
-                     CyanGhost(self),
-                     OrangeGhost(self)]
+                     PinkGhost(self),]
+                    #  CyanGhost(self),
+                    #  OrangeGhost(self)]
 
         self.player.lives = self.config.lives
 
@@ -144,10 +144,17 @@ class Game:
 
         self.map.print()
 
-        pg.display.set_mode(
-            (max(self.map.cols*self.map.step
-             + self.map.wall_thickness, SCREEN_WIDTH),
-             max((self.map.rows + 3)*(self.map.step), SCREEN_HEIGHT)))
+        if self.app.fullscreen_mode:
+            pg.display.set_mode(
+                (max(self.map.cols*self.map.step
+                + self.map.wall_thickness, SCREEN_WIDTH),
+                max((self.map.rows + 3)*(self.map.step), SCREEN_HEIGHT)),
+                pg.SCALED | pg.FULLSCREEN)
+        else:
+            pg.display.set_mode(
+                (max(self.map.cols*self.map.step
+                + self.map.wall_thickness, SCREEN_WIDTH),
+                max((self.map.rows + 3)*(self.map.step), SCREEN_HEIGHT)))
 
         self.screen_left_shift = 0
         if ((self.map.cols*self.map.step
@@ -345,32 +352,39 @@ class Game:
                 if self.new_start:
                     self.new_start = False
             if event.type == pg.KEYDOWN:
-                keys = pg.key.get_pressed()
-                if self.old_keys != keys:
-                    self.old_keys = keys
-                    if keys[pg.K_ESCAPE]:
-                        if self.pause:
-                            self.app.move_to(ScreenTypes.MAIN_MENU)
-                        else:
-                            self.pause = True
-                        self.running = False
-                        return
-                    if self.config.cheat:
-                        if keys[pg.K_1]:    # invincibility
-                            self.player.invincibil = not (
-                                self.player.invincibil)
-                        if keys[pg.K_2]:    # skip level
-                            self.next_level()
-                        if keys[pg.K_4]:    # Extra lives to the player
-                            self.player.lives += 1
-                        if keys[pg.K_5]:    # Increased speed of player
-                            self.player.speed_factor = min(
-                                self.player.speed_factor + 0.005,
-                                0.3 / self.player.max_d)
-                        if keys[pg.K_6]:    # Decreased speed of player
-                            self.player.speed_factor = max(
-                                self.player.speed_factor - 0.01,
-                                0.005 / self.player.max_d)
+                if event.key == pg.K_f:
+                    self.app.fullscreen_mode = not self.app.fullscreen_mode
+                    if self.app.fullscreen_mode:
+                        pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pg.SCALED | pg.FULLSCREEN)
+                    else:
+                        pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+                else:
+                    keys = pg.key.get_pressed()
+                    if self.old_keys != keys:
+                        self.old_keys = keys
+                        if keys[pg.K_ESCAPE]:
+                            if self.pause:
+                                self.app.move_to(ScreenTypes.MAIN_MENU)
+                            else:
+                                self.pause = True
+                            self.running = False
+                            return
+                        if self.config.cheat:
+                            if keys[pg.K_1]:    # invincibility
+                                self.player.invincibil = not (
+                                    self.player.invincibil)
+                            if keys[pg.K_2]:    # skip level
+                                self.next_level()
+                            if keys[pg.K_4]:    # Extra lives to the player
+                                self.player.lives += 1
+                            if keys[pg.K_5]:    # Increased speed of player
+                                self.player.speed_factor = min(
+                                    self.player.speed_factor + 0.005,
+                                    0.3 / self.player.max_d)
+                            if keys[pg.K_6]:    # Decreased speed of player
+                                self.player.speed_factor = max(
+                                    self.player.speed_factor - 0.01,
+                                    0.005 / self.player.max_d)
             else:
                 self.old_keys = pg.key.get_pressed()
 

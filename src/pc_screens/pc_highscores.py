@@ -48,6 +48,12 @@ class HighscoresScreen(BaseScreen):
                     if event.key == pg.K_ESCAPE:
                         running = False
                         self.app.move_to(ScreenTypes.MAIN_MENU)
+                    elif event.key == pg.K_f:
+                        self.app.fullscreen_mode = not self.app.fullscreen_mode
+                        if self.app.fullscreen_mode:
+                            pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pg.SCALED | pg.FULLSCREEN)
+                        else:
+                            pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
             self.app.screen.fill("black")
             y = 60
