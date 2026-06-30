@@ -20,8 +20,8 @@
 	"pacgum" : 0,
 	"seed": 1,
 	"remove_deadends": true,
-	"speed_factor_ghost": 0.04,
-	"max_player_acceleration": 6,
+	"speed_factor_ghost": 0.03,
+	"max_player_acceleration": 5,
 	"level_max_time": 90,
 	"bonus_fruit_type":"Strawberry",
 	"points_per_bonus_fruit": 300
@@ -45,7 +45,7 @@
 	"level_max_time" : 222,
 	"remove_deadends": true,
 	"max_player_acceleration": 7,
-	"speed_factor_ghost": 0.1,
+	"speed_factor_ghost": 0.05,
 	"map_filename": "inc/maps/maze-3.txt",
 	"bonus_fruit_type":"Orange",
 	"points_per_bonus_fruit": 500
@@ -98,5 +98,5 @@
 "points_per_super_pacgum" : 50,
 "points_per_ghost" : 200,
 "seed" : 42,
-"cheat": false
+"cheat": true
 }
