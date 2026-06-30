@@ -79,9 +79,10 @@ class Game:
         self.player = Player(self)
 
         # Add Ghost
-        self.npcs = [RedGhost(self),
-                     PinkGhost(self),
-                     CyanGhost(self),
+        red_ghost = RedGhost(self)
+        self.npcs = [red_ghost,
+                    #  PinkGhost(self),]
+                    #  CyanGhost(self, red_ghost=red_ghost),]
                      OrangeGhost(self)]
 
         self.player.lives = self.config.lives
@@ -171,19 +172,20 @@ class Game:
         self.player.max_d = config.max_player_acceleration
 
         # Set NPC
-        for i in range(0, len(self.npcs)):
-            n = self.npcs[i]
-            if i == 1:
+        for n in self.npcs:
+            if isinstance(n, RedGhost):
+                n.start_x = 0
+                n.start_y = 0
+            elif isinstance(n, PinkGhost):
                 n.start_x = self.map.cols - 1
                 n.start_y = 0
-            elif i == 2:
-                n.start_x = self.map.cols - 1
-                n.start_y = self.map.rows - 1
-            elif i == 3:
+            elif isinstance(n, OrangeGhost):
                 n.start_x = 0
                 n.start_y = self.map.rows - 1
+            elif isinstance(n, CyanGhost):
+                n.start_x = self.map.cols - 1
+                n.start_y = self.map.rows - 1
             n.reset()
-            n.goal = (self.player.x, self.player.y)
             n.speed_factor = config.speed_factor_ghost
             n.points = self.config.points_per_ghost
 

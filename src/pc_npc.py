@@ -25,9 +25,10 @@ class NPC(Entity):
         self.points = points  # score add
         self.dx: int = 0
         self.dy: int = 0
-        self.goal: tuple[int, int] | None = None
+        # self.goal: tuple[int, int] | None = None
+        self.goal: pg.Vector2 | None = None
         self.start_chase_if_near: int = 4
-        self.mode: GhostMode = GhostMode.STROLL
+        self.mode: GhostMode = GhostMode.CHASE
 
         self.read_frames_from_file("inc/img/frightened/", FrameType.FRIGHTENED)
         self.read_frames_from_file("inc/img/end_of_frightened/",
@@ -45,38 +46,64 @@ class NPC(Entity):
         self.old_keys: Sequence[bool] = pg.key.get_pressed()
 
     def find_goal(self) -> None:
-        x: int = int(round(self.x, 0))
-        y: int = int(round(self.y, 0))
-
-        # Check if player near and  ghosts not etable now
-        if (self.mode == GhostMode.CHASE):
-            self.goal = (int(round(self.game.player.x, 0)),
-                         int(round(self.game.player.y, 0)))
-        elif (((self.mode == GhostMode.STROLL)
-                and ((self.game.player.x - x) ** 2
-                     + (self.game.player.y - y) ** 2)
-                < self.start_chase_if_near ** 2)):
-            self.goal = (int(round(self.game.player.x, 0)),
-                         int(round(self.game.player.y, 0)))
-        elif ((self.mode == GhostMode.SCATTER)
-              and (self.goal != (self.start_x, self.start_y))):
-            self.goal = (self.start_x, self.start_y)
+        if (
+            self.mode == GhostMode.SCATTER
+            and self.goal != (self.start_x, self.start_y)
+        ):
+            self.goal = pg.Vector2(self.start_x, self.start_y)
         else:
-            if (self.goal is None) or self.goal == (x, y):
+            if (self.goal is None) or self.goal == (int(round(self.x, 0)), int(round(self.y, 0))):
                 # We have reached the goal and we need a new one
-                if (self.mode == GhostMode.SCATTER):
-                    self.mode = GhostMode.STROLL
+                if self.mode == GhostMode.SCATTER:
+                    self.mode = GhostMode.CHASE
+                    return
                 x_g = random.randrange(0, self.game.map.cols)
                 y_g = random.randrange(0, self.game.map.rows)
                 i = 20
                 while (self.game.map.world_map.get((x_g, y_g), 0)
-                        & 0xf == 0xf) and (i > 0):
+                        & 0xf == 0xf and i > 0):
                     x_g = random.randrange(0, self.game.map.cols)
                     y_g = random.randrange(0, self.game.map.rows)
                     i -= 1
                 if i > 0:
-                    self.goal = (x_g, y_g)
+                    self.goal = pg.Vector2(x_g, y_g)
                 # print(self.name, " goal=", self.goal)
+        # # x: int = int(round(self.x, 0))
+        # # y: int = int(round(self.y, 0))
+        # npc_pos = pg.Vector2(int(round(self.x, 0)), int(round(self.y, 0)))
+        # player_pos = pg.Vector2(self.game.player.x, self.game.player.y)
+        # dist_to_chase = self.start_chase_if_near ** 2
+
+        # # Check if player near and  ghosts not etable now
+        # if (self.mode == GhostMode.CHASE):
+        #     self.goal = pg.Vector2(int(round(self.game.player.x, 0)),
+        #                  int(round(self.game.player.y, 0)))
+        # elif ((self.mode == GhostMode.STROLL)
+        #         # and ((self.game.player.x - x) ** 2
+        #         #      + (self.game.player.y - y) ** 2)
+        #         # < self.start_chase_if_near ** 2)):
+        #         and npc_pos.distance_to(player_pos) < dist_to_chase):
+        #     self.goal = pg.Vector2(int(round(self.game.player.x, 0)),
+        #                  int(round(self.game.player.y, 0)))
+        # elif ((self.mode == GhostMode.SCATTER)
+        #       and (self.goal != (self.start_x, self.start_y))):
+        #     self.goal = pg.Vector2(self.start_x, self.start_y)
+        # else:
+        #     if (self.goal is None) or self.goal == (x, y):
+        #         # We have reached the goal and we need a new one
+        #         if (self.mode == GhostMode.SCATTER):
+        #             self.mode = GhostMode.STROLL
+        #         x_g = random.randrange(0, self.game.map.cols)
+        #         y_g = random.randrange(0, self.game.map.rows)
+        #         i = 20
+        #         while (self.game.map.world_map.get((x_g, y_g), 0)
+        #                 & 0xf == 0xf) and (i > 0):
+        #             x_g = random.randrange(0, self.game.map.cols)
+        #             y_g = random.randrange(0, self.game.map.rows)
+        #             i -= 1
+        #         if i > 0:
+        #             self.goal = pg.Vector2(x_g, y_g)
+        #         # print(self.name, " goal=", self.goal)
 
     def movement(self) -> None:
 
@@ -113,16 +140,16 @@ class NPC(Entity):
             x = int(round(x, 0))
             y = int(round(y, 0))
 
+
             if self.mode == GhostMode.SPAWN:
-                if self.goal == (x, y):
+                if self.goal == pg.Vector2(x, y):
                     self.reborn()
             else:
-                # We in a center of the cell and must decide where to go
                 self.find_goal()
 
             # Check if player near and not ghosts etable now
 
-            P_ = self.game.map.find_path((x, y), self.goal)
+            P_ = self.game.map.find_path((x, y), tuple(self.goal))
             # print("ghost", self.name, "path:", P_)
             if len(P_) > 1:
                 dx = P_[1][0] - x
@@ -161,7 +188,7 @@ class NPC(Entity):
     def event_end(self) -> None:
         # print("Fr End:", self.event_timer, self.mode, self.name)
         if self.mode == GhostMode.FRIGHTENED:
-            self.mode = GhostMode.STROLL
+            self.mode = GhostMode.CHASE
 
     def event(self) -> None:
         if not self.alive:
@@ -182,19 +209,33 @@ class NPC(Entity):
             self.game.player.alive = False
             self.visible = False
 
-    def reset(self) -> None:
-        self.mode = GhostMode.STROLL
-        super().reset()
+    # def reset(self) -> None:
+    #     super().reset()
+        # self.mode = GhostMode.CHASE
         # print("name:",self.name, "mode:",self.mode, "alive:",self.alive)
 
     def after_death(self) -> None:
         self.mode = GhostMode.SPAWN
-        self.goal = (self.start_x, self.start_y)
+        self.goal = pg.Vector2(self.start_x, self.start_y)
 
     def reborn(self) -> None:
-        self.mode = GhostMode.STROLL
+        self.mode = GhostMode.CHASE
         self.alive = True
         self.visible = True
         self.dx = 0
         self.dy = 0
         self.teleport()
+
+    def get_player_direction(self) -> pg.Vector2:
+        if not self.game.player.dx and not self.game.player.dy:
+            return pg.Vector2(0, 0)
+        if abs(self.game.player.dx) > abs(self.game.player.dy):
+            return pg.Vector2(1 if self.game.player.dx > 0 else -1, 0)
+        return pg.Vector2(0, 1 if self.game.player.dy > 0 else -1)
+
+    def adjust_vector(self, vector: pg.Vector2) -> pg.Vector2:
+        max_x = self.game.map.cols - 1
+        max_y = self.game.map.rows - 1
+        x = min(max(vector.x, 0), max_x)
+        y = min(max(vector.y, 0), max_y)
+        return pg.Vector2(x, y)

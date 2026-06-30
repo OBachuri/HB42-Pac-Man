@@ -265,7 +265,7 @@ class Fruit(PC_Artifacts):
         if len(self.game.artifacts) > 10:
             for n in self.game.npcs:
                 if n.alive and (n.mode != GhostMode.FRIGHTENED):
-                    n.mode = GhostMode.STROLL
+                    n.mode = GhostMode.CHASE
 
     def update(self) -> None:
         self.animation_timer += 0.1
