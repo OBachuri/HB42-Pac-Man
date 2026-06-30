@@ -96,7 +96,7 @@ def main() -> None:
         try:
             from mazegenerator.mazegenerator import MazeGenerator
             from pc_parser import Parser
-            from app import App
+            from src.pc_app import App
             # from pc_game import Game
 
         except Exception as ex:
@@ -106,7 +106,12 @@ def main() -> None:
             g_error_txt += f"\n Platform: {sys.platform} "
             pg.init()
             pg.font.init()
-            pg.mixer.init()
+
+            try:
+                pg.mixer.init()
+            except Exception as ex:
+                print("Error:", ex)
+                g_error_txt += f"\n Error: {ex}\n"
 
             screen = pg.display.set_mode((640, 480))
             clock = pg.time.Clock()

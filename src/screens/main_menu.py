@@ -3,9 +3,9 @@ import asyncio
 import pygame as pg
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from app import App
+    from src.pc_app import App
 
-from constants import SCREEN_WIDTH, FPS
+from src.pc_constants import SCREEN_WIDTH, FPS
 from screens import BaseScreen, ScreenTypes
 from screens.utils import Button
 
@@ -59,6 +59,11 @@ class MainMenuScreen(BaseScreen):
                         buttons[selected_index].selected = False
                         selected_index = (selected_index + 1) % len(buttons)
                         buttons[selected_index].selected = True
+
+                    elif event.key == pg.K_F11:
+                        self.app.fullscreen_mode = not (
+                            self.app.fullscreen_mode)
+                        self.app.set_screen()
 
                     elif event.key == pg.K_RETURN or event.key == pg.K_SPACE:
                         selected_button = buttons[selected_index]

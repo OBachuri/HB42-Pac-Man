@@ -45,6 +45,11 @@ class LevelWeb:
             fruit = BonusFruitType.CHERRY
             print("Can't find fruit: ", f_nane, "!")
         self.bonus_fruit_type: BonusFruitType = fruit
+        self.fullscreen_mode: bool = False
+        try:
+            self.fullscreen_mode = bool(data.get("fullscreen_mode", False))
+        except Exception as ex:
+            print("Error: Wrong value of fullscreen_mode - ", ex)
 
     @property
     def size(self) -> tuple[int, int]:

@@ -219,7 +219,8 @@ class NPC(Entity):
     def sound_init(self) -> None:
         self.sounds = Sound.read_sounds_from_files(
             "inc/sounds/ghosts/death/",
-            SoundType.EATEN,self.sounds)
+            SoundType.EATEN, self.sounds)
+
 
 class RedGhosts(NPC):
     """ Red gost (Blinky, Shadow)

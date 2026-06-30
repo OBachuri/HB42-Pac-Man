@@ -368,16 +368,19 @@ class Player(Entity):
             pggf.pie(self.game.screen, int(x), int(y), self.size,
                      -20, 20, (255, 0, 0))
 
-        if self.invincibil:
-            txt_ = (f'Invincibil - x:{float(self.x):.4}, y:{float(self.y):.4},'
-                    f' s:{float(self.speed_factor):.4}')
-        else:
-            txt_ = f'x:{self.x}, y:{self.y}, a:{self.angle} '
         if self.game.config.cheat:
+            if self.invincibil:
+                txt_ = (f'Invincibil - x:{float(self.x):.4}, '
+                        f'y:{float(self.y):.4}, '
+                        f's:{float(self.speed_factor):.4}')
+            else:
+                txt_ = f'x:{self.x}, y:{self.y}, a:{self.angle} '
             txt_ += "\n"
             for n in self.game.npcs:
                 txt_ += f'{n.name[0]}:{n.mode.name} '
-        self.game.screen.blit(self.game.font.render(
-            txt_, False, (10, 10, 200)),
-            (10, 5 + (self.game.map.rows + 1)
-             * (self.game.map.step) + self.game.map.top))
+
+            self.game.screen.blit(self.game.font.render(
+                txt_, False, (10, 10, 200)),
+                (10, 5 + (self.game.map.rows + 1)
+                 * (self.game.map.step)
+                 + self.game.map.top))
