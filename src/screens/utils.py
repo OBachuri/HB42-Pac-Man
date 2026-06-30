@@ -1,5 +1,5 @@
 import pygame as pg
-from src.pc_constants import SCREEN_WIDTH
+from pc_constants import SCREEN_WIDTH
 
 
 def wrap_text(text: str, font: pg.Font, max_width: int) -> list[str]:

@@ -96,7 +96,7 @@ def main() -> None:
         try:
             from mazegenerator.mazegenerator import MazeGenerator
             from pc_parser import Parser
-            from src.pc_app import App
+            from pc_app import App
             # from pc_game import Game
 
         except Exception as ex:

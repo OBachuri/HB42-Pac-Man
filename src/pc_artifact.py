@@ -9,7 +9,7 @@ from pc_sound import SoundType, Sound
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from src.pc_game import Game
+    from pc_game import Game
 
 
 class BonusFruitType(Enum):

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from src.pc_app import App
 
-from src.pc_constants import SCREEN_WIDTH, FPS
+from pc_constants import SCREEN_WIDTH, FPS
 from screens import BaseScreen, ScreenTypes
 from screens.utils import Button
 

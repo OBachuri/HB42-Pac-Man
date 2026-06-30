@@ -9,7 +9,7 @@ from collections.abc import Sequence
 # import sys
 # sys.path.append(os.path.dirname(__file__))
 
-from src.pc_constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
+from pc_constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 from pc_map import Map
 from pc_player import Player
 from pc_npc import NPC, RedGhosts  # , GhostMode
@@ -24,7 +24,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from config import Config
     from config_web import ConfigWeb
-    from src.pc_app import App
+    from pc_app import App
 
 
 class Game:
