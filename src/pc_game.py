@@ -9,12 +9,12 @@ from collections.abc import Sequence
 # import sys
 # sys.path.append(os.path.dirname(__file__))
 
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
+from pc_constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 from pc_map import Map
 from pc_player import Player
 from pc_npc import NPC, RedGhosts  # , GhostMode
-from pc_artifact import PC_Artifacts
-from pc_artifact import PowerPellet, Pellet, BonusFruitType, Fruit
+from pc_artifact import PC_Artifacts  # ,Fruit
+from pc_artifact import PowerPellet, Pellet, BonusFruitType
 from pc_entity import FrameType
 from screens import ScreenTypes
 from screens.utils import PCUIElement
@@ -24,10 +24,11 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from config import Config
     from config_web import ConfigWeb
-    from app import App
+    from pc_app import App
 
 
 class Game:
+    screen_type: ScreenTypes = ScreenTypes.GAME
 
     sounds: dict[SoundType, list[Sound]] = {}
     sound_index: int = 0
@@ -166,13 +167,9 @@ class Game:
                 maze_ = self.map.do_not_perfect(maze_)
             self.map.get_map(maze_)
 
-        self.map.print()
+        # self.map.print()
 
-        pg.display.set_mode((
-            (max(self.map.cols*self.map.step
-             + self.map.wall_thickness, SCREEN_WIDTH),
-             max((self.map.rows + 3)*(self.map.step), SCREEN_HEIGHT))),
-             pg.SCALED)  # pg.FULLSCREEN
+        self.app.set_screen()
 
         self.screen_left_shift = 0
         if ((self.map.cols*self.map.step
@@ -274,13 +271,14 @@ class Game:
         self.delta_time = self.clock.tick(self.fps)
         self.game_time -= self.delta_time / 1000
 
-        if (self.game_time < 6) and (self.game_time > 0) and (self.sound_index != int(self.game_time)): 
-            # and (round(self.game_time, 0) == self.game_time):
+        if ((self.game_time < 6)
+           and (self.game_time > 0)
+           and (self.sound_index != int(self.game_time))):
             sound = self.sounds.get(SoundType.TICK, [])
             if len(sound) > 0:
                 sound[0].play()
             Game.sound_index = int(self.game_time)
-            
+
         # check for end of time
         if self.game_time <= 0:
             self.game_time = 0
@@ -391,6 +389,10 @@ class Game:
                             self.pause = True
                         self.running = False
                         return
+                    elif keys[pg.K_F11]:
+                        self.app.fullscreen_mode = not (
+                            self.app.fullscreen_mode)
+                        self.app.set_screen()
                     if self.config.cheat:
                         if keys[pg.K_1]:    # invincibility
                             self.player.invincibil = not (

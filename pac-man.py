@@ -23,7 +23,7 @@ def main() -> int:
 
     from src.pc_parser import Parser
     from src.config import Config
-    from src.app import App
+    from src.pc_app import App
 
     # try shcool maze generator
     try:

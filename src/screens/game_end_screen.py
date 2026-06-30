@@ -2,11 +2,11 @@ import asyncio
 import pygame as pg
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from app import App
+    from pc_app import App
 
 from screens import BaseScreen, ScreenTypes
-from highscore_handler import HighscoresHandler
-from constants import SCREEN_HEIGHT, SCREEN_WIDTH, FPS
+from pc_highscore_handler import HighscoresHandler
+from pc_constants import SCREEN_HEIGHT, SCREEN_WIDTH, FPS
 
 
 class GameEndScreen(BaseScreen):

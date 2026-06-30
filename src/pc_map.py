@@ -19,7 +19,7 @@ class Map:
         self.cell_size: int = 55
         self.wall_thickness: int = 4
         self.step: int = self.cell_size + self.wall_thickness
-        self.top: int = self.step
+        self.top: int = 35
 
     def get_map(self, maze_: list[list[int]]) -> None:
         # get map from list
@@ -295,25 +295,25 @@ class Map:
                             # 1 - (xxx1) Top wall (North)
                             maze[y][x] = maze[y][x] & 0xfffe
                             maze[y-1][x] = maze[y-1][x] & 0xfffb
-                            print("del", chosen_wall, ":", (x, y))
+                            # print("del", chosen_wall, ":", (x, y))
                             continue
                         case 2:
                             # 2 - (xx1x) Right (East)
                             maze[y][x] = maze[y][x] & 0xfffd
                             maze[y][x+1] = maze[y][x+1] & 0xfff7
-                            print("del", chosen_wall, ":", (x, y))
+                            # print("del", chosen_wall, ":", (x, y))
                             continue
                         case 4:
                             # 4 - (x1xx) Bottom (South)
                             maze[y+1][x] = maze[y+1][x] & 0xfffe
                             maze[y][x] = maze[y][x] & 0xfffb
-                            print("del", chosen_wall, ":", (x, y))
+                            # print("del", chosen_wall, ":", (x, y))
                             continue
                         case 8:
                             # 8 - (1xxx) Left
                             maze[y][x-1] = maze[y][x-1] & 0xfffd
                             maze[y][x] = maze[y][x] & 0xfff7
-                            print("del", chosen_wall, ":", (x, y))
+                            # print("del", chosen_wall, ":", (x, y))
                             continue
 
         return maze

@@ -2,9 +2,9 @@ import asyncio
 import pygame as pg
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from app import App
+    from pc_app import App
 
-from constants import SCREEN_HEIGHT, SCREEN_WIDTH, FPS
+from pc_constants import SCREEN_HEIGHT, SCREEN_WIDTH, FPS
 from screens import BaseScreen, ScreenTypes
 from screens.utils import wrap_text
 

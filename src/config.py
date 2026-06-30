@@ -199,6 +199,7 @@ class Config(BaseModel):
     points_per_ghost: PositiveInt = 200
     seed: int = 42
     cheat: bool = False
+    fullscreen_mode: bool = False
 
     @field_validator("highscores_filename", mode="before")
     @classmethod
@@ -292,8 +293,18 @@ class Config(BaseModel):
     def fix_cheat(cls, value: Any) -> bool:
         try:
             return bool(value)
-        except (TypeError, ValueError):
-            print("Wrong type of 'cheat'. Using default value")
+        except (TypeError, ValueError) as er:
+            print("Wrong type of 'cheat'. Using default value.\n", er)
+            return False
+
+    @field_validator("fullscreen_mode", mode="before")
+    @classmethod
+    def fix_fullscreen_mode(cls, value: Any) -> bool:
+        try:
+            return bool(value)
+        except (TypeError, ValueError) as er:
+            print("Wrong type of 'fullscreen_mode'."
+                  "Using default value.\n", er)
             return False
 
     def print(self) -> None:
