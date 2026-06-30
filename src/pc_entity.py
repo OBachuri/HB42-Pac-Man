@@ -202,3 +202,4 @@ class Entity:
         else:
             print(f"Can't find images files in {file_path}"
                   f"for {frame_type.name} of {self.name}.")
+

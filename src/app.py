@@ -6,6 +6,7 @@ import pygame as pg
 
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from pc_game import Game
+from pc_artifact import Pellet, Fruit
 from screens import ScreenTypes, BaseScreen, MainMenuScreen, ErrorScreen
 from screens import InstructionsScreen, HighscoresScreen, GameEndScreen
 from typing import TYPE_CHECKING
@@ -20,7 +21,13 @@ class App:
         self.err_msg: str = ""
         pg.init()
         pg.font.init()
-        pg.mixer.init()
+        try:
+            pg.mixer.init()
+            Game.sound_init()
+            Pellet.sound_init()
+            Fruit.sound_init()
+        except Exception as ex:
+            print("Error - no access to sound device:", ex)
         self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pg.time.Clock()
         pg.display.set_caption('Pac-man 42')

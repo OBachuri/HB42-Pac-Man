@@ -5,7 +5,7 @@ import random
 from collections.abc import Sequence
 # from enum import Enum
 from pc_entity import Entity, FrameType, GhostMode
-from pc_sound import SoundType  # , Sound
+from pc_sound import SoundType, Sound
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -19,11 +19,20 @@ class NPC(Entity):
                  color: tuple[int, int, int] = (100, 100, 100),
                  name: str = "Gost", size: int = 11, points: int = 200):
         super().__init__(game, point=point, color=color, name=name, size=size)
-        self.angle: float | int = 0
         self.speed_factor: float = 0.02
         self.points = points  # score add
+
+        # for mypy test - it can't check type from Entity
         self.dx: int = 0
         self.dy: int = 0
+        self.x: float | int = 0
+        self.y: float | int = 0
+        self.x, self.y = point
+        self.angle: float | int = 0
+        self.animation_timer: float = 0
+        self.event_timer: float = 0
+        # end of block for mypy
+
         self.goal: tuple[int, int] | None = None
         self.start_chase_if_near: int = 4
         self.mode: GhostMode = GhostMode.STROLL
@@ -42,6 +51,8 @@ class NPC(Entity):
         self.freeze: bool = False
 
         self.old_keys: Sequence[bool] = pg.key.get_pressed()
+
+        self.sound_init()
 
     def find_goal(self) -> None:
         x: int = int(round(self.x, 0))
@@ -96,11 +107,14 @@ class NPC(Entity):
                 if keys[pg.K_3]:
                     self.freeze = not (self.freeze)
 
-        if self.freeze:
-            return
+        x: float = float(self.x)
+        y: float = float(self.y)
 
-        x = self.x
-        y = self.y
+        if self.freeze:
+            if self.mode == GhostMode.SPAWN:
+                if self.goal == (x, y):
+                    self.reborn()
+            return
 
         if self.mode == GhostMode.SPAWN:
             speed_factor = max(0.05, self.speed_factor)
@@ -170,6 +184,10 @@ class NPC(Entity):
             self.game.score += self.points
             self.mode = GhostMode.DEAD
             self.alive = False
+            sound = self.sounds.get(SoundType.EATEN, [])
+            if len(sound) > 0:
+                sound[0].play()
+
         else:
             if self.game.player.invincibil:
                 return
@@ -198,6 +216,10 @@ class NPC(Entity):
         self.dy = 0
         self.teleport()
 
+    def sound_init(self) -> None:
+        self.sounds = Sound.read_sounds_from_files(
+            "inc/sounds/ghosts/death/",
+            SoundType.EATEN,self.sounds)
 
 class RedGhosts(NPC):
     """ Red gost (Blinky, Shadow)
