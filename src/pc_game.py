@@ -12,13 +12,14 @@ from collections.abc import Sequence
 from pc_constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 from pc_map import Map
 from pc_player import Player
-from pc_npc import NPC, RedGhosts  # , GhostMode
-from pc_artifact import PC_Artifacts  # ,Fruit
+from pc_npc import NPC  # , GhostMode
+from pc_ghosts import RedGhost, PinkGhost, CyanGhost, OrangeGhost
+from pc_artifact import PC_Artifacts
 from pc_artifact import PowerPellet, Pellet, BonusFruitType
-from pc_entity import FrameType
-from screens import ScreenTypes
-from screens.utils import PCUIElement
+from pc_screens import ScreenTypes
+from pc_screens.pc_utils import PCUIElement
 from pc_sound import SoundType, Sound
+
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -57,8 +58,7 @@ class Game:
         self.global_event = pg.event.custom_type()
         self.score: int = 0
         self.level: int = 1
-        self.fps: int = FPS
-        self.gost_edible: int = 17  # sec - frightened time
+        self.ghost_edible: int = 17  # sec - frightened time
         self.new_start: bool = True
         self.pause: bool = True
         self.running: bool = True
@@ -82,26 +82,11 @@ class Game:
         self.player = Player(self)
 
         # Add Ghost
-        self.npcs.append(RedGhosts(self))
-        pink = NPC(self, (self.map.cols - 1, 0),
-                   (240, 24, 140), "Pink gost (Speedy)")
-        self.npcs.append(pink)
-        pink.read_frames_from_file("inc/img/pink/run/", FrameType.RUN)
-        pink.read_frames_from_file("inc/img/pink/stay/", FrameType.STAY)
-
-        cyan = NPC(self,
-                   (self.map.cols - 1, self.map.rows - 1),
-                   (100, 250, 250), "Cyan gost (Inky, Bashful)")
-        self.npcs.append(cyan)
-        cyan.read_frames_from_file("inc/img/cyan/run/", FrameType.RUN)
-        cyan.read_frames_from_file("inc/img/cyan/stay/", FrameType.STAY)
-
-        orange = NPC(self,
-                     (0, self.map.rows - 1),
-                     (250, 120, 10), "Orange gost (Clyde, Pockey)")
-        self.npcs.append(orange)
-        orange.read_frames_from_file("inc/img/orange/run/", FrameType.RUN)
-        orange.read_frames_from_file("inc/img/orange/stay/", FrameType.STAY)
+        red_ghost = RedGhost(self)
+        self.npcs = [red_ghost,
+                     PinkGhost(self, red_ghost=red_ghost),
+                     CyanGhost(self, red_ghost=red_ghost),
+                     OrangeGhost(self)]
 
         self.player.lives = self.config.lives
 
@@ -186,19 +171,20 @@ class Game:
         self.player.max_d = config.max_player_acceleration
 
         # Set NPC
-        for i in range(0, len(self.npcs)):
-            n = self.npcs[i]
-            if i == 1:
+        for n in self.npcs:
+            if isinstance(n, RedGhost):
+                n.start_x = 0
+                n.start_y = 0
+            elif isinstance(n, PinkGhost):
                 n.start_x = self.map.cols - 1
                 n.start_y = 0
-            elif i == 2:
-                n.start_x = self.map.cols - 1
-                n.start_y = self.map.rows - 1
-            elif i == 3:
+            elif isinstance(n, OrangeGhost):
                 n.start_x = 0
                 n.start_y = self.map.rows - 1
+            elif isinstance(n, CyanGhost):
+                n.start_x = self.map.cols - 1
+                n.start_y = self.map.rows - 1
             n.reset()
-            n.goal = (self.player.x, self.player.y)
             n.speed_factor = config.speed_factor_ghost
             n.points = self.config.points_per_ghost
 
@@ -258,7 +244,7 @@ class Game:
 
     def update(self) -> None:
         if self.pause:
-            self.delta_time = self.clock.tick(self.fps)
+            self.delta_time = self.clock.tick(FPS)
             return
         self.player.update()
         for npc in self.npcs:
@@ -268,7 +254,7 @@ class Game:
         # self.raycasting.update()
         # self.object_handler.update()
         # self.weapon.update()
-        self.delta_time = self.clock.tick(self.fps)
+        self.delta_time = self.clock.tick(FPS)
         self.game_time -= self.delta_time / 1000
 
         if ((self.game_time < 6)
@@ -329,7 +315,7 @@ class Game:
                 #     txt_,
                 #     color='yellow', bgcolor=(10, 10, 0, 40), antialias=True)
                 # self.screen.blit(surf, ((w - surf.get_width()) // 2, h // 2))
-            self.animation_timer += 1/self.fps
+            self.animation_timer += 1/FPS
             # txt_ = "PRESS SPACE - to run \nESC - to return to the menu \n "
             # self.screen.blit(self.font.render(
             #     txt_,

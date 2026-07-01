@@ -3,7 +3,7 @@ import pygame as pg
 from enum import Enum
 import random
 
-
+from pc_constants import FPS
 from pc_entity import FrameType, GhostMode
 from pc_sound import SoundType, Sound
 
@@ -106,8 +106,8 @@ class PC_Artifacts():
         self.game.artifacts.remove(self)
 
     def update(self) -> None:
-        x = int(round(self.game.player.x, 0))
-        y = int(round(self.game.player.y, 0))
+        x = round(self.game.player.x)
+        y = round(self.game.player.y)
         if ((x, y) == (self.x, self.y)) and self.game.player.alive:
             if ((self.x - self.game.player.x)**2
                 + (self.y
@@ -134,7 +134,7 @@ class PowerPellet(PC_Artifacts):
                 n.mode = GhostMode.FRIGHTENED
                 n.dx *= -1
                 n.dy *= -1
-                n.event_timer = self.game.gost_edible
+                n.event_timer = self.game.ghost_edible
 
 
 class Pellet(PC_Artifacts):
@@ -265,7 +265,7 @@ class Fruit(PC_Artifacts):
         if len(self.game.artifacts) > 10:
             for n in self.game.npcs:
                 if n.alive and (n.mode != GhostMode.FRIGHTENED):
-                    n.mode = GhostMode.STROLL
+                    n.mode = GhostMode.CHASE
 
     def update(self) -> None:
         self.animation_timer += 0.1
@@ -273,7 +273,7 @@ class Fruit(PC_Artifacts):
             self.animation_timer = 0
             self.frame_index += 1
         if self.event_timer > 0:
-            self.event_timer -= 1 / self.game.fps
+            self.event_timer -= 1 / FPS
             if self.event_timer <= 0:
                 self.event_timer = 0
                 self.event_end()

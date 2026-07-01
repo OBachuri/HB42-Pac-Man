@@ -8,8 +8,8 @@ from pc_constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from pc_constants import MIN_SCREEN_WIDTH, MIN_SCREEN_HEIGHT
 from pc_game import Game
 from pc_artifact import Pellet, Fruit
-from screens import ScreenTypes, BaseScreen, MainMenuScreen, ErrorScreen
-from screens import InstructionsScreen, HighscoresScreen, GameEndScreen
+from pc_screens import ScreenTypes, BaseScreen, MainMenuScreen, ErrorScreen
+from pc_screens import InstructionsScreen, HighscoresScreen, GameEndScreen
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from config import Config

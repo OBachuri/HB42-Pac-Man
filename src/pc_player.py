@@ -6,7 +6,7 @@ import math
 # from collections.abc import Sequence
 
 from pc_entity import Entity, FrameType
-from screens import ScreenTypes
+from pc_screens import ScreenTypes
 from pc_sound import SoundType, Sound
 
 from typing import TYPE_CHECKING
@@ -65,8 +65,8 @@ class Player(Entity):
                     max_shift: float) -> bool:
         """ Returned True if there is wall on new palace """
 
-        new_x_int = int(round(new_x, 0))
-        new_y_int = int(round(new_y, 0))
+        new_x_int = round(new_x)
+        new_y_int = round(new_y)
 
         if (((abs(new_x_int - new_x) <= max_shift)
              and (abs(new_y_int - new_y) <= max_shift))):
@@ -175,9 +175,9 @@ class Player(Entity):
         if abs(dx) + abs(dy) > self.max_d:
             # print("d--in(x,y)",dx,dy)
             if dx != 0:
-                dx = int(round(dx * self.max_d/(abs(dx) + abs(dy)), 0))
+                dx = round(dx * self.max_d/(abs(dx) + abs(dy)))
             if dy != 0:
-                dy = int(round(dy * self.max_d/(abs(dx) + abs(dy)), 0))
+                dy = round(dy * self.max_d/(abs(dx) + abs(dy)))
             # print("d-out(x,y)",dx,dy)
 
         dx_sf = dx * self.speed_factor
@@ -216,8 +216,8 @@ class Player(Entity):
 
         if (dy == 0) and (dx == 0):  # we cant move to new point
             # try to move to the edge
-            x_int = int(round(self.x, 0))
-            y_int = int(round(self.y, 0))
+            x_int = round(self.x)
+            y_int = round(self.y)
             w = self.game.map.world_map.get((x_int, y_int), 0)
 
             if (((dx_sf > 0) and (w & 2)

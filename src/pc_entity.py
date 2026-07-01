@@ -14,15 +14,15 @@ if TYPE_CHECKING:
 class FrameType(Enum):
     # stay / run / left / right / top / bottom / dead / frightened
     STAY = 1
-    RUN = 2,
-    LEFT = 3,
-    RIGHT = 4,
-    UP = 5,
-    DOWN = 6,
-    DEATH = 7,
-    DEAD = 8,
-    FRIGHTENED = 9,
-    END_OF_FRIGHTENED = 10,
+    RUN = 2
+    LEFT = 3
+    RIGHT = 4
+    UP = 5
+    DOWN = 6
+    DEATH = 7
+    DEAD = 8
+    FRIGHTENED = 9
+    END_OF_FRIGHTENED = 10
 
 
 class GhostMode(Enum):
@@ -58,7 +58,7 @@ class Entity:
         self.dy: int = 0
         self.color = color  # (R,G,B)
         self.frames: dict[FrameType, list[pg.Surface]] = {}
-        self.mode: GhostMode = GhostMode.STROLL
+        # self.mode: GhostMode = GhostMode.STROLL
         self.frame_index: int = 0
         self.animation_timer: float = 0
         self.event_timer: float = 0

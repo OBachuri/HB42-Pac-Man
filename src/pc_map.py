@@ -21,6 +21,12 @@ class Map:
         self.step: int = self.cell_size + self.wall_thickness
         self.top: int = 35
 
+    def get_cell(self, x: int, y: int) -> int:
+        return self.world_map.get((x, y), 0)
+
+    def has_cell_exit(self, x: int, y: int) -> bool:
+        return bool((self.get_cell(x, y) & 15) != 15)
+
     def get_map(self, maze_: list[list[int]]) -> None:
         # get map from list
         self.world_map = {}
@@ -41,7 +47,7 @@ class Map:
             file_name = os.path.join(
                 os.path.dirname(os.path.abspath(__file__)),
                 file_name,
-                )
+            )
 
         with open(file_name, "r", encoding="utf-8") as f:
             for line in f:
