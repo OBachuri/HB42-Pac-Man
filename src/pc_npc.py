@@ -217,14 +217,14 @@ class NPC(Entity):
             return pg.Vector2(1 if self.game.player.dx > 0 else -1, 0)
         return pg.Vector2(0, 1 if self.game.player.dy > 0 else -1)
 
-    def sound_init(self) -> None:
-        self.sounds = Sound.read_sounds_from_files(
-            "inc/sounds/ghosts/death/",
-            SoundType.EATEN, self.sounds)
-
     def adjust_vector(self, vector: pg.Vector2) -> pg.Vector2:
         max_x = self.game.map.cols - 1
         max_y = self.game.map.rows - 1
         x = min(max(vector.x, 0), max_x)
         y = min(max(vector.y, 0), max_y)
         return pg.Vector2(x, y)
+
+    def sound_init(self) -> None:
+        self.sounds = Sound.read_sounds_from_files(
+            "inc/sounds/ghosts/death/",
+            SoundType.EATEN, self.sounds)

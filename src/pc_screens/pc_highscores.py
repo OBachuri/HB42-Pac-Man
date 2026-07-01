@@ -1,7 +1,11 @@
 import asyncio
 import pygame as pg
 from pc_highscore_handler import HighscoresHandler
+<<<<<<< HEAD:src/pc_screens/pc_highscores.py
 from pc_screens import BaseScreen, ScreenTypes
+=======
+from screens import BaseScreen, ScreenTypes
+>>>>>>> main:src/screens/highscores.py
 from pc_constants import FPS, SCREEN_HEIGHT, SCREEN_WIDTH
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:

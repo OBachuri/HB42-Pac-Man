@@ -22,7 +22,6 @@ class App:
         self.err_msg: str = ""
         pg.init()
         pg.font.init()
-
         try:
             pg.mixer.init()
             Game.sound_init()
