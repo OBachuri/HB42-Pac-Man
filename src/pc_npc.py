@@ -63,7 +63,7 @@ class NPC(Entity):
         ):
             self.goal = pg.Vector2(self.start_x, self.start_y)
         else:
-            if (self.goal is None) or self.goal == (int(round(self.x, 0)), int(round(self.y, 0))):
+            if (self.goal is None) or self.goal == (round(self.x), round(self.y)):
                 # We have reached the goal and we need a new one
                 if self.mode == GhostMode.SCATTER:
                     self.mode = GhostMode.CHASE
@@ -112,10 +112,10 @@ class NPC(Entity):
         else:
             speed_factor = self.speed_factor
 
-        if (((abs(int(round(x, 0)) - x) < speed_factor)
-             and (abs(int(round(y, 0)) - y) < speed_factor))):
-            x = int(round(x, 0))
-            y = int(round(y, 0))
+        if (((abs(round(x) - x) < speed_factor)
+             and (abs(round(y) - y) < speed_factor))):
+            x = round(x)
+            y = round(y)
 
 
             if self.mode == GhostMode.SPAWN:
@@ -206,6 +206,9 @@ class NPC(Entity):
         self.dx = 0
         self.dy = 0
         self.teleport()
+
+    def get_player_pos(self) -> pg.Vector2:
+        return pg.Vector2(round(self.game.player.x), round(self.game.player.y))
 
     def get_player_direction(self) -> pg.Vector2:
         if not self.game.player.dx and not self.game.player.dy:

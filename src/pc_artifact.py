@@ -106,8 +106,8 @@ class PC_Artifacts():
         self.game.artifacts.remove(self)
 
     def update(self) -> None:
-        x = int(round(self.game.player.x, 0))
-        y = int(round(self.game.player.y, 0))
+        x = round(self.game.player.x)
+        y = round(self.game.player.y)
         if ((x, y) == (self.x, self.y)) and self.game.player.alive:
             if ((self.x - self.game.player.x)**2
                 + (self.y
