@@ -2,20 +2,13 @@ import sys
 import asyncio
 import pygame as pg
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
-<<<<<<< HEAD:src/pc_screens/pc_main_menu.py
     from pc_app import App
 
 from pc_constants import SCREEN_WIDTH, FPS
 from pc_screens import BaseScreen, ScreenTypes
 from pc_screens.pc_utils import Button
-=======
-    from src.pc_app import App
-
-from pc_constants import SCREEN_WIDTH, FPS
-from screens import BaseScreen, ScreenTypes
-from screens.utils import Button
->>>>>>> main:src/screens/main_menu.py
 
 
 class MainMenuScreen(BaseScreen):

@@ -58,7 +58,7 @@ class Entity:
         self.dy: int = 0
         self.color = color  # (R,G,B)
         self.frames: dict[FrameType, list[pg.Surface]] = {}
-        # self.mode: GhostMode = GhostMode.STROLL
+        self.mode: GhostMode = GhostMode.STROLL
         self.frame_index: int = 0
         self.animation_timer: float = 0
         self.event_timer: float = 0

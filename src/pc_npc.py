@@ -35,6 +35,8 @@ class NPC(Entity):
         self.angle: float | int = 0
         self.animation_timer: float = 0
         self.event_timer: float = 0
+        self.sounds: dict[SoundType, list[Sound]] = {}
+        self.sound_index: int = 0
         # end of block for mypy
 
         self.start_chase_if_near: int = 4
@@ -60,11 +62,13 @@ class NPC(Entity):
     def find_goal(self) -> None:
         if (
             self.mode == GhostMode.SCATTER
-            and self.goal != (self.start_x, self.start_y)
+            and (self.goal is None
+                 or tuple(self.goal) != (self.start_x, self.start_y))
         ):
             self.goal = pg.Vector2(self.start_x, self.start_y)
         else:
-            if (self.goal is None) or self.goal == (round(self.x), round(self.y)):
+            if ((self.goal is None)
+               or tuple(self.goal) == (round(self.x), round(self.y))):
                 # We have reached the goal and we need a new one
                 if self.mode == GhostMode.SCATTER:
                     self.mode = GhostMode.CHASE
@@ -104,7 +108,8 @@ class NPC(Entity):
 
         if self.freeze:
             if self.mode == GhostMode.SPAWN:
-                if self.goal == (x, y):
+                if (not (self.goal is None)
+                   and tuple(self.goal) == (x, y)):
                     self.reborn()
             return
 
@@ -126,6 +131,8 @@ class NPC(Entity):
 
             # Check if player near and not ghosts etable now
 
+            if self.goal is None:
+                return
             P_ = self.game.map.find_path((x, y), tuple(self.goal))
             # print("ghost", self.name, "path:", P_)
             if len(P_) > 1:

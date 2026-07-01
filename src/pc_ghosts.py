@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import pygame as pg
 import random
-from collections.abc import Sequence
+
+# from collections.abc import Sequence
 # from enum import Enum
-from pc_entity import Entity, FrameType, GhostMode
-from pc_sound import SoundType  # , Sound
-from pc_constants import FPS
+
+from pc_entity import FrameType, GhostMode  # Entity
+# from pc_sound import SoundType  # , Sound
+# from pc_constants import FPS
 from pc_npc import NPC
 
 from typing import TYPE_CHECKING
@@ -39,28 +41,31 @@ class PinkGhost(NPC):
                  red_ghost: NPC | None = None) -> None:
         super().__init__(game, point, (240, 24, 140), "Pink ghost (Speedy)")
         self.red_ghost = red_ghost
-        self.tiles = 4
+        self.tiles: int = 4
         self.read_frames_from_file("inc/img/pink/run/", FrameType.RUN)
         self.read_frames_from_file("inc/img/pink/stay/", FrameType.STAY)
 
     def find_goal(self) -> None:
         if self.mode == GhostMode.CHASE:
             pos = pg.Vector2(self.x, self.y)
-            red_ghost_pos = pg.Vector2(self.red_ghost.x, self.red_ghost.y) if self.red_ghost else None
+            red_ghost_pos = pg.Vector2(
+                self.red_ghost.x, self.red_ghost.y) if self.red_ghost else None
             player_pos = self.get_player_pos()
             player_direction = 0
 
             if (pos.distance_to(player_pos) <= self.start_chase_if_near and
-                red_ghost_pos is not None and
-                red_ghost_pos.distance_to(player_pos) > self.start_chase_if_near):
-                    self.goal = player_pos
-                    return
+               red_ghost_pos is not None
+               and red_ghost_pos.distance_to(
+                   player_pos) > self.start_chase_if_near):
+                self.goal = player_pos
+                return
             player_direction = self.get_player_direction()
             if player_direction:
                 tiles = self.tiles
                 self.goal = self.adjust_vector(
                     player_pos + player_direction * tiles)
-                while not self.game.map.has_cell_exit(int(self.goal.x), int(self.goal.y)):
+                while not self.game.map.has_cell_exit(int(self.goal.x),
+                                                      int(self.goal.y)):
                     tiles -= 1
                     if tiles > 0:
                         self.goal = self.adjust_vector(
@@ -98,7 +103,9 @@ class CyanGhost(NPC):
             vec2 = (vec1 - red_ghost_pos)
             self.goal = self.adjust_vector(red_ghost_pos + vec2 * 2)
 
-            while not self.game.map.has_cell_exit(int(self.goal.x), int(self.goal.y)):
+            i = 10
+            while not self.game.map.has_cell_exit(int(self.goal.x),
+                                                  int(self.goal.y)):
                 # reduce vec2
                 if vec2.x < 0:
                     vec2.x += 1
@@ -111,8 +118,10 @@ class CyanGhost(NPC):
 
                 self.goal = self.adjust_vector(red_ghost_pos + vec2 * 2)
 
-                if self.goal == vec1:
+                if self.goal == vec1 or (i < 0):
                     self.goal = player_pos
+                    return
+                i -= 1
         else:
             super().find_goal()
 
@@ -123,13 +132,17 @@ class OrangeGhost(NPC):
         super().__init__(game, point, (250, 120, 10),
                          "Orange ghost (Clyde, Pockey)")
         # self.tiles = int(min(self.game.map.cols, self.game.map.rows) * 0.42)
-        self.tiles = 4
+        self.tiles: int = 4
         self.read_frames_from_file("inc/img/orange/run/", FrameType.RUN)
         self.read_frames_from_file("inc/img/orange/stay/", FrameType.STAY)
 
+        # for mypy test - it can't check type from NPC
+        self.goal: pg.Vector2 | None = None
+
     def find_goal(self) -> None:
         if self.mode == GhostMode.CHASE:
-            if self.goal is not None and self.goal != (round(self.x), round(self.y)):
+            if (self.goal is not None
+               and tuple(self.goal) != (round(self.x), round(self.y))):
                 return
             player_pos = self.get_player_pos()
             x = int(player_pos.x)

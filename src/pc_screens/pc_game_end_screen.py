@@ -4,11 +4,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from pc_app import App
 
-<<<<<<< HEAD:src/pc_screens/pc_game_end_screen.py
 from pc_screens import BaseScreen, ScreenTypes
-=======
-from screens import BaseScreen, ScreenTypes
->>>>>>> main:src/screens/game_end_screen.py
 from pc_highscore_handler import HighscoresHandler
 from pc_constants import SCREEN_HEIGHT, SCREEN_WIDTH, FPS
 
