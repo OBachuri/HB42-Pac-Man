@@ -60,6 +60,11 @@ class MainMenuScreen(BaseScreen):
                         selected_index = (selected_index + 1) % len(buttons)
                         buttons[selected_index].selected = True
 
+                    elif event.key == pg.K_F11:
+                        self.app.fullscreen_mode = not (
+                            self.app.fullscreen_mode)
+                        self.app.set_screen()
+
                     elif event.key == pg.K_RETURN or event.key == pg.K_SPACE:
                         selected_button = buttons[selected_index]
                         if selected_button.text == "START GAME":

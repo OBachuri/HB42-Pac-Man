@@ -5,8 +5,8 @@ import random
 from collections.abc import Sequence
 # from enum import Enum
 from pc_entity import Entity, FrameType, GhostMode
-from pc_sound import SoundType  # , Sound
 from pc_constants import FPS
+from pc_sound import SoundType, Sound
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -20,13 +20,22 @@ class NPC(Entity):
                  color: tuple[int, int, int] = (100, 100, 100),
                  name: str = "Ghost", size: int = 11, points: int = 200):
         super().__init__(game, point=point, color=color, name=name, size=size)
-        self.angle: float | int = 0
         self.speed_factor: float = 0.02
         self.points = points  # score add
+
+        # for mypy test - it can't check type from Entity
         self.dx: int = 0
         self.dy: int = 0
-        # self.goal: tuple[int, int] | None = None
+
         self.goal: pg.Vector2 | None = None
+        self.x: float | int = 0
+        self.y: float | int = 0
+        self.x, self.y = point
+        self.angle: float | int = 0
+        self.animation_timer: float = 0
+        self.event_timer: float = 0
+        # end of block for mypy
+
         self.start_chase_if_near: int = 4
         self.mode: GhostMode = GhostMode.CHASE
 
@@ -44,6 +53,8 @@ class NPC(Entity):
         self.freeze: bool = False
 
         self.old_keys: Sequence[bool] = pg.key.get_pressed()
+
+        self.sound_init()
 
     def find_goal(self) -> None:
         if (
@@ -67,43 +78,6 @@ class NPC(Entity):
                     i -= 1
                 if i > 0:
                     self.goal = pg.Vector2(x_g, y_g)
-                # print(self.name, " goal=", self.goal)
-        # # x: int = int(round(self.x, 0))
-        # # y: int = int(round(self.y, 0))
-        # npc_pos = pg.Vector2(int(round(self.x, 0)), int(round(self.y, 0)))
-        # player_pos = pg.Vector2(self.game.player.x, self.game.player.y)
-        # dist_to_chase = self.start_chase_if_near ** 2
-
-        # # Check if player near and  ghosts not etable now
-        # if (self.mode == GhostMode.CHASE):
-        #     self.goal = pg.Vector2(int(round(self.game.player.x, 0)),
-        #                  int(round(self.game.player.y, 0)))
-        # elif ((self.mode == GhostMode.STROLL)
-        #         # and ((self.game.player.x - x) ** 2
-        #         #      + (self.game.player.y - y) ** 2)
-        #         # < self.start_chase_if_near ** 2)):
-        #         and npc_pos.distance_to(player_pos) < dist_to_chase):
-        #     self.goal = pg.Vector2(int(round(self.game.player.x, 0)),
-        #                  int(round(self.game.player.y, 0)))
-        # elif ((self.mode == GhostMode.SCATTER)
-        #       and (self.goal != (self.start_x, self.start_y))):
-        #     self.goal = pg.Vector2(self.start_x, self.start_y)
-        # else:
-        #     if (self.goal is None) or self.goal == (x, y):
-        #         # We have reached the goal and we need a new one
-        #         if (self.mode == GhostMode.SCATTER):
-        #             self.mode = GhostMode.STROLL
-        #         x_g = random.randrange(0, self.game.map.cols)
-        #         y_g = random.randrange(0, self.game.map.rows)
-        #         i = 20
-        #         while (self.game.map.world_map.get((x_g, y_g), 0)
-        #                 & 0xf == 0xf) and (i > 0):
-        #             x_g = random.randrange(0, self.game.map.cols)
-        #             y_g = random.randrange(0, self.game.map.rows)
-        #             i -= 1
-        #         if i > 0:
-        #             self.goal = pg.Vector2(x_g, y_g)
-        #         # print(self.name, " goal=", self.goal)
 
     def movement(self) -> None:
 
@@ -124,11 +98,14 @@ class NPC(Entity):
                 if keys[pg.K_3]:
                     self.freeze = not (self.freeze)
 
-        if self.freeze:
-            return
+        x: float = float(self.x)
+        y: float = float(self.y)
 
-        x = self.x
-        y = self.y
+        if self.freeze:
+            if self.mode == GhostMode.SPAWN:
+                if self.goal == (x, y):
+                    self.reborn()
+            return
 
         if self.mode == GhostMode.SPAWN:
             speed_factor = max(0.05, self.speed_factor)
@@ -198,6 +175,10 @@ class NPC(Entity):
             self.game.score += self.points
             self.mode = GhostMode.DEAD
             self.alive = False
+            sound = self.sounds.get(SoundType.EATEN, [])
+            if len(sound) > 0:
+                sound[0].play()
+
         else:
             if self.game.player.invincibil:
                 return
@@ -232,6 +213,11 @@ class NPC(Entity):
         if abs(self.game.player.dx) > abs(self.game.player.dy):
             return pg.Vector2(1 if self.game.player.dx > 0 else -1, 0)
         return pg.Vector2(0, 1 if self.game.player.dy > 0 else -1)
+
+    def sound_init(self) -> None:
+        self.sounds = Sound.read_sounds_from_files(
+            "inc/sounds/ghosts/death/",
+            SoundType.EATEN, self.sounds)
 
     def adjust_vector(self, vector: pg.Vector2) -> pg.Vector2:
         max_x = self.game.map.cols - 1

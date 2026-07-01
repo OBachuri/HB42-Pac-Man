@@ -9,7 +9,7 @@ from pc_sound import SoundType, Sound
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from src.pc_game import Game
+    from pc_game import Game
 
 
 class BonusFruitType(Enum):
@@ -108,7 +108,7 @@ class PC_Artifacts():
     def update(self) -> None:
         x = int(round(self.game.player.x, 0))
         y = int(round(self.game.player.y, 0))
-        if (x, y) == (self.x, self.y):
+        if ((x, y) == (self.x, self.y)) and self.game.player.alive:
             if ((self.x - self.game.player.x)**2
                 + (self.y
                    - self.game.player.y)**2) < (self.size

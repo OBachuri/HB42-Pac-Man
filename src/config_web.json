@@ -7,10 +7,11 @@
 	"height": 10,
 	"seed": 12,
 	"pacgum" : 0,
-	"level_max_time": 60,
+	"level_max_time": 65,
 	"remove_deadends": true,
 	"map_filename": "inc/maps/maze-1.txt",
-	"bonus_fruit_type": "Strawberry"
+	"bonus_fruit_type": "Cherry",
+	"points_per_bonus_fruit": 200
 	},
 	{
 	"number": 2,
@@ -19,10 +20,10 @@
 	"pacgum" : 0,
 	"seed": 1,
 	"remove_deadends": true,
-	"speed_factor_ghost": 0.04,
-	"max_player_acceleration": 6,
+	"speed_factor_ghost": 0.03,
+	"max_player_acceleration": 5,
 	"level_max_time": 90,
-	"bonus_fruit_type":"raspberry",
+	"bonus_fruit_type":"Strawberry",
 	"points_per_bonus_fruit": 300
 	},
 	{
@@ -31,8 +32,12 @@
 	"height": 8,
 	"seed": 42,
 	"pacgum" : 42,
-	"level_max_time": 190,
-	"remove_deadends": true
+	"level_max_time": 90,
+	"speed_factor_ghost": 0.04,
+	"max_player_acceleration": 6,
+	"remove_deadends": true,
+	"bonus_fruit_type":"Orange",
+	"points_per_bonus_fruit": 500
 	},
 	{
 	"number": 4,
@@ -40,9 +45,53 @@
 	"level_max_time" : 222,
 	"remove_deadends": true,
 	"max_player_acceleration": 7,
-	"speed_factor_ghost": 0.1,
-	"map_filename": "inc/maps/maze-3.txt"
+	"speed_factor_ghost": 0.05,
+	"map_filename": "inc/maps/maze-3.txt",
+	"bonus_fruit_type":"Orange",
+	"points_per_bonus_fruit": 500
+	},
+	{
+	"number": 5,
+	"width": 12,
+	"height": 12,
+	"pacgum" : 0,
+	"seed": 0,
+	"remove_deadends": true,
+	"speed_factor_ghost": 0.05,
+	"max_player_acceleration": 7,
+	"level_max_time": 190,
+	"bonus_fruit_type":"apple",
+	"points_per_bonus_fruit": 700
 	}
+,
+	{
+	"number": 7,
+	"width": 13,
+	"height": 13,
+	"pacgum" : 0,
+	"seed": 0,
+	"remove_deadends": true,
+	"speed_factor_ghost": 0.06,
+	"max_player_acceleration": 8,
+	"level_max_time": 200,
+	"bonus_fruit_type":"melon",
+	"points_per_bonus_fruit": 1000
+	},
+	{
+	"number": 9,
+	"width": 15,
+	"height": 13,
+	"pacgum" : 0,
+	"seed": 0,
+	"remove_deadends": true,
+	"speed_factor_ghost": 0.07,
+	"max_player_acceleration": 9,
+	"level_max_time": 300,
+	"bonus_fruit_type":"banana",
+	"points_per_bonus_fruit": 2000
+	}
+
+
 ],
 "lives": 3,
 "points_per_pacgum" : 10,

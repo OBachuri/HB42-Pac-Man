@@ -71,7 +71,18 @@ class ConfigWeb:
             "points_per_super_pacgum", 50)
         self.points_per_ghost: int = cfg_data.get("points_per_ghost", 200)
         self.seed: int = cfg_data.get("seed", 0)
-        self.cheat: bool = cfg_data.get("cheat", False)
+
+        self.cheat: bool = False
+        try:
+            self.cheat = bool(cfg_data.get("cheat", False))
+        except Exception as ex:
+            print("Error: Wrong value for cheat - ", ex)
+
+        self.fullscreen_mode: bool = False
+        try:
+            self.fullscreen_mode = bool(cfg_data.get("fullscreen_mode", False))
+        except Exception as ex:
+            print("Error: Wrong value of fullscreen_mode - ", ex)
 
         try:
             levels: list[LevelWeb] = [LevelWeb(level_data)
