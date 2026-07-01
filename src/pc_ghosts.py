@@ -18,6 +18,7 @@ class RedGhost(NPC):
     """ Red ghost (Blinky, Shadow)
         Blinky always chase his prey :)
     """
+
     def __init__(self, game: Game,
                  point: tuple[float, float] = (0, 0)) -> None:
         super().__init__(game, point, (250, 20, 20),
@@ -27,32 +28,47 @@ class RedGhost(NPC):
 
     def find_goal(self) -> None:
         if self.mode == GhostMode.CHASE:
-            self.goal = pg.Vector2(int(round(self.game.player.x, 0)),
-                         int(round(self.game.player.y, 0)))
+            self.goal = self.get_player_pos()
         else:
             super().find_goal()
 
 
 class PinkGhost(NPC):
     def __init__(self, game: Game,
-                 point: tuple[float, float] = (0, 0)) -> None:
+                 point: tuple[float, float] = (0, 0),
+                 red_ghost: NPC | None = None) -> None:
         super().__init__(game, point, (240, 24, 140), "Pink ghost (Speedy)")
+        self.red_ghost = red_ghost
+        self.tiles = 4
         self.read_frames_from_file("inc/img/pink/run/", FrameType.RUN)
         self.read_frames_from_file("inc/img/pink/stay/", FrameType.STAY)
-
 
     def find_goal(self) -> None:
         if self.mode == GhostMode.CHASE:
             pos = pg.Vector2(self.x, self.y)
-            player_pos = pg.Vector2(int(round(self.game.player.x, 0)),
-                                    int(round(self.game.player.y, 0)))
+            red_ghost_pos = pg.Vector2(self.red_ghost.x, self.red_ghost.y) if self.red_ghost else None
+            player_pos = self.get_player_pos()
             player_direction = 0
-            if pos.distance_to(player_pos) > self.start_chase_if_near:
-                player_direction = self.get_player_direction()
+
+            if (pos.distance_to(player_pos) <= self.start_chase_if_near and
+                red_ghost_pos is not None and
+                red_ghost_pos.distance_to(player_pos) > self.start_chase_if_near):
+                    self.goal = player_pos
+                    return
+            player_direction = self.get_player_direction()
             if player_direction:
-                self.goal = self.adjust_vector(player_pos + player_direction * 2)
-                return
-            self.goal = player_pos
+                tiles = self.tiles
+                self.goal = self.adjust_vector(
+                    player_pos + player_direction * tiles)
+                while not self.game.map.has_cell_exit(int(self.goal.x), int(self.goal.y)):
+                    tiles -= 1
+                    if tiles > 0:
+                        self.goal = self.adjust_vector(
+                            player_pos + player_direction * tiles)
+                    else:
+                        self.goal = player_pos
+            else:
+                self.goal = player_pos
         else:
             super().find_goal()
 
@@ -69,16 +85,34 @@ class CyanGhost(NPC):
 
     def find_goal(self) -> None:
         if self.mode == GhostMode.CHASE:
-            player_pos = pg.Vector2(int(round(self.game.player.x, 0)),
-                                    int(round(self.game.player.y, 0)))
+            player_pos = self.get_player_pos()
             red_ghost_pos = pg.Vector2(0, 0)
             if self.red_ghost:
-                red_ghost_pos = pg.Vector2(int(round(self.red_ghost.x, 0)),
-                                           int(round(self.red_ghost.y, 0)))
+                red_ghost_pos = pg.Vector2(round(self.red_ghost.x),
+                                           round(self.red_ghost.y))
 
-            vec1 = self.adjust_vector(player_pos + self.get_player_direction() * 2)
-            vec2 = self.adjust_vector((vec1 - red_ghost_pos) * 2)
-            self.goal = self.adjust_vector(red_ghost_pos + vec2)
+            # position 2 tiles in front of the player
+            vec1 = self.adjust_vector(
+                player_pos + self.get_player_direction() * 2)
+            # vector for red ghost to reach vec1
+            vec2 = (vec1 - red_ghost_pos)
+            self.goal = self.adjust_vector(red_ghost_pos + vec2 * 2)
+
+            while not self.game.map.has_cell_exit(int(self.goal.x), int(self.goal.y)):
+                # reduce vec2
+                if vec2.x < 0:
+                    vec2.x += 1
+                else:
+                    vec2.x -= 1
+                if vec2.y < 0:
+                    vec2.y += 1
+                else:
+                    vec2.y -= 1
+
+                self.goal = self.adjust_vector(red_ghost_pos + vec2 * 2)
+
+                if self.goal == vec1:
+                    self.goal = player_pos
         else:
             super().find_goal()
 
@@ -88,22 +122,46 @@ class OrangeGhost(NPC):
                  point: tuple[float, float] = (0, 0)) -> None:
         super().__init__(game, point, (250, 120, 10),
                          "Orange ghost (Clyde, Pockey)")
+        # self.tiles = int(min(self.game.map.cols, self.game.map.rows) * 0.42)
+        self.tiles = 4
         self.read_frames_from_file("inc/img/orange/run/", FrameType.RUN)
         self.read_frames_from_file("inc/img/orange/stay/", FrameType.STAY)
 
     def find_goal(self) -> None:
         if self.mode == GhostMode.CHASE:
-            tiles = int(self.game.map.cols * self.game.map.rows * 0.042)
-            player_pos = pg.Vector2(int(round(self.game.player.x, 0)),
-                                    int(round(self.game.player.y, 0)))
+            if self.goal is not None and self.goal != (round(self.x), round(self.y)):
+                return
+            player_pos = self.get_player_pos()
+            x = int(player_pos.x)
+            y = int(player_pos.y)
+
             max_x = self.game.map.cols - 1
             max_y = self.game.map.rows - 1
-            # pos_x_before = (0, player_pos.x - 1)
-            # pos_x_after = (player_pos.x + 1, )
-            # pos_y_before = (0, player_pos.y - 1)
-            # pos_y_after = (player_pos.y + 1, )
-            # # self.goal = self.adjust_vector(red_ghost_pos + vec2)
-            self.goal = pg.Vector2(int(round(self.game.player.x, 0)),
-                         int(round(self.game.player.y, 0)))
+            pos_x_min = max(0, x - self.tiles)
+            pos_x_max = min(x + self.tiles, max_x)
+            pos_y_min = max(0, y - self.tiles)
+            pos_y_max = min(y + self.tiles, max_y)
+
+            vecs: list[pg.Vector2] = []
+            if (y > self.tiles):
+                vecs.extend([pg.Vector2(x, pos_y_min) for x
+                             in range(pos_x_min, pos_x_max + 1)
+                             if self.game.map.has_cell_exit(x, pos_y_min)])
+            if (max_y - y > self.tiles):
+                vecs.extend([pg.Vector2(x, pos_y_max) for x
+                             in range(pos_x_min, pos_x_max + 1)
+                             if self.game.map.has_cell_exit(x, pos_y_max)])
+            if x > self.tiles:
+                vecs.extend([pg.Vector2(pos_x_min, y) for y
+                             in range(pos_y_min + 1, pos_y_max)
+                             if self.game.map.has_cell_exit(pos_x_min, y)])
+            if max_x - x > self.tiles:
+                vecs.extend([pg.Vector2(pos_x_max, y) for y
+                            in range(pos_y_min + 1, pos_y_max)
+                            if self.game.map.has_cell_exit(pos_x_max, y)])
+            if len(vecs):
+                self.goal = random.choice(vecs)
+            else:
+                self.goal = pg.Vector2(self.start_x, self.start_y)
         else:
             super().find_goal()

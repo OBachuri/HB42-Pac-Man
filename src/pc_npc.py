@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 
 class NPC(Entity):
     """ Ghosts """
+
     def __init__(self, game: Game,
                  point: tuple[int | float, int | float] = (0, 0),
                  color: tuple[int, int, int] = (100, 100, 100),
@@ -116,7 +117,6 @@ class NPC(Entity):
              and (abs(round(y) - y) < speed_factor))):
             x = round(x)
             y = round(y)
-
 
             if self.mode == GhostMode.SPAWN:
                 if self.goal == pg.Vector2(x, y):

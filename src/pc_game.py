@@ -84,8 +84,8 @@ class Game:
         # Add Ghost
         red_ghost = RedGhost(self)
         self.npcs = [red_ghost,
-                    #  PinkGhost(self),]
-                    #  CyanGhost(self, red_ghost=red_ghost),]
+                     PinkGhost(self, red_ghost=red_ghost),
+                     CyanGhost(self, red_ghost=red_ghost),
                      OrangeGhost(self)]
 
         self.player.lives = self.config.lives
