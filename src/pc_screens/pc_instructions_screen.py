@@ -5,13 +5,8 @@ if TYPE_CHECKING:
     from pc_app import App
 
 from pc_constants import SCREEN_HEIGHT, SCREEN_WIDTH, FPS
-<<<<<<< HEAD:src/pc_screens/pc_instructions_screen.py
 from pc_screens import BaseScreen, ScreenTypes
 from pc_screens.pc_utils import wrap_text
-=======
-from screens import BaseScreen, ScreenTypes
-from screens.utils import wrap_text
->>>>>>> main:src/screens/instructions_screen.py
 
 
 class InstructionsScreen(BaseScreen):
