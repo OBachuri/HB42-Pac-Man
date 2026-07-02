@@ -11,11 +11,22 @@
 	"remove_deadends": true,
 	"map_filename": "inc/maps/maze-1.txt",
 	"bonus_fruit_type": "Cherry",
-	"points_per_bonus_fruit": 200,
-	"walls_color": "#1e2ac9"
+	"points_per_bonus_fruit": 200
 	},
 	{
 	"number": 2,
+	"pacgum" : 0,
+	"speed_factor_ghost": 0.03,
+	"max_player_acceleration": 5,
+	"remove_deadends": false,
+	"map_filename": "inc/maps/maze.txt",
+	"level_max_time": 90,
+	"bonus_fruit_type":"Strawberry",
+	"points_per_bonus_fruit": 300,
+	"walls_color": "#1e2ac9"
+	},
+	{
+	"number": 3,
 	"width": 14,
 	"height": 12,
 	"pacgum" : 0,
@@ -24,11 +35,11 @@
 	"speed_factor_ghost": 0.03,
 	"max_player_acceleration": 5,
 	"level_max_time": 90,
-	"bonus_fruit_type":"Strawberry",
-	"points_per_bonus_fruit": 300
+	"bonus_fruit_type":"Orange",
+	"points_per_bonus_fruit": 500
 	},
 	{
-	"number": 3,
+	"number": 4,
 	"width": 8,
 	"height": 8,
 	"seed": 42,
@@ -41,7 +52,7 @@
 	"points_per_bonus_fruit": 500
 	},
 	{
-	"number": 4,
+	"number": 5,
 	"pacgum" : 0,
 	"level_max_time" : 222,
 	"remove_deadends": true,
@@ -53,7 +64,7 @@
 	"walls_color": "#1e2ac9"
 	},
 	{
-	"number": 5,
+	"number": 6,
 	"width": 12,
 	"height": 12,
 	"pacgum" : 0,
@@ -91,6 +102,31 @@
 	"level_max_time": 300,
 	"bonus_fruit_type":"banana",
 	"points_per_bonus_fruit": 2000
+	},
+	{
+	"number": 10,
+	"width": 14,
+	"height": 13,
+	"pacgum" : 0,
+	"remove_deadends": true,
+	"speed_factor_ghost": 0.08,
+	"max_player_acceleration": 10,
+	"level_max_time": 300,
+	"bonus_fruit_type":"key",
+	"points_per_bonus_fruit": 5000
+	},
+	{
+	"number": 13,
+	"width": 14,
+	"height": 14,
+	"pacgum" : 0,
+	"remove_deadends": true,
+	"speed_factor_ghost": 0.08,
+	"max_player_acceleration": 10,
+	"level_max_time": 300,
+	"bonus_fruit_type":"key",
+	"points_per_bonus_fruit": 5000,
+	"walls_color": "#fe2ac9"
 	}
 
 
