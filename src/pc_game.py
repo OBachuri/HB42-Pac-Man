@@ -12,7 +12,7 @@ from collections.abc import Sequence
 from pc_constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 from pc_map import Map
 from pc_player import Player
-from pc_npc import NPC  # , GhostMode
+from pc_npc import NPC, GhostMode
 from pc_ghosts import RedGhost, PinkGhost, CyanGhost, OrangeGhost
 from pc_artifact import PC_Artifacts
 from pc_artifact import PowerPellet, Pellet, BonusFruitType
@@ -181,9 +181,11 @@ class Game:
             elif isinstance(n, OrangeGhost):
                 n.start_x = 0
                 n.start_y = self.map.rows - 1
+                n.goal = None
             elif isinstance(n, CyanGhost):
                 n.start_x = self.map.cols - 1
                 n.start_y = self.map.rows - 1
+            n.mode = GhostMode.CHASE
             n.reset()
             n.speed_factor = config.speed_factor_ghost
             n.points = self.config.points_per_ghost

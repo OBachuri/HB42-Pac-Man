@@ -142,7 +142,7 @@ class OrangeGhost(NPC):
     def find_goal(self) -> None:
         if self.mode == GhostMode.CHASE:
             if (self.goal is not None
-               and tuple(self.goal) != (round(self.x), round(self.y))):
+               and self.goal != (round(self.x), round(self.y))):
                 return
             player_pos = self.get_player_pos()
             x = int(player_pos.x)
