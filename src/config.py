@@ -203,7 +203,6 @@ class Level(BaseModel):
         print("walls color:", self.walls_color)
 
 
-
 class Config(BaseModel):
     default_highscores_filename: ClassVar[str] = "highscores.json"
 

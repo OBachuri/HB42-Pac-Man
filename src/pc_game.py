@@ -55,7 +55,7 @@ class Game:
         self.game_time: float = self.game_max_time   # sec
         self.chase_mode_time: int = 20  # sec - chase time
         self.scatter_mode_time: int = 7  # sec - scatter time
-        self.chase_phase: bool = True   # to know what phase it is, so that ghosts have an appropriate mode after frightened mode
+        self.chase_phase: bool = True
         self.global_trigger = False
         # self.global_event = pg.USEREVENT + 0
         self.global_event = pg.event.custom_type()
@@ -177,20 +177,6 @@ class Game:
 
         # Set NPC
         for n in self.npcs:
-            if isinstance(n, RedGhost):
-                n.start_x = 0
-                n.start_y = 0
-            elif isinstance(n, PinkGhost):
-                n.start_x = self.map.cols - 1
-                n.start_y = 0
-            elif isinstance(n, OrangeGhost):
-                n.start_x = 0
-                n.start_y = self.map.rows - 1
-                n.goal = None
-            elif isinstance(n, CyanGhost):
-                n.start_x = self.map.cols - 1
-                n.start_y = self.map.rows - 1
-            n.mode = GhostMode.CHASE
             n.reset()
             n.speed_factor = config.speed_factor_ghost
             n.points = self.config.points_per_ghost

@@ -161,10 +161,7 @@ class Pellet(PC_Artifacts):
                 del self.game.fruits_triger[0]
                 for n in self.game.npcs:
                     if n.alive and (n.mode != GhostMode.FRIGHTENED):
-                        if self.game.chase_phase:
-                            n.mode = GhostMode.CHASE
-                        else:
-                            n.mode = GhostMode.SCATTER
+                        n.mode = GhostMode.CHASE
                 sound = self.sounds.get(SoundType.REBORN, [])
                 if len(sound) > 0:
                     if self.sound_index >= len(sound):
