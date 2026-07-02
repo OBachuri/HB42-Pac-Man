@@ -51,12 +51,12 @@ class MainMenuScreen(BaseScreen):
                     running = False
 
                 if event.type == pg.KEYDOWN:
-                    if event.key == pg.K_UP:
+                    if event.key == pg.K_UP or event.key == pg.K_w:
                         buttons[selected_index].selected = False
                         selected_index = (selected_index - 1) % len(buttons)
                         buttons[selected_index].selected = True
 
-                    elif event.key == pg.K_DOWN:
+                    elif event.key == pg.K_DOWN or event.key == pg.K_s:
                         buttons[selected_index].selected = False
                         selected_index = (selected_index + 1) % len(buttons)
                         buttons[selected_index].selected = True

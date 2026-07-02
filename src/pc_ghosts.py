@@ -28,6 +28,12 @@ class RedGhost(NPC):
         self.read_frames_from_file("inc/img/red/run/", FrameType.RUN)
         self.read_frames_from_file("inc/img/red/stay/", FrameType.STAY)
 
+    def reset(self) -> None:
+        self.start_x = 0
+        self.start_y = 0
+        self.mode = GhostMode.CHASE
+        super().reset()
+
     def find_goal(self) -> None:
         if self.mode == GhostMode.CHASE:
             self.goal = self.get_player_pos()
@@ -44,6 +50,12 @@ class PinkGhost(NPC):
         self.tiles: int = 4
         self.read_frames_from_file("inc/img/pink/run/", FrameType.RUN)
         self.read_frames_from_file("inc/img/pink/stay/", FrameType.STAY)
+
+    def reset(self) -> None:
+        self.start_x = self.game.map.cols - 1
+        self.start_y = 0
+        self.mode = GhostMode.CHASE
+        super().reset()
 
     def find_goal(self) -> None:
         if self.mode == GhostMode.CHASE:
@@ -87,6 +99,12 @@ class CyanGhost(NPC):
         self.red_ghost = red_ghost
         self.read_frames_from_file("inc/img/cyan/run/", FrameType.RUN)
         self.read_frames_from_file("inc/img/cyan/stay/", FrameType.STAY)
+
+    def reset(self) -> None:
+        self.start_x = self.game.map.cols - 1
+        self.start_y = self.game.map.rows - 1
+        self.mode = GhostMode.CHASE
+        super().reset()
 
     def find_goal(self) -> None:
         if self.mode == GhostMode.CHASE:
@@ -139,10 +157,17 @@ class OrangeGhost(NPC):
         # for mypy test - it can't check type from NPC
         self.goal: pg.Vector2 | None = None
 
+    def reset(self) -> None:
+        self.start_x = 0
+        self.start_y = self.game.map.rows - 1
+        self.goal = None
+        self.mode = GhostMode.CHASE
+        super().reset()
+
     def find_goal(self) -> None:
         if self.mode == GhostMode.CHASE:
             if (self.goal is not None
-               and tuple(self.goal) != (round(self.x), round(self.y))):
+               and self.goal != (round(self.x), round(self.y))):
                 return
             player_pos = self.get_player_pos()
             x = int(player_pos.x)

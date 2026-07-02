@@ -38,9 +38,9 @@ class ErrorScreen(BaseScreen):
                     if event.key == pg.K_ESCAPE:
                         running = False
                         self.app.move_to(ScreenTypes.MAIN_MENU)
-                    elif event.key == pg.K_DOWN:
+                    elif event.key == pg.K_DOWN or event.key == pg.K_s:
                         scroll_y = min(scroll_y + line_height, max_scroll)
-                    elif event.key == pg.K_UP:
+                    elif event.key == pg.K_UP or event.key == pg.K_w:
                         scroll_y = max(scroll_y - line_height, 0)
                 if event.type == pg.MOUSEWHEEL:
                     scroll_y = max(

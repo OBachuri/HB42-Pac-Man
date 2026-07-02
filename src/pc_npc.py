@@ -66,11 +66,23 @@ class NPC(Entity):
                  or tuple(self.goal) != (self.start_x, self.start_y))
         ):
             self.goal = pg.Vector2(self.start_x, self.start_y)
+        elif self.mode == GhostMode.FRIGHTENED:
+            cur_x = round(self.x)
+            cur_y = round(self.y)
+            if self.goal and self.goal != (cur_x, cur_y):
+                return
+            dx, dy = random.choice([(-1, 0), (1, 0), (0, -1), (0, 1)])
+            new_goal = self.adjust_vector(pg.Vector2(cur_x + dx, cur_y + dy))
+            while not self.game.map.has_cell_exit(new_goal.x, new_goal.y):
+                dx, dy = random.choice([(-1, 0), (1, 0), (0, -1), (0, 1)])
+                new_goal = self.adjust_vector(
+                    pg.Vector2(cur_x + dx, cur_y + dy))
+            self.goal = new_goal
         else:
             if ((self.goal is None)
-               or tuple(self.goal) == (round(self.x), round(self.y))):
+               or self.goal == (round(self.x), round(self.y))):
                 # We have reached the goal and we need a new one
-                if self.mode == GhostMode.SCATTER:
+                if self.mode == GhostMode.SCATTER and self.game.chase_phase:
                     self.mode = GhostMode.CHASE
                     return
                 x_g = random.randrange(0, self.game.map.cols)
@@ -172,7 +184,10 @@ class NPC(Entity):
     def event_end(self) -> None:
         # print("Fr End:", self.event_timer, self.mode, self.name)
         if self.mode == GhostMode.FRIGHTENED:
-            self.mode = GhostMode.CHASE
+            if self.game.chase_phase:
+                self.mode = GhostMode.CHASE
+            else:
+                self.mode = GhostMode.SCATTER
 
     def event(self) -> None:
         if not self.alive:
@@ -207,7 +222,10 @@ class NPC(Entity):
         self.goal = pg.Vector2(self.start_x, self.start_y)
 
     def reborn(self) -> None:
-        self.mode = GhostMode.CHASE
+        if self.game.chase_phase:
+            self.mode = GhostMode.CHASE
+        else:
+            self.mode = GhostMode.SCATTER
         self.alive = True
         self.visible = True
         self.dx = 0
