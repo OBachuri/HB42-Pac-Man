@@ -53,6 +53,9 @@ class Game:
         self.delta_time = 1
         self.game_max_time: float = 110   # sec
         self.game_time: float = self.game_max_time   # sec
+        self.chase_mode_time: int = 20  # sec - chase time
+        self.scatter_mode_time: int = 7  # sec - scatter time
+        self.chase_phase: bool = True   # to know what phase it is, so that ghosts have an appropriate mode after frightened mode
         self.global_trigger = False
         # self.global_event = pg.USEREVENT + 0
         self.global_event = pg.event.custom_type()
@@ -258,6 +261,21 @@ class Game:
         # self.weapon.update()
         self.delta_time = self.clock.tick(FPS)
         self.game_time -= self.delta_time / 1000
+
+        elapsed_time = int(self.game_max_time - self.game_time)
+        phase_time = elapsed_time % (self.chase_mode_time + self.scatter_mode_time)
+        if phase_time < self.chase_mode_time:
+            if not self.chase_phase:
+                self.chase_phase = True
+                for npc in self.npcs:
+                    if npc.mode == GhostMode.SCATTER:
+                        npc.mode = GhostMode.CHASE
+        else:
+            if self.chase_phase:
+                self.chase_phase = False
+                for npc in self.npcs:
+                    if npc.mode == GhostMode.CHASE:
+                        npc.mode = GhostMode.SCATTER
 
         if ((self.game_time < 6)
            and (self.game_time > 0)

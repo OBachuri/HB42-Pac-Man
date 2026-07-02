@@ -160,7 +160,10 @@ class Pellet(PC_Artifacts):
                 del self.game.fruits_triger[0]
                 for n in self.game.npcs:
                     if n.alive and (n.mode != GhostMode.FRIGHTENED):
-                        n.mode = GhostMode.CHASE
+                        if self.game.chase_phase:
+                            n.mode = GhostMode.CHASE
+                        else:
+                            n.mode = GhostMode.SCATTER
                 sound = self.sounds.get(SoundType.REBORN, [])
                 if len(sound) > 0:
                     if self.sound_index >= len(sound):
@@ -265,7 +268,10 @@ class Fruit(PC_Artifacts):
         if len(self.game.artifacts) > 10:
             for n in self.game.npcs:
                 if n.alive and (n.mode != GhostMode.FRIGHTENED):
-                    n.mode = GhostMode.CHASE
+                    if self.game.chase_phase:
+                        n.mode = GhostMode.CHASE
+                    else:
+                        n.mode = GhostMode.SCATTER
 
     def update(self) -> None:
         self.animation_timer += 0.1
