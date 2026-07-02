@@ -155,6 +155,8 @@ class Game:
                 maze_ = self.map.do_not_perfect(maze_)
             self.map.get_map(maze_)
 
+        self.map.color = config.walls_color
+
         # self.map.print()
 
         self.app.set_screen()

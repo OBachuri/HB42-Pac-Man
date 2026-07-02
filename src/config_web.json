@@ -11,7 +11,8 @@
 	"remove_deadends": true,
 	"map_filename": "inc/maps/maze-1.txt",
 	"bonus_fruit_type": "Cherry",
-	"points_per_bonus_fruit": 200
+	"points_per_bonus_fruit": 200,
+	"walls_color": "#1e2ac9"
 	},
 	{
 	"number": 2,
@@ -48,7 +49,8 @@
 	"speed_factor_ghost": 0.05,
 	"map_filename": "inc/maps/maze-3.txt",
 	"bonus_fruit_type":"Orange",
-	"points_per_bonus_fruit": 500
+	"points_per_bonus_fruit": 500,
+	"walls_color": "#1e2ac9"
 	},
 	{
 	"number": 5,
