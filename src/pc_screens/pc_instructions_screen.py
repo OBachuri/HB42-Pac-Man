@@ -1,4 +1,5 @@
 import asyncio
+import sys
 import pygame as pg
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -18,14 +19,14 @@ class InstructionsScreen(BaseScreen):
             self.text = (
                 "You are in CHEAT mode! "
                 "Available features:\n"
-                "1 - Invincibility (no life lost; "
+                "  1 - Invincibility (no life lost; "
                 "ghosts cannot eat the player).\n"
-                "2 - Level skip (immediately win the current level).\n"
-                "3 - Ghost freeze (ghosts stop moving).\n"
-                "4 - Extra lives (add extra lives to the player).\n"
-                "5 - Increased speed (player moves faster).\n"
-                "6 - Decreased speed (player moves slower).\n"
-                "7 - Change ghost mode.\n\n"
+                "  2 - Level skip (immediately win the current level).\n"
+                "  3 - Ghost freeze (ghosts stop moving).\n"
+                "  4 - Extra lives (add extra lives to the player).\n"
+                "  5 - Increased speed (player moves faster).\n"
+                "  6 - Decreased speed (player moves slower).\n"
+                "  7 - Change ghost mode.\n\n"
             )
         self.text += (
             "Focus on navigating a maze to eat all the dots"
@@ -34,25 +35,35 @@ class InstructionsScreen(BaseScreen):
             "you turn the ghosts blue and vulnerable "
             "to being eaten for extra points.\n\n"
 
-            "Basic Rules:\n"
-            "- Press the corresponding direction (Up, Down, "
+            "Control:\n"
+            "  W A S D      - Move \n"
+            "  Space        - Stop \n"
+            "  Esc          - Return/Pause \n"
+            )
+
+        if (sys.platform != "emscripten"):
+            self.text += "  Shit+F11     - Full screan\n"
+
+        self.text += (
+            "\nBasic Rules:\n"
+            " - Press the corresponding direction (Up, Down, "
             "Left, Right / W, A, S, D) to steer Pac-Man through the maze.\n"
-            "- Eat the pacgums: Clear the maze of all small dots placed in "
+            " - Eat the pacgums: Clear the maze of all small dots placed in "
             "most corridors to progress to the next level.\n"
-            "- Super-pacgums: Eat the power pellets (larger dots) in the "
+            " - Super-pacgums: Eat the power pellets (larger dots) in the "
             "corners. This causes the ghosts for a short time to turn blue "
             "and run away, allowing you to gobble them up for points.\n"
-            "- Avoid the Ghosts: If a ghost touches you while they are "
+            " - Avoid the Ghosts: If a ghost touches you while they are "
             "normal-colored, you lose a life. You start with "
             f"{app.config.lives} lives.\n"
-            "- Eat Fruit: Bonus fruits appear twice per level of the screen,"
+            " - Eat Fruit: Bonus fruits appear twice per level of the screen,"
             " offering extra points.\n\n"
-            f"Scoring Points:\n- Pacgums: {app.config.points_per_pacgum}"
+            f"Scoring Points:\n - Pacgums: {app.config.points_per_pacgum}"
             " points each\n"
-            f"- Super-pacgums: {app.config.points_per_super_pacgum}"
+            f" - Super-pacgums: {app.config.points_per_super_pacgum}"
             " points each\n"
-            f"- Ghosts: {app.config.points_per_ghost} points each\n"
-            "- Fruits: Range from 100 points (Cherry) up to 5,000 points "
+            f" - Ghosts: {app.config.points_per_ghost} points each\n"
+            " - Fruits: Range from 100 points (Cherry) up to 5,000 points "
             "(Key) in higher levels.\n"
         )
 
@@ -74,6 +85,7 @@ class InstructionsScreen(BaseScreen):
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     running = False
+                    self.app.move_to(ScreenTypes.MAIN_MENU)
                     # self.app.quit()
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
@@ -83,6 +95,11 @@ class InstructionsScreen(BaseScreen):
                         scroll_y = min(scroll_y + line_height, max_scroll)
                     elif event.key == pg.K_UP or event.key == pg.K_w:
                         scroll_y = max(scroll_y - line_height, 0)
+                    elif event.key == pg.K_F11:
+                        self.app.fullscreen_mode = not (
+                            self.app.fullscreen_mode)
+                        self.app.set_screen()
+
                 if event.type == pg.MOUSEWHEEL:
                     scroll_y = max(
                         0, min(scroll_y - event.y

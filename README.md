@@ -46,6 +46,7 @@ python3 pac-man.py my_config.json
 - **D** or **⇨** - Move Right
 - **Space** - Stop
 - **Esc** - Pause / Exit game
+- **F11** - Full screan 
 
 #### Cheat mode
 
@@ -84,11 +85,12 @@ The configuration file controls the maze generation physics and rules.
 	"points_per_bonus_fruit": 300,
 	"remove_deadends": true,
 	"speed_factor_ghost": 0.04,
-	"max_player_acceleration": 6
+	"max_player_acceleration": 6,
+	"walls_color": "#1e2ac9"
 	},
 	{
 	"number": 100,
-	"map_filename": "inc/maps/maze-3.txt"
+	"map_filename": "inc/maps/maze.txt"
 	}
 	]
 }

@@ -109,7 +109,10 @@ class App:
                     pg.display.set_mode((g_width, g_height),
                                         pg.SCALED | pg.FULLSCREEN)
                 else:
-                    pg.display.set_mode((g_width, g_height))
+                    size_ = self.screen.get_size()
+                    if (size_ != (g_width, g_height)
+                       or bool(self.screen.get_flags() & pg.FULLSCREEN)):
+                        pg.display.set_mode((g_width, g_height))
         else:
             if self.fullscreen_mode:
                 if bool(self.screen.get_flags() & pg.FULLSCREEN):
@@ -130,7 +133,10 @@ class App:
                     pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT),
                                         pg.SCALED | pg.FULLSCREEN)
                 else:
-                    pg.display.set_mode((m_width, m_height))
+                    size_ = self.screen.get_size()
+                    if (size_ != (m_width, m_height)
+                       or bool(self.screen.get_flags() & pg.FULLSCREEN)):
+                        pg.display.set_mode((m_width, m_height))
 
     def quit(self) -> None:
         self.running = False
