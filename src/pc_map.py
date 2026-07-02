@@ -20,6 +20,7 @@ class Map:
         self.wall_thickness: int = 4
         self.step: int = self.cell_size + self.wall_thickness
         self.top: int = 35
+        self.color: tuple[int, int, int] = (40, 200, 40)
 
     def get_map(self, maze_: list[list[int]]) -> None:
         # get map from list
@@ -187,12 +188,12 @@ class Map:
         return path_
 
     def draw(self) -> None:
-        pg.draw.rect(self.game.screen, 'green', (
+        pg.draw.rect(self.game.screen, self.color, (
             self.game.screen_left_shift, self.top,
                      self.wall_thickness,
                      self.rows * self.step
                      + self.wall_thickness), 0)
-        pg.draw.rect(self.game.screen, 'green',
+        pg.draw.rect(self.game.screen, self.color,
                      (self.game.screen_left_shift, self.rows * self.step
                       + self.top,
                       self.cols * self.step,
@@ -210,7 +211,7 @@ class Map:
                               self.cell_size,
                               self.cell_size), 0)
             if (w & 2) == 2:
-                pg.draw.rect(self.game.screen, 'green',
+                pg.draw.rect(self.game.screen, self.color,
                              (self.game.screen_left_shift
                               + (pos[0] + 1) * self.step,
                               pos[1] * self.step
@@ -218,7 +219,7 @@ class Map:
                               self.wall_thickness,
                               self.cell_size + self.wall_thickness * 2), 0)
             if (w & 1) == 1:
-                pg.draw.rect(self.game.screen, 'green',
+                pg.draw.rect(self.game.screen, self.color,
                              (self.game.screen_left_shift
                               + pos[0] * self.step,
                               pos[1] * self.step

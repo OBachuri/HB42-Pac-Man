@@ -1,5 +1,7 @@
 from typing import Any
 
+import pygame as pg
+
 from pc_artifact import BonusFruitType
 
 
@@ -41,10 +43,19 @@ class LevelWeb:
         try:
             f_nane = str(data.get("bonus_fruit_type", "cherry"))
             fruit = BonusFruitType[f_nane.upper()]
-        except KeyError:
+        except Exception as ex:
             fruit = BonusFruitType.CHERRY
-            print("Can't find fruit: ", f_nane, "!")
+            print("Error: Can't find fruit: ", f_nane,
+                  f"(level:{self.number})!", ex)
         self.bonus_fruit_type: BonusFruitType = fruit
+        self.walls_color: tuple[int, ...] = (40, 200, 40)
+
+        try:
+            color_txt = str(data.get("walls_color", "green"))
+            self.walls_color = tuple(pg.Color(color_txt)[:3])
+        except Exception as ex:
+            print(f"Error: Wrong color of wall for level"
+                  f"(level:{self.number})!", ex)
 
     @property
     def size(self) -> tuple[int, int]:
@@ -59,6 +70,7 @@ class LevelWeb:
         print("Seed:", self.seed)
         print("Remove deadends:", self.remove_deadends)
         print("Time max:", self.level_max_time, "s")
+        print("walls color:", self.walls_color)
 
 
 class ConfigWeb:

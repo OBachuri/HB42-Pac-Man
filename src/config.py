@@ -3,6 +3,8 @@ from pydantic import BaseModel
 from pydantic import PositiveInt, NonNegativeInt, PositiveFloat
 from pydantic import field_validator
 
+import pygame as pg
+
 from pc_artifact import BonusFruitType
 
 
@@ -20,6 +22,7 @@ class Level(BaseModel):
     speed_factor_ghost: PositiveFloat = 0.02
     bonus_fruit_type: BonusFruitType = BonusFruitType.CHERRY
     points_per_bonus_fruit: PositiveInt = 100
+    walls_color: tuple[int, ...] = (40, 200, 40)
 
     @property
     def size(self) -> tuple[PositiveInt, PositiveInt]:
@@ -177,6 +180,17 @@ class Level(BaseModel):
                   " Using default value")
             return 0.02
 
+    @field_validator("walls_color", mode="before")
+    @classmethod
+    def fix_walls_color(cls, value: Any) -> tuple[int, ...]:
+        try:
+            color = tuple(pg.Color(value)[:3])
+            return color
+        except (TypeError, ValueError) as ex:
+            print("Wrong value for walls_collor "
+                  " Using default value.", ex)
+            return ((40, 200, 40))
+
     def print(self) -> None:
         print("--Level:")
         print("Number:", self.number)
@@ -186,6 +200,8 @@ class Level(BaseModel):
         print("Seed:", self.seed)
         print("Remove deadends:", self.remove_deadends)
         print("Time max:", self.level_max_time, "s")
+        print("walls color:", self.walls_color)
+
 
 
 class Config(BaseModel):
