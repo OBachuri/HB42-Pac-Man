@@ -131,6 +131,7 @@ class PowerPellet(PC_Artifacts):
         self.game.player.dy = max(0, self.game.player.dy - 3)
         for n in self.game.npcs:
             if n.alive:
+                n.goal = None
                 n.mode = GhostMode.FRIGHTENED
                 n.dx *= -1
                 n.dy *= -1

@@ -263,7 +263,8 @@ class Game:
         self.game_time -= self.delta_time / 1000
 
         elapsed_time = int(self.game_max_time - self.game_time)
-        phase_time = elapsed_time % (self.chase_mode_time + self.scatter_mode_time)
+        phase_time = elapsed_time % (
+            self.chase_mode_time + self.scatter_mode_time)
         if phase_time < self.chase_mode_time:
             if not self.chase_phase:
                 self.chase_phase = True

@@ -66,6 +66,18 @@ class NPC(Entity):
                  or tuple(self.goal) != (self.start_x, self.start_y))
         ):
             self.goal = pg.Vector2(self.start_x, self.start_y)
+        elif self.mode == GhostMode.FRIGHTENED:
+            cur_x = round(self.x)
+            cur_y = round(self.y)
+            if self.goal and self.goal != (cur_x, cur_y):
+                return
+            dx, dy = random.choice([(-1, 0), (1, 0), (0, -1), (0, 1)])
+            new_goal = self.adjust_vector(pg.Vector2(cur_x + dx, cur_y + dy))
+            while not self.game.map.has_cell_exit(new_goal.x, new_goal.y):
+                dx, dy = random.choice([(-1, 0), (1, 0), (0, -1), (0, 1)])
+                new_goal = self.adjust_vector(
+                    pg.Vector2(cur_x + dx, cur_y + dy))
+            self.goal = new_goal
         else:
             if ((self.goal is None)
                or self.goal == (round(self.x), round(self.y))):
