@@ -42,7 +42,7 @@ Main game loop:
 ```bash
 make install
 ```
-This target creates/uses `.venv` and installs dependencies (including `pygame-ce`, `pydantic`, `numpy`, maze generator wheel, linting tools, etc.).
+This target creates/uses `.venv` and installs dependencies (including `pygame-ce`, `pydantic`, maze generator wheel, linting tools, etc.).
 
 ### Usage
 

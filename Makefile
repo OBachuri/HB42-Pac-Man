@@ -154,8 +154,8 @@ lint-strict:
 
 install:
 	@$(ACTIVATE_VENV)
-#	$(PIP) install pydantic dotenv build flake8 mypy pygame-ce numpy
-	$(PIP) install pydantic flake8 mypy pygame-ce numpy
+#	$(PIP) install pydantic dotenv build flake8 mypy pygame-ce
+	$(PIP) install pydantic flake8 mypy pygame-ce
 	$(PIP) install mazegenerator-00001-py3-none-any.whl
 #	$(PIP) install mazegen-0.1.0-py3-none-any.whl
 #	$(PIP) install pygbag --upgrade
