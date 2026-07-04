@@ -56,6 +56,10 @@ class PinkGhost(NPC):
         self.start_y = 0
         self.mode = GhostMode.CHASE
         super().reset()
+        # print("reset:", self.name, "x:", self.x, "y:",
+        #       self.y, "vis:", self.visible,
+        #       ",goal:", self.goal, ",start:", (self.start_x, self.start_y),
+        #       "speed:", self.speed_factor)
 
     def find_goal(self) -> None:
         if self.mode == GhostMode.CHASE:

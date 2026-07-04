@@ -8,6 +8,20 @@ from pc_artifact import BonusFruitType
 class LevelWeb:
     def __init__(self, data: dict[str, Any] = {}) -> None:
         self.number: int = 1
+        self.map_filename: str = ""
+        self.remove_deadends: bool = True
+        self.width: int = 14
+        self.height: int = 10
+        self.seed: int = 0
+        self.level_max_time: int = 120
+        self.speed_factor_player: float = 0.01
+        self.speed_factor_ghost: float = 0.02
+        self.max_player_acceleration: int = 5
+        self.points_per_bonus_fruit: int = 100
+        self.bonus_fruit_type: BonusFruitType = BonusFruitType.CHERRY
+        self.walls_color: tuple[int, ...] = (40, 200, 40)
+        self.pacgum: int = 0
+
         try:
             n = int(data.get("number", 1))
             if n < 0:
@@ -17,7 +31,6 @@ class LevelWeb:
             print("Error in config in level number =",
                   data.get("number", 1), ":", ex)
 
-        self.map_filename: str = ""
         try:
             str_ = str(data.get("map_filename", ""))
             self.map_filename = str_
@@ -26,29 +39,88 @@ class LevelWeb:
                   "- wrong map file name",
                   data.get("map_filename", ""), ":", ex)
 
-        self.remove_deadends: bool = data.get("remove_deadends", True)
-        self.width: int = max(data.get("width", 14), 3)
-        self.height: int = max(data.get("height", 10), 3)
-        self.seed: int = data.get("seed", 0)
-        self.pacgum: int = data.get("pacgum", 0)
-        self.level_max_time: int = data.get("level_max_time", 90)
-        self.speed_factor_player: float = data.get(
-            "speed_factor_player", 0.01)
-        self.speed_factor_ghost: float = data.get(
-            "speed_factor_ghost", 0.02)
-        self.max_player_acceleration: int = data.get(
-            "max_player_acceleration", 5)
-        self.points_per_bonus_fruit: int = data.get(
-            "points_per_bonus_fruit", 100)
+        try:
+            self.remove_deadends = bool(data.get("remove_deadends", True))
+        except Exception as ex:
+            print(f"Error: Wrong value remove_deadends for level"
+                  f"(level:{self.number})! \n", ex)
+
+        try:
+            v = int(data.get("width", 14))
+            if v < 3 or v > 40:
+                print(f'Error: Wrong value "width"={v} (3-25) for level'
+                      f"(level:{self.number})! \n")
+                v = 14
+            self.width = v
+        except Exception as ex:
+            print(f'Error: Wrong value "width" (3-25) for level'
+                  f"(level:{self.number})! \n", ex)
+
+        try:
+            v = int(data.get("height", 14))
+            if v < 3 or v > 30:
+                print(f'Error: Wrong value "height"={v} (3-25) for level'
+                      f"(level:{self.number})! \n")
+                v = 10
+            self.height = v
+        except Exception as ex:
+            print(f'Error: Wrong value "height" (3-25) for level'
+                  f"(level:{self.number})! \n", ex)
+
+        try:
+            self.seed = int(data.get("seed", 0))
+        except Exception as ex:
+            print(f'Error: Wrong value "seed" for level'
+                  f"(level:{self.number})! \n", ex)
+
+        try:
+            self.pacgum = int(data.get("pacgum", 0))
+        except Exception as ex:
+            print(f'Error: Wrong value "pacgum" for level'
+                  f"(level:{self.number})! \n", ex)
+
+        try:
+            self.level_max_time = max(10, int(data.get("level_max_time", 90)))
+        except Exception as ex:
+            print(f'Error: Wrong value "level_max_time" for level'
+                  f"(level:{self.number})! \n", ex)
+
+        try:
+            self.speed_factor_player = min(max(
+                float(data.get("speed_factor_player", 0.01)), 0.005), 10)
+        except Exception as ex:
+            print(f'Error: Wrong value "speed_factor_player" for level'
+                  f"(level:{self.number})! \n", ex)
+
+        try:
+            self.speed_factor_ghost = min(max(float(data.get(
+                "speed_factor_ghost", 0.02)), 0.01), 0.5)
+            print("self.speed_factor_ghost", self.speed_factor_ghost)
+        except Exception as ex:
+            print(f'Error: Wrong value "speed_factor_ghost" for level'
+                  f"(level:{self.number})! \n", ex)
+
+        try:
+            self.max_player_acceleration = min(max(int(data.get(
+                "max_player_acceleration", 5)), 1), 100)
+        except Exception as ex:
+            print(f'Error: Wrong value "max_player_acceleration" for level'
+                  f"(level:{self.number})! \n", ex)
+
+        try:
+            self.points_per_bonus_fruit = max(int(data.get(
+                "points_per_bonus_fruit", 100)), 0)
+        except Exception as ex:
+            print(f'Error: Wrong value "points_per_bonus_fruit" for level'
+                  f"(level:{self.number})! \n", ex)
+
         try:
             f_nane = str(data.get("bonus_fruit_type", "cherry"))
             fruit = BonusFruitType[f_nane.upper()]
+            self.bonus_fruit_type = fruit
         except Exception as ex:
-            fruit = BonusFruitType.CHERRY
             print("Error: Can't find fruit: ", f_nane,
                   f"(level:{self.number})!", ex)
-        self.bonus_fruit_type: BonusFruitType = fruit
-        self.walls_color: tuple[int, ...] = (40, 200, 40)
 
         try:
             color_txt = str(data.get("walls_color", "green"))

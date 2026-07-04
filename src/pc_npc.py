@@ -59,6 +59,11 @@ class NPC(Entity):
 
         self.sound_init()
 
+        # print("Created:",
+        #       self.name, "x:", self.x, ", y:",
+        #       self.y, ", vis:", self.visible,
+        #       ", goal:", self.goal)
+
     def find_goal(self) -> None:
         if (
             self.mode == GhostMode.SCATTER
@@ -71,12 +76,38 @@ class NPC(Entity):
             cur_y = round(self.y)
             if self.goal and self.goal != (cur_x, cur_y):
                 return
-            dx, dy = random.choice([(-1, 0), (1, 0), (0, -1), (0, 1)])
+
+            w = self.game.map.world_map.get((cur_x, cur_y), 0) & 15
+            l_ = []
+            if w & 1 == 0:
+                l_ = [(0, -1)]
+            if w & 2 == 0:
+                l_.append((1, 0))
+            if w & 4 == 0:
+                l_.append((0, 1))
+            if w & 8 == 0:
+                l_.append((-1, 0))
+
+            if len(l_) > 1 and ((self.dx != 0) or (self.dy != 0)):
+                l_.remove((-self.dx, -self.dy))
+            dx, dy = random.choice(l_)
+            # dx, dy = random.choice([(-1, 0), (1, 0), (0, -1), (0, 1)])
             new_goal = self.adjust_vector(pg.Vector2(cur_x + dx, cur_y + dy))
-            while not self.game.map.has_cell_exit(new_goal.x, new_goal.y):
-                dx, dy = random.choice([(-1, 0), (1, 0), (0, -1), (0, 1)])
+            if len(l_) > 1:
+                l_.remove((dx, dy))
+                dx, dy = random.choice(l_)
+            new_goal = self.adjust_vector(pg.Vector2(cur_x + dx, cur_y + dy))
+
+            if (new_goal == self.get_player_pos()
+               and ((self.dx != 0) or (self.dy != 0))):
                 new_goal = self.adjust_vector(
-                    pg.Vector2(cur_x + dx, cur_y + dy))
+                    pg.Vector2(cur_x - self.dx, cur_y - self.dy))
+
+            # while not self.game.map.has_cell_exit(new_goal.x, new_goal.y):
+            #     dx, dy = random.choice([(-1, 0), (1, 0), (0, -1), (0, 1)])
+            #     new_goal = self.adjust_vector(
+            #         pg.Vector2(cur_x + dx, cur_y + dy))
+
             self.goal = new_goal
         else:
             if ((self.goal is None)
@@ -112,6 +143,9 @@ class NPC(Entity):
                         self.mode = GhostMode.CHASE
                     else:
                         self.mode = GhostMode.SCATTER
+                    print(self.name, "x:", self.x, "y:",
+                          self.y, "vis:", self.visible,
+                          "goal:", self.goal)
                 if keys[pg.K_3]:
                     self.freeze = not (self.freeze)
 
@@ -125,10 +159,9 @@ class NPC(Entity):
                     self.reborn()
             return
 
+        speed_factor = min(self.speed_factor, 0.5)
         if self.mode == GhostMode.SPAWN:
-            speed_factor = max(0.05, self.speed_factor)
-        else:
-            speed_factor = self.speed_factor
+            speed_factor = max(0.05, speed_factor)
 
         if (((abs(round(x) - x) < speed_factor)
              and (abs(round(y) - y) < speed_factor))):
@@ -192,7 +225,8 @@ class NPC(Entity):
     def event(self) -> None:
         if not self.alive:
             return
-        print("Collide PacMan and", self.name, "!")
+        if self.game.config.cheat:
+            print("Collide PacMan and", self.name, "!")
         if self.mode == GhostMode.FRIGHTENED:
             self.game.score += self.points
             self.mode = GhostMode.DEAD
