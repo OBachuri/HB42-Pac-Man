@@ -4,26 +4,47 @@
 
 # Pac-Man 42
 
-This project is part of the 42.fr curriculum.
+## Description
 
-The task: Recreate the famous arcade game Pac-man!
+This project is a Python implementation of the classic arcade game Pac-Man, developed with an object-oriented and modular architecture.  
+The project focuses on gameplay completeness, robustness, and maintainability:
 
-- Use external library for maze generation (‘A-Maze-ing‘ package from other "42" people)
-- Pac-Man starts from the center of the maze.
-- One ghost appear in each corner of the maze.
+- Playable multi-level Pac-Man loop
+- Configurable game behavior via JSON config file
+- Persistent top-10 highscores
+- Integration of an external A-Maze-ing maze generator package
+- Menu/game over/victory UI flow
+- Cheat mode for peer-evaluation convenience
+- Packaging-ready project with Makefile automation
 
+Main game loop:
+
+`Main Menu → Start Game → Win/Lose → Enter Name (save highscore) → Back to Main Menu`
+
+---
 
 ## Game screen example
 ![Result](result.png)
 
 
-## Installation
+## Instructions
+
+### Requirements
+
+- Python 3.10 or later
+- Pygame
+- Pydantic
+- Pip (for install)
+
+
+### Installation
 
 ```bash
 make install
 ```
+This target creates/uses `.venv` and installs dependencies (including `pygame-ce`, `pydantic`, maze generator wheel, linting tools, etc.).
 
-## Usage
+### Usage
 
 ```bash
 # Run with default configuration
@@ -34,6 +55,23 @@ make run my_config.json
 
 # Run directly with Python
 python3 pac-man.py my_config.json
+```
+
+### Debug
+
+```bash
+make debug config.json
+```
+
+### Lint
+
+```bash
+make lint
+```
+Optional stricter check:
+
+```bash
+make lint-strict
 ```
 
 ## Play
@@ -61,7 +99,7 @@ If you started game with ``` "cheat":  true ``` in config.json - for you availab
 - **F** - Ghosts SCATTER
 
 
-### Configuration File
+### Configuration
 
 The configuration file controls the maze generation physics and rules.
 
@@ -95,36 +133,131 @@ The configuration file controls the maze generation physics and rules.
 	]
 }
 ```
+#### Key notes
 
-## Requirements
+- Unknown keys are ignored.
+- Missing/invalid values are replaced with safe defaults where applicable.
+- Typical tunables:
+  - player lives
+  - scoring values
+  - level dimensions and timers
+  - random seed
+  - cheat mode
+  - highscore output file path/name
 
-- Python 3.10 or later
-- Pygame
-- Pydantic
-- Pip (for install)
+---
+## Highscore
 
+The project uses a persistent highscore system stored in JSON (`highscores_filename` from config, default `highscores.json`).
+
+### Behavior
+
+- Highscores are loaded at game start.
+- At game end (win or lose), player decides to quit or to store their score. If yes, player enters a name and score is stored.
+- Name rules:
+  - max 10 characters
+  - alphanumeric + spaces
+- Score rules:
+  - non-negative integer
+- Top 10 entries are kept and saved to disk.
+
+#### Why JSON?
+
+JSON is lightweight, human-readable, version-control friendly, and simple to validate/recover from.  
+It is sufficient for project constraints.
+
+---
+## Maze Generation
+
+This project integrates an **assigned external A-Maze-ing package** (not authored in this repository) through a dedicated adapter/loader workflow.
+
+### Integration principles
+
+- The external package is used **as-is**.
+- Loader adapts to package API (not the other way around).
+- Maze generation failures are handled gracefully with explicit error messages.
+- `PERFECT = False` is expected for Pac-Man-friendly corridor topology, according to subject constraints.
+
+The entrypoint imports maze generation package at runtime and exits with a clear message if unavailable.
+
+---
+## Implementation (Technical Summary)
+
+- Entry point: `pac-man.py`
+- Runtime flow:
+  1. Dependency checks (`pygame`, `pydantic`, maze package)
+  2. Config parsing/validation
+  3. App initialization
+  4. Async game loop execution
+- Core design goals:
+  - no hard crashes on expected faulty inputs
+  - modular code organization under `src/`
+  - separation of concerns (parsing/config/game/ui/storage)
+
+---
+
+## General Software Architecture
+
+High-level architecture (actual class names may evolve):
+
+- **Entrypoint Layer**
+  - `pac-man.py`: bootstrap, dependency checks, CLI config argument, app launch
+- **Configuration Layer**
+  - Parser module (`pc_parser`) for config loading and validation
+  - Config model (`config`) with typed fields/default logic
+- **Application Layer**
+  - App orchestrator (`pc_app`) managing screen flow/game lifecycle
+- **Domain/Game Layer**
+  - level state, entities (player, ghosts, pellets), scoring, timer logic
+- **UI Layer**
+  - main menu, in-game HUD, pause, game over, victory, highscores, instructions
+- **Persistence Layer**
+  - highscores JSON read/write with robust file error handling
+- **Integration Layer**
+  - adapter usage of external `mazegenerator` package
+
+This modular decomposition supports reuse, easier testing, and clearer maintenance boundaries.
+
+---
+
+## Project Management
+
+The responsibilities were distributed among the team members as follows:
+
+*Obachuri*:
+- Main architecture design
+- Maze creating and drawing
+- Pac-Man's movements and animation
+
+*IIunusov*:
+- Project management
+- Main menu
+- Highscore system
+- Parsing and error handling
+- Ghost movement algorithm 
+
+Project management artifacts are maintained in a dedicated directory in the repository (timeline, tracking, risk analysis, role distribution, testing/acceptance notes, blockers/conflicts summary).
+
+**DRAFT! DRAFT! DRAFT! DRAFT! DRAFT! DRAFT! DRAFT!**
+> See the project-management folder in this repository for evidence and supporting documents.
+
+Suggested contents:
+- planning board / timeline
+- progress vs plan snapshots
+- risk register + mitigations
+- team responsibilities and decision process
+- acceptance test checklist and bugfix log
+
+---
 ## Resources
 
-Pac-Man on WiKi: 
-https://en.wikipedia.org/wiki/Pac-Man
-
-Pac-Man Ghosts Wiki:
-https://en.wikipedia.org/wiki/Ghosts_(Pac-Man)
-
-PyGame:
-https://www.pygame.org/docs/
-
-PyGame - RPG example:
-https://www.youtube.com/watch?v=ECqUrT7IdqQ&list=PLi77irUVkDatlbulEY4Kz8O107HO8RGH8
-
-Pacmancode - How to program a Pacman game in the Python language using Pygame:
-https://pacmancode.com/
-
-Resources DFS: 
-https://en.wikipedia.org/wiki/Depth-first_search
-
-Resources PRIMS:
-https://en.wikipedia.org/wiki/Prim%27s_algorithm
+[Pac-Man on WiKi](https://en.wikipedia.org/wiki/Pac-Man)  
+[Pac-Man Ghosts Wiki](https://en.wikipedia.org/wiki/Ghosts_(Pac-Man))  
+[PyGame Docs](https://www.pygame.org/docs/)  
+[PyGame - RPG example](https://www.youtube.com/watch?v=ECqUrT7IdqQ&list=PLi77irUVkDatlbulEY4Kz8O107HO8RGH8)  
+[Pacmancode - How to program a Pacman game in the Python language using Pygame](https://pacmancode.com/)  
+[Resources DFS](https://en.wikipedia.org/wiki/Depth-first_search)  
+[Resources PRIMS](https://en.wikipedia.org/wiki/Prim%27s_algorithm)
 
 ### AI Usage
 
@@ -132,23 +265,8 @@ Tools Used:
 - ChatGPT (GPT-4)
 - Nano Banana 2
 
-AI was used to generate images and structuring this README.
-
-## Project Management
-
-Team Members
-
-Obachuri:
-- Main architecture design
-- Maze creating and drawing
-- Pac-Man's movements and animation
-
-IIunusov:
-- Project management
-- Main menu
-- Highscore system
-- Parsing and error handling
-- Ghost movement algorithm 
+AI was used to generate images and structuring this README.  
+All produced code and design decisions were reviewed and adapted by the project authors before integration.
 
 ## License
 
