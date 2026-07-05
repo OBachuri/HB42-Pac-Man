@@ -11,6 +11,12 @@ if TYPE_CHECKING:
 
 
 class Map:
+
+    directions = {1: (0, -1), 2: (1, 0), 4: (0, 1), 8: (-1, -0)}
+    possible_moves = dict((w, [d for b, d in {
+        1: (0, -1), 2: (1, 0), 4: (0, 1), 8: (-1, -0)
+        }.items() if not (w & b)]) for w in range(16))
+
     def __init__(self, game: Game):
         self.game = game
         self.world_map: dict[tuple[int, int], int] = {}
@@ -27,6 +33,21 @@ class Map:
 
     def has_cell_exit(self, x: int, y: int) -> bool:
         return bool((self.get_cell(x, y) & 15) != 15)
+
+    def get_direction_for_cell(self, x: int, y: int) -> list[tuple[int, int]]:
+        w = self.world_map.get((x, y), 0) & 15
+        return (list(self.possible_moves[w]))
+
+        # l_: list[tuple[int, int]] = []
+        # if w & 1 == 0:
+        #     l_ = [(0, -1)]
+        # if w & 2 == 0:
+        #     l_.append((1, 0))
+        # if w & 4 == 0:
+        #     l_.append((0, 1))
+        # if w & 8 == 0:
+        #     l_.append((-1, 0))
+        # return l_
 
     def get_map(self, maze_: list[list[int]]) -> None:
         # get map from list

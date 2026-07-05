@@ -253,15 +253,17 @@ class Game:
         elapsed_time = int(self.game_max_time - self.game_time)
         phase_time = elapsed_time % (
             self.chase_mode_time + self.scatter_mode_time)
-        if phase_time < self.chase_mode_time:
+        if phase_time > self.chase_mode_time:
             if not self.chase_phase:
                 self.chase_phase = True
+                print("self.chase_phase", self.chase_phase)
                 for npc in self.npcs:
                     if npc.mode == GhostMode.SCATTER:
                         npc.mode = GhostMode.CHASE
         else:
             if self.chase_phase:
                 self.chase_phase = False
+                print("self.chase_phase", self.chase_phase)
                 for npc in self.npcs:
                     if npc.mode == GhostMode.CHASE:
                         npc.mode = GhostMode.SCATTER

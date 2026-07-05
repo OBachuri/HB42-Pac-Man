@@ -95,7 +95,6 @@ class LevelWeb:
         try:
             self.speed_factor_ghost = min(max(float(data.get(
                 "speed_factor_ghost", 0.02)), 0.01), 0.5)
-            print("self.speed_factor_ghost", self.speed_factor_ghost)
         except Exception as ex:
             print(f'Error: Wrong value "speed_factor_ghost" for level'
                   f"(level:{self.number})! \n", ex)

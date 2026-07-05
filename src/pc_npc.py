@@ -65,37 +65,33 @@ class NPC(Entity):
         #       ", goal:", self.goal)
 
     def find_goal(self) -> None:
-        if (
-            self.mode == GhostMode.SCATTER
-            and (self.goal is None
-                 or tuple(self.goal) != (self.start_x, self.start_y))
-        ):
-            self.goal = pg.Vector2(self.start_x, self.start_y)
+        if self.mode == GhostMode.SCATTER:
+            if (self.goal is None
+               or tuple(self.goal) != (self.start_x, self.start_y)):
+                self.goal = pg.Vector2(self.start_x, self.start_y)
+            if self.goal == pg.Vector2(
+                 round(self.x), round(self.y)):
+                self.mode = GhostMode.CHASE
+                print(self.name, "canhe to CHASE")
         elif self.mode == GhostMode.FRIGHTENED:
             cur_x = round(self.x)
             cur_y = round(self.y)
             if self.goal and self.goal != (cur_x, cur_y):
                 return
 
-            w = self.game.map.world_map.get((cur_x, cur_y), 0) & 15
-            l_ = []
-            if w & 1 == 0:
-                l_ = [(0, -1)]
-            if w & 2 == 0:
-                l_.append((1, 0))
-            if w & 4 == 0:
-                l_.append((0, 1))
-            if w & 8 == 0:
-                l_.append((-1, 0))
+            l_ = self.game.map.get_direction_for_cell(cur_x, cur_y)
 
-            if len(l_) > 1 and ((self.dx != 0) or (self.dy != 0)):
+            if (len(l_) > 1
+               and ((self.dx != 0) or (self.dy != 0))
+               and ((-self.dx, -self.dy) in l_)):
                 l_.remove((-self.dx, -self.dy))
+
+            # dx, dy = random.choice(l_)
+            # # dx, dy = random.choice([(-1, 0), (1, 0), (0, -1), (0, 1)])
+            # new_goal = self.adjust_vector(pg.Vector2(cur_x + dx, cur_y + dy))
+            # if len(l_) > 1:
+            #     l_.remove((dx, dy))
             dx, dy = random.choice(l_)
-            # dx, dy = random.choice([(-1, 0), (1, 0), (0, -1), (0, 1)])
-            new_goal = self.adjust_vector(pg.Vector2(cur_x + dx, cur_y + dy))
-            if len(l_) > 1:
-                l_.remove((dx, dy))
-                dx, dy = random.choice(l_)
             new_goal = self.adjust_vector(pg.Vector2(cur_x + dx, cur_y + dy))
 
             if (new_goal == self.get_player_pos()
@@ -111,11 +107,9 @@ class NPC(Entity):
             self.goal = new_goal
         else:
             if ((self.goal is None)
-               or self.goal == (round(self.x), round(self.y))):
+               or self.goal == pg.Vector2(
+                 round(self.x), round(self.y))):
                 # We have reached the goal and we need a new one
-                if self.mode == GhostMode.SCATTER and self.game.chase_phase:
-                    self.mode = GhostMode.CHASE
-                    return
                 x_g = random.randrange(0, self.game.map.cols)
                 y_g = random.randrange(0, self.game.map.rows)
                 i = 20
@@ -162,6 +156,8 @@ class NPC(Entity):
         speed_factor = min(self.speed_factor, 0.5)
         if self.mode == GhostMode.SPAWN:
             speed_factor = max(0.05, speed_factor)
+        if self.mode == GhostMode.FRIGHTENED:
+            speed_factor = max(0.03, speed_factor)
 
         if (((abs(round(x) - x) < speed_factor)
              and (abs(round(y) - y) < speed_factor))):
@@ -217,10 +213,7 @@ class NPC(Entity):
     def event_end(self) -> None:
         # print("Fr End:", self.event_timer, self.mode, self.name)
         if self.mode == GhostMode.FRIGHTENED:
-            if self.game.chase_phase:
-                self.mode = GhostMode.CHASE
-            else:
-                self.mode = GhostMode.SCATTER
+            self.mode = GhostMode.CHASE
 
     def event(self) -> None:
         if not self.alive:
@@ -228,7 +221,12 @@ class NPC(Entity):
         if self.game.config.cheat:
             print("Collide PacMan and", self.name, "!")
         if self.mode == GhostMode.FRIGHTENED:
-            self.game.score += self.points
+            count_frightened = (
+                1 +
+                sum(
+                 1 for n in self.game.npcs if n.mode != GhostMode.FRIGHTENED))
+            print(count_frightened)
+            self.game.score += self.points * count_frightened
             self.mode = GhostMode.DEAD
             self.alive = False
             sound = self.sounds.get(SoundType.EATEN, [])
@@ -256,10 +254,7 @@ class NPC(Entity):
         self.goal = pg.Vector2(self.start_x, self.start_y)
 
     def reborn(self) -> None:
-        if self.game.chase_phase:
-            self.mode = GhostMode.CHASE
-        else:
-            self.mode = GhostMode.SCATTER
+        self.mode = GhostMode.CHASE
         self.alive = True
         self.visible = True
         self.dx = 0
