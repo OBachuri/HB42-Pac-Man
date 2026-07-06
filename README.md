@@ -265,8 +265,7 @@ Tools Used:
 - ChatGPT (GPT-4)
 - Nano Banana 2
 
-AI was used to generate images and structuring this README.  
-All produced code and design decisions were reviewed and adapted by the project authors before integration.
+AI was used to generate images and structuring this README.
 
 ## License
 
