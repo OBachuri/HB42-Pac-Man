@@ -12,13 +12,15 @@ from collections.abc import Sequence
 from pc_constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 from pc_map import Map
 from pc_player import Player
-from pc_npc import NPC, GhostMode
+from pc_npc import NPC
+from pc_entity import GhostMode
 from pc_ghosts import RedGhost, PinkGhost, CyanGhost, OrangeGhost
 from pc_artifact import PC_Artifacts
 from pc_artifact import PowerPellet, Pellet, BonusFruitType
 from pc_screens import ScreenTypes
 from pc_screens.pc_utils import PCUIElement
 from pc_sound import SoundType, Sound
+from pc_screens.pc_base_screen import BaseScreen
 
 
 from typing import TYPE_CHECKING
@@ -28,7 +30,7 @@ if TYPE_CHECKING:
     from pc_app import App
 
 
-class Game:
+class Game(BaseScreen):
     screen_type: ScreenTypes = ScreenTypes.GAME
 
     sounds: dict[SoundType, list[Sound]] = {}

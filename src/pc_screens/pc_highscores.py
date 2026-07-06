@@ -55,9 +55,9 @@ class HighscoresScreen(BaseScreen):
                         self.app.set_screen()
 
             self.app.screen.fill("black")
-            y = 60
+            y = 60.0
             self.app.screen.blit(title_surf, (x - title_surf.width // 2, y))
-            y += title_line_height * 2
+            y += title_line_height * 2.0
 
             if not highscores:
                 score_surf = font.render(

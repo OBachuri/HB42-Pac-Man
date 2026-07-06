@@ -26,7 +26,7 @@ class Map:
         self.wall_thickness: int = 4
         self.step: int = self.cell_size + self.wall_thickness
         self.top: int = 35
-        self.color: tuple[int, int, int] = (40, 200, 40)
+        self.color: tuple[int, ...] = (40, 200, 40)
 
     def get_cell(self, x: int, y: int) -> int:
         return self.world_map.get((x, y), 0)
