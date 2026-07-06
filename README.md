@@ -161,11 +161,6 @@ The project uses a persistent highscore system stored in JSON (`highscores_filen
   - non-negative integer
 - Top 10 entries are kept and saved to disk.
 
-#### Why JSON?
-
-JSON is lightweight, human-readable, version-control friendly, and simple to validate/recover from.  
-It is sufficient for project constraints.
-
 ---
 ## Maze Generation
 
@@ -271,7 +266,6 @@ Tools Used:
 - Nano Banana 2
 
 AI was used to generate images and structuring this README.  
-All produced code and design decisions were reviewed and adapted by the project authors before integration.
 
 ## License
 
