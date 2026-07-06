@@ -39,13 +39,13 @@ class Map:
         return (list(self.possible_moves[w]))
 
         # l_: list[tuple[int, int]] = []
-        # if w & 1 == 0:
+        # if w & 1 == 0:  # top
         #     l_ = [(0, -1)]
-        # if w & 2 == 0:
+        # if w & 2 == 0:  # right
         #     l_.append((1, 0))
-        # if w & 4 == 0:
+        # if w & 4 == 0:  #  bottom
         #     l_.append((0, 1))
-        # if w & 8 == 0:
+        # if w & 8 == 0:  #  left
         #     l_.append((-1, 0))
         # return l_
 

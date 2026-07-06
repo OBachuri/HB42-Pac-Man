@@ -72,11 +72,10 @@ class NPC(Entity):
             if self.goal == pg.Vector2(
                  round(self.x), round(self.y)):
                 self.mode = GhostMode.CHASE
-                print(self.name, "canhe to CHASE")
         elif self.mode == GhostMode.FRIGHTENED:
             cur_x = round(self.x)
             cur_y = round(self.y)
-            if self.goal and self.goal != (cur_x, cur_y):
+            if self.goal and tuple(self.goal) != (cur_x, cur_y):
                 return
 
             l_ = self.game.map.get_direction_for_cell(cur_x, cur_y)
@@ -174,8 +173,9 @@ class NPC(Entity):
 
             if self.goal is None:
                 return
-            P_ = self.game.map.find_path((x, y), tuple(self.goal))
-            # print("ghost", self.name, "path:", P_)
+            P_ = self.game.map.find_path(
+                (x, y), (int(self.goal.x), int(self.goal.y)))
+
             if len(P_) > 1:
                 dx = P_[1][0] - x
                 dx = int(dx > 0) - int(dx < 0)
@@ -225,7 +225,6 @@ class NPC(Entity):
                 1 +
                 sum(
                  1 for n in self.game.npcs if n.mode != GhostMode.FRIGHTENED))
-            print(count_frightened)
             self.game.score += self.points * count_frightened
             self.mode = GhostMode.DEAD
             self.alive = False

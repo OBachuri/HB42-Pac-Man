@@ -144,7 +144,9 @@ lint-strict:
 	echo "--- flake8 test :"
 	flake8 ./*.py $(BUILD_SOURCE_DIR)/
 	echo "--- mypy strict test :"
+	cd $(BUILD_SOURCE_DIR) 
 	mypy . \
+	--explicit-package-bases \
 	--strict \
 	--exclude '(^\.venv/|^test/|^subject/)'
 

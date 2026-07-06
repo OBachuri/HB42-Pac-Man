@@ -77,11 +77,11 @@ class Entity:
         self.alive = True
         self.visible = True
 
-    def teleport(self, x: int | float = -1, y: int | float = -1) -> None:
+    def teleport(self, x: int = -1, y: int = -1) -> None:
         if x < 0:
-            x = self.start_x
+            x = int(self.start_x)
         if y < 0:
-            y = self.start_y
+            y = int(self.start_y)
         self.x = int(x)
         self.y = int(y)
 
