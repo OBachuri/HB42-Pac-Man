@@ -67,7 +67,7 @@ class PinkGhost(NPC):
             red_ghost_pos = pg.Vector2(
                 self.red_ghost.x, self.red_ghost.y) if self.red_ghost else None
             player_pos = self.get_player_pos()
-            player_direction = 0
+            player_direction = pg.Vector2(0, 0)
 
             if (pos.distance_to(player_pos) <= self.start_chase_if_near and
                red_ghost_pos is not None
@@ -171,7 +171,7 @@ class OrangeGhost(NPC):
     def find_goal(self) -> None:
         if self.mode == GhostMode.CHASE:
             if (self.goal is not None
-               and self.goal != (round(self.x), round(self.y))):
+               and self.goal != pg.Vector2(round(self.x), round(self.y))):
                 return
             player_pos = self.get_player_pos()
             x = int(player_pos.x)

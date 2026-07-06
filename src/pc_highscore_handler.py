@@ -5,11 +5,12 @@ import pygame as pg
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from config import Config
+    from config_web import ConfigWeb
 
 
 class HighscoresHandler:
     @staticmethod
-    def get_highscores(config: "Config") -> list[dict[str, int]]:
+    def get_highscores(config: "Config | ConfigWeb") -> list[dict[str, int]]:
         highscores: list[dict[str, int]] = []
         path = config.highscores_filename
         if sys.platform == "emscripten":
@@ -27,7 +28,8 @@ class HighscoresHandler:
         return highscores
 
     @classmethod
-    def store_highscores(cls, config: "Config", name: str, score: int) -> None:
+    def store_highscores(cls, config: "Config | ConfigWeb",
+                         name: str, score: int) -> None:
         highscores = cls.get_highscores(config)
         highscores.insert(0, {name: score})
         highscores.sort(key=lambda d: list(d.values())[0], reverse=True)
