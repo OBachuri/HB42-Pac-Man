@@ -51,6 +51,8 @@ class NPC(Entity):
         self.read_frames_from_file("inc/img/ghost/eyes/left/", FrameType.LEFT)
         self.read_frames_from_file("inc/img/ghost/eyes/right/",
                                    FrameType.RIGHT)
+        self.read_frames_from_file("inc/img/ghost/eyes/stay/", FrameType.DEAD)
+
         self.alive: bool = True
         self.visible: bool = True
         self.freeze: bool = False
@@ -228,6 +230,8 @@ class NPC(Entity):
             self.game.score += self.points * count_frightened
             self.mode = GhostMode.DEAD
             self.alive = False
+            self.dx = 0
+            self.dy = 0
             sound = self.sounds.get(SoundType.EATEN, [])
             if len(sound) > 0:
                 sound[0].play()
@@ -251,6 +255,10 @@ class NPC(Entity):
     def after_death(self) -> None:
         self.mode = GhostMode.SPAWN
         self.goal = pg.Vector2(self.start_x, self.start_y)
+        self.dx = 1 * (round(self.x) - round(self.x, 6) > 0) - 1 * (round(self.x, 6) - round(self.x) > 0)
+        self.dy = 1 * (round(self.y) - round(self.y, 6) > 0) - 1 * (round(self.y, 6) - round(self.y) > 0)
+
+        print(self.name, self.goal, (self.x, self.y), (self.dx, self.dy))
 
     def reborn(self) -> None:
         self.mode = GhostMode.CHASE

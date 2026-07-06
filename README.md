@@ -181,8 +181,9 @@ This project integrates an **assigned external A-Maze-ing package** (not authore
 The entrypoint imports maze generation package at runtime and exits with a clear message if unavailable.
 
 ---
-## Implementation (Technical Summary)
+## Implementation 
 
+### Implementation technical summary
 - Entry point: `pac-man.py`
 - Runtime flow:
   1. Dependency checks (`pygame`, `pydantic`, maze package)
@@ -193,6 +194,10 @@ The entrypoint imports maze generation package at runtime and exits with a clear
   - no hard crashes on expected faulty inputs
   - modular code organization under `src/`
   - separation of concerns (parsing/config/game/ui/storage)
+
+### Key design decisions
+- Maze for level can be randomly generated or read from file
+- PacMan move not only by grid lines but in any direction inside free space
 
 ---
 
