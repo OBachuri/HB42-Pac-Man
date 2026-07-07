@@ -161,11 +161,6 @@ The project uses a persistent highscore system stored in JSON (`highscores_filen
   - non-negative integer
 - Top 10 entries are kept and saved to disk.
 
-#### Why JSON?
-
-JSON is lightweight, human-readable, version-control friendly, and simple to validate/recover from.  
-It is sufficient for project constraints.
-
 ---
 ## Maze Generation
 
@@ -181,8 +176,9 @@ This project integrates an **assigned external A-Maze-ing package** (not authore
 The entrypoint imports maze generation package at runtime and exits with a clear message if unavailable.
 
 ---
-## Implementation (Technical Summary)
+## Implementation 
 
+### Implementation technical summary
 - Entry point: `pac-man.py`
 - Runtime flow:
   1. Dependency checks (`pygame`, `pydantic`, maze package)
@@ -193,6 +189,11 @@ The entrypoint imports maze generation package at runtime and exits with a clear
   - no hard crashes on expected faulty inputs
   - modular code organization under `src/`
   - separation of concerns (parsing/config/game/ui/storage)
+
+### Key design decisions
+- Maze for level can be randomly generated or read from file, there is function to delete one random wall for all dead ends in a maze.
+- Movement - PacMan move not only by grid lines but in any direction inside free space with acceleration. Ghosts - only Grid-based movement with constant speed.
+- Rendering - The maze is pre-rendered onto the surface for rapid copying (blitting), while the dots, Pac-Man, and the ghosts are drawn in every frame.
 
 ---
 
@@ -265,7 +266,7 @@ Tools Used:
 - ChatGPT (GPT-4)
 - Nano Banana 2
 
-AI was used to generate images and structuring this README.
+AI was used to generate images and structuring this README.  
 
 ## License
 

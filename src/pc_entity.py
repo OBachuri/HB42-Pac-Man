@@ -146,6 +146,8 @@ class Entity:
                     frames = self.frames.get(FrameType.LEFT, [])
                 elif self.dx > 0:  # right
                     frames = self.frames.get(FrameType.RIGHT, [])
+                else:
+                    frames = self.frames.get(FrameType.DEAD, [])
         elif (self.mode == GhostMode.FRIGHTENED):
             if self.event_timer > 2:
                 frames = self.frames.get(FrameType.FRIGHTENED, [])
@@ -157,7 +159,7 @@ class Entity:
             frames = self.frames.get(FrameType.RUN, [])
         if len(frames) > 0:
             if self.frame_index >= len(frames):
-                if not (self.alive):
+                if (not (self.alive)) and (self.mode != GhostMode.SPAWN):
                     self.frame_index = len(frames) - 1
                     self.after_death()
                     return
