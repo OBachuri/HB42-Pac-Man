@@ -191,8 +191,9 @@ The entrypoint imports maze generation package at runtime and exits with a clear
   - separation of concerns (parsing/config/game/ui/storage)
 
 ### Key design decisions
-- Maze for level can be randomly generated or read from file
-- PacMan move not only by grid lines but in any direction inside free space
+- Maze for level can be randomly generated or read from file, there is function to delete one random wall for all dead ends in a maze.
+- Movement - PacMan move not only by grid lines but in any direction inside free space with acceleration. Ghosts - only Grid-based movement with constant speed.
+- Rendering - The maze is pre-rendered onto the surface for rapid copying (blitting), while the dots, Pac-Man, and the ghosts are drawn in every frame.
 
 ---
 
@@ -265,11 +266,7 @@ Tools Used:
 - ChatGPT (GPT-4)
 - Nano Banana 2
 
-<<<<<<< HEAD
 AI was used to generate images and structuring this README.  
-=======
-AI was used to generate images and structuring this README.
->>>>>>> main
 
 ## License
 

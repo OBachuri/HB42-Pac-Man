@@ -66,19 +66,30 @@ class NPC(Entity):
         #       self.y, ", vis:", self.visible,
         #       ", goal:", self.goal)
 
+    def get_speed_factor(self) -> float:
+        speed_factor = min(self.speed_factor, 0.5)
+        if self.mode == GhostMode.SPAWN:
+            speed_factor = max(0.05, speed_factor)
+        if self.mode == GhostMode.FRIGHTENED:
+            speed_factor = min(0.03, speed_factor)
+        return (speed_factor)
+
     def find_goal(self) -> None:
+
+        speed_factor = self.get_speed_factor()
+        cur_x = round(self.x)
+        cur_y = round(self.y)
+
         if self.mode == GhostMode.SCATTER:
             if (self.goal is None
-               or tuple(self.goal) != (self.start_x, self.start_y)):
+               or self.goal.distance_to(
+                   pg.Vector2(self.start_x, self.start_y)) > speed_factor):
                 self.goal = pg.Vector2(self.start_x, self.start_y)
-            if self.goal == pg.Vector2(
-                 round(self.x), round(self.y)):
+            gx, gy = tuple(self.goal)
+            if ((abs(cur_x-gx) < speed_factor)
+               and (abs(cur_y-gy) < speed_factor)):
                 self.mode = GhostMode.CHASE
         elif self.mode == GhostMode.FRIGHTENED:
-            cur_x = round(self.x)
-            cur_y = round(self.y)
-            if self.goal and tuple(self.goal) != (cur_x, cur_y):
-                return
 
             l_ = self.game.map.get_direction_for_cell(cur_x, cur_y)
 
@@ -87,11 +98,6 @@ class NPC(Entity):
                and ((-self.dx, -self.dy) in l_)):
                 l_.remove((-self.dx, -self.dy))
 
-            # dx, dy = random.choice(l_)
-            # # dx, dy = random.choice([(-1, 0), (1, 0), (0, -1), (0, 1)])
-            # new_goal = self.adjust_vector(pg.Vector2(cur_x + dx, cur_y + dy))
-            # if len(l_) > 1:
-            #     l_.remove((dx, dy))
             dx, dy = random.choice(l_)
             new_goal = self.adjust_vector(pg.Vector2(cur_x + dx, cur_y + dy))
 
@@ -100,22 +106,21 @@ class NPC(Entity):
                 new_goal = self.adjust_vector(
                     pg.Vector2(cur_x - self.dx, cur_y - self.dy))
 
-            # while not self.game.map.has_cell_exit(new_goal.x, new_goal.y):
-            #     dx, dy = random.choice([(-1, 0), (1, 0), (0, -1), (0, 1)])
-            #     new_goal = self.adjust_vector(
-            #         pg.Vector2(cur_x + dx, cur_y + dy))
-
             self.goal = new_goal
+
         else:
+            if not (self.goal is None):
+                gx, gy = tuple(self.goal)
+            else:
+                gx, gy = (0, 0)
             if ((self.goal is None)
-               or self.goal == pg.Vector2(
-                 round(self.x), round(self.y))):
+               or ((abs(cur_x-gx) < speed_factor)
+                   and (abs(cur_y-gy) < speed_factor))):
                 # We have reached the goal and we need a new one
                 x_g = random.randrange(0, self.game.map.cols)
                 y_g = random.randrange(0, self.game.map.rows)
                 i = 20
-                while (self.game.map.world_map.get((x_g, y_g), 0)
-                        & 0xf == 0xf and i > 0):
+                while (not self.game.map.has_cell_exit(x_g, y_g) and i > 0):
                     x_g = random.randrange(0, self.game.map.cols)
                     y_g = random.randrange(0, self.game.map.rows)
                     i -= 1
@@ -138,8 +143,8 @@ class NPC(Entity):
                         self.mode = GhostMode.CHASE
                     else:
                         self.mode = GhostMode.SCATTER
-                    print(self.name, "x:", self.x, "y:",
-                          self.y, "vis:", self.visible,
+                    print(self.name, "x:", self.x, ", y:",
+                          self.y, ", visible:", self.visible,
                           "goal:", self.goal)
                 if keys[pg.K_3]:
                     self.freeze = not (self.freeze)
@@ -147,27 +152,28 @@ class NPC(Entity):
         x: float = float(self.x)
         y: float = float(self.y)
 
+        speed_factor = self.get_speed_factor()
+
         if self.freeze:
             if self.mode == GhostMode.SPAWN:
-                if (not (self.goal is None)
-                   and tuple(self.goal) == (x, y)):
+                if ((not (self.goal is None))
+                   and self.goal.distance_to(
+                       pg.Vector2(x, y)) < speed_factor * 2):
                     self.reborn()
             return
 
-        speed_factor = min(self.speed_factor, 0.5)
-        if self.mode == GhostMode.SPAWN:
-            speed_factor = max(0.05, speed_factor)
-        if self.mode == GhostMode.FRIGHTENED:
-            speed_factor = max(0.03, speed_factor)
+        x_i = round(x)
+        y_i = round(y)
+        if (((abs(x_i - x) < speed_factor)
+             and (abs(y_i - y) < speed_factor))):
 
-        if (((abs(round(x) - x) < speed_factor)
-             and (abs(round(y) - y) < speed_factor))):
-            x = round(x)
-            y = round(y)
+            if self.mode == GhostMode.SPAWN and not (self.goal is None):
+                gx, gy = tuple(self.goal)
 
-            if self.mode == GhostMode.SPAWN:
-                if self.goal == pg.Vector2(x, y):
+                if ((abs(x_i-gx) < speed_factor)
+                   and (abs(y_i-gy) < speed_factor)):
                     self.reborn()
+                    return
             else:
                 self.find_goal()
 
@@ -175,13 +181,14 @@ class NPC(Entity):
 
             if self.goal is None:
                 return
+
             P_ = self.game.map.find_path(
-                (x, y), (int(self.goal.x), int(self.goal.y)))
+                (x_i, y_i), (int(self.goal.x), int(self.goal.y)))
 
             if len(P_) > 1:
-                dx = P_[1][0] - x
+                dx = P_[1][0] - x_i
                 dx = int(dx > 0) - int(dx < 0)
-                dy = P_[1][1] - y
+                dy = P_[1][1] - y_i
                 dy = int(dy > 0) - int(dy < 0)
                 self.dx = dx
                 self.dy = dy
@@ -255,10 +262,20 @@ class NPC(Entity):
     def after_death(self) -> None:
         self.mode = GhostMode.SPAWN
         self.goal = pg.Vector2(self.start_x, self.start_y)
-        self.dx = 1 * (round(self.x) - round(self.x, 6) > 0) - 1 * (round(self.x, 6) - round(self.x) > 0)
-        self.dy = 1 * (round(self.y) - round(self.y, 6) > 0) - 1 * (round(self.y, 6) - round(self.y) > 0)
+        speed_factor = self.get_speed_factor()
 
-        print(self.name, self.goal, (self.x, self.y), (self.dx, self.dy))
+        if abs(round(self.x) - self.x) >= speed_factor:
+            self.dx = 1 - 2 * ((round(self.x) - self.x) > 0)
+        if abs(round(self.y) - self.y) >= speed_factor:
+            self.dy = 1 - 2 * ((round(self.y) - self.y) > 0)
+
+        # print(self.name, self.goal, (self.x, self.y), (self.dx, self.dy))
+
+        if (abs(self.dx) > 0) and (abs(self.dy) > 0):
+            if abs(self.dx) > abs(self.dy):
+                self.dy = 0
+            else:
+                self.dx = 0
 
     def reborn(self) -> None:
         self.mode = GhostMode.CHASE
