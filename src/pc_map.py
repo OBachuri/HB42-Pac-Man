@@ -33,7 +33,12 @@ class Map:
         return self.world_map.get((x, y), 0)
 
     def has_cell_exit(self, x: int, y: int) -> bool:
-        return bool((self.get_cell(x, y) & 15) != 15)
+        # return true if the cell inside the maze and have exit
+        return bool(
+            x >= 0 and y >= 0
+            and x < self.cols
+            and y < self.rows
+            and (self.get_cell(x, y) & 15) != 15)
 
     def get_direction_for_cell(self, x: int, y: int) -> list[tuple[int, int]]:
         w = self.world_map.get((x, y), 0) & 15
