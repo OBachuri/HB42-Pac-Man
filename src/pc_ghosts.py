@@ -42,6 +42,9 @@ class RedGhost(NPC):
 
 
 class PinkGhost(NPC):
+    """ Pink ghost (Speedy)
+        Target at the 4 tiles ahead
+    """
     def __init__(self, game: Game,
                  point: tuple[float, float] = (0, 0),
                  red_ghost: NPC | None = None) -> None:
@@ -69,10 +72,16 @@ class PinkGhost(NPC):
             player_pos = self.get_player_pos()
             player_direction = pg.Vector2(0, 0)
 
-            if (pos.distance_to(player_pos) <= self.start_chase_if_near and
-               red_ghost_pos is not None
-               and red_ghost_pos.distance_to(
-                   player_pos) > self.start_chase_if_near):
+            # If Pink ghost near PacMan and Red not around - run on PacMan
+            if (pos.distance_to(player_pos) <= self.start_chase_if_near
+                and
+                (self.red_ghost is None
+                 or (not self.red_ghost.alive)
+                 or self.red_ghost.mode == GhostMode.FRIGHTENED
+                 or red_ghost_pos is None
+                 or red_ghost_pos.distance_to(
+                   player_pos) > self.start_chase_if_near)):
+
                 self.goal = player_pos
                 return
             player_direction = self.get_player_direction()
@@ -95,6 +104,10 @@ class PinkGhost(NPC):
 
 
 class CyanGhost(NPC):
+    """ Cyan ghost (Inky, Bashful)
+        Target tile by doubling a vector drawn from Blinky (the red ghost)
+        to a point two tiles ahead of PacMan
+    """
     def __init__(self, game: Game,
                  point: tuple[float, float] = (0, 0),
                  red_ghost: NPC | None = None) -> None:
@@ -115,8 +128,15 @@ class CyanGhost(NPC):
             player_pos = self.get_player_pos()
             red_ghost_pos = pg.Vector2(0, 0)
             if self.red_ghost:
+                if ((not self.red_ghost.alive)
+                   or self.red_ghost.mode == GhostMode.FRIGHTENED):
+                    self.goal = player_pos
+                    return
                 red_ghost_pos = pg.Vector2(round(self.red_ghost.x),
                                            round(self.red_ghost.y))
+            else:
+                self.goal = player_pos
+                return
 
             # position 2 tiles in front of the player
             vec1 = self.adjust_vector(
@@ -149,12 +169,15 @@ class CyanGhost(NPC):
 
 
 class OrangeGhost(NPC):
+    """ Orange ghost (Clyde, Pockey)
+        Target a random cell at a specific distance (3 tiles) from Pac-Man.
+    """
     def __init__(self, game: Game,
                  point: tuple[float, float] = (0, 0)) -> None:
         super().__init__(game, point, (250, 120, 10),
                          "Orange ghost (Clyde, Pockey)")
         # self.tiles = int(min(self.game.map.cols, self.game.map.rows) * 0.42)
-        self.tiles: int = 4
+        self.tiles: int = 3
         self.read_frames_from_file("inc/img/orange/run/", FrameType.RUN)
         self.read_frames_from_file("inc/img/orange/stay/", FrameType.STAY)
 
@@ -170,9 +193,13 @@ class OrangeGhost(NPC):
 
     def find_goal(self) -> None:
         if self.mode == GhostMode.CHASE:
-            if (self.goal is not None
-               and self.goal != pg.Vector2(round(self.x), round(self.y))):
-                return
+            if self.goal is not None:
+                speed_factor = self.get_speed_factor()
+                gx, gy = tuple(self.goal)
+                if ((abs(round(self.x)-gx) > speed_factor)
+                   or (abs(round(self.y)-gy) > speed_factor)):
+                    return
+
             player_pos = self.get_player_pos()
             x = int(player_pos.x)
             y = int(player_pos.y)
