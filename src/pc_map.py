@@ -262,7 +262,7 @@ class Map:
                     + self.top,
                     self.cell_size + self.wall_thickness * 2,
                     self.wall_thickness), 0)
-        self.background = self.game.screen.copy()
+        # self.background = self.game.screen.copy()
         # else:
         #     self.game.screen.blit(self.background)
 
