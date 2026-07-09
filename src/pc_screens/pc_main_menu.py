@@ -37,7 +37,7 @@ class MainMenuScreen(BaseScreen):
         selected_index = 0
         buttons[selected_index].selected = True
 
-        title = self.app.large_font.render("PAC-MAN", True, "yellow")
+        title = self.app.large_font.render("PAC-MAN 42", True, "yellow")
         title_rect = title.get_rect(center=(SCREEN_WIDTH//2, 80))
 
         running = True

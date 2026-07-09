@@ -146,14 +146,63 @@ class LevelWeb:
 
 class ConfigWeb:
     def __init__(self, cfg_data: dict[str, Any] = {}) -> None:
-        self.highscores_filename: str = cfg_data.get(
-            "highscores_filename", "highscores.json")
-        self.lives: int = cfg_data.get("lives", 3)
-        self.points_per_pacgum: int = cfg_data.get("points_per_pacgum", 10)
-        self.points_per_super_pacgum: int = cfg_data.get(
-            "points_per_super_pacgum", 50)
-        self.points_per_ghost: int = cfg_data.get("points_per_ghost", 200)
-        self.seed: int = cfg_data.get("seed", 0)
+
+        self.highscores_filename: str = "highscores.json"
+        self.lives: int = 3
+        self.points_per_pacgum: int = 10
+        self.points_per_super_pacgum: int = 50
+        self.points_per_ghost: int = 200
+        self.seed: int = 0
+
+        try:
+            str_ = str(cfg_data.get("highscores_filename", "highscores.json"))
+            if len(str_) > 5:
+                self.highscores_filename = str_
+            else:
+                print("Error: Wrong value of highscores_filename -", str_)
+        except Exception as ex:
+            print("Error: Wrong value of highscores_filename -", ex)
+
+        try:
+            l_ = int(cfg_data.get("lives", 3))
+            if (l_ > 0):
+                self.lives = l_
+            else:
+                print("Error: Wrong value of lives -", l_)
+        except Exception as ex:
+            print("Error: Wrong value of lives -", ex)
+
+        try:
+            p_ = int(cfg_data.get("points_per_pacgum", 10))
+            if (p_ >= 0):
+                self.points_per_pacgum = p_
+            else:
+                print("Error: Wrong value of points_per_pacgum -", p_)
+        except Exception as ex:
+            print("Error: Wrong value of points_per_pacgum -", ex)
+
+        try:
+            p_ = int(cfg_data.get("points_per_super_pacgum", 50))
+            if (p_ >= 0):
+                self.points_per_super_pacgum = p_
+            else:
+                print("Error: Wrong value of points_per_super_pacgum -", p_)
+        except Exception as ex:
+            print("Error: Wrong value of points_per_super_pacgum -", ex)
+
+        try:
+            p_ = int(cfg_data.get("points_per_ghost", 200))
+            if (p_ >= 0):
+                self.points_per_ghost = p_
+            else:
+                print("Error: Wrong value of points_per_ghost -", p_)
+        except Exception as ex:
+            print("Error: Wrong value of points_per_ghost -", ex)
+
+        try:
+            self.seed = int(cfg_data.get("seed", 0))
+        except Exception as ex:
+            print("Error: Wrong value of seed -", ex)
 
         self.cheat: bool = False
         try:
