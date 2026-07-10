@@ -15,7 +15,24 @@ PIP := pip3
 C_DIR := pwd
 
 BUILD_SOURCE_DIR := "src"
+DIST_DIR := "dist"
 # WHEEL := $(BUILD_SOURCE_DIR)/dist/*.whl
+
+define README_TXT
+PacMan 42
+
+Controls in game:
+W or ⇧ - Move Up
+A or ⇦ - Move Left
+S or ⇩ - Move Down
+D or ⇨ - Move Right
+Space - Stop
+Esc - Pause / Exit game
+F11 - Full screan
+
+Source:
+https://github.com/OBachuri/HB42-Pac-Man
+endef
 
 #MLX_URL := https://cdn.intra.42.fr/document/document/47086/mlx-2.2-py3-ubuntu-any.whl
 #MLX_ORIG := mlx-2.2-py3-ubuntu-any.whl
@@ -57,9 +74,9 @@ help:
 	@echo "  debug          Run the debugger "
 
 
-rebuild:
+rebuild-web:
 	@$(ACTIVATE_VENV)
-	@$(RM) dist
+	@$(RM) $(DIST_DIR)
 	@$(RM) $(BUILD_SOURCE_DIR)/build
 	@if [ ! -d "src/mazegenerator" ]; then \
 		echo "Unpack mazegenerator....whl."; \
@@ -69,6 +86,14 @@ rebuild:
 	# rm -rf $(BUILD_SOURCE_DIR)/mazegenerator
 
 #	pyinstaller -n "PacMan-42" --windowed -p src/ --add-data="src/inc:inc"  src/main.py
+	
+rebuild-linux:
+	@$(ACTIVATE_VENV)
+	@$(RM) $(DIST_DIR)
+	pyinstaller -n "PacMan-42" -F --add-data "src/inc:inc" -p src/ src/main.py
+	cp src/config_web.json $(DIST_DIR)
+	printf '%s' '$(README_TXT)' > $(DIST_DIR)/ReadMe.txt
+	@$(RM) build
 
 webrun:    # build
 	@$(ACTIVATE_VENV)
@@ -109,7 +134,7 @@ clean:
 	@$(RM) __pycache__
 	@$(RM) $(BUILD_SOURCE_DIR)/build
 	@$(RM) $(BUILD_SOURCE_DIR)/mazegenerator
-	@$(RM) dist
+	@$(RM) $(DIST_DIR)
 	find . -type d -name __pycache__ -exec rm -rf {} +
 	find . -type d -name .mypy_cache -exec rm -rf {} +
 	find . -type d -name *.egg-info -exec rm -rf {} +
@@ -163,4 +188,5 @@ install:
 #	$(PIP) install pygbag --upgrade
 	$(PIP) install pygbag
 	$(PIP) install pyinstaller
-.PHONY:	clean run debug install lint-strict lint $(RUN_ARGS) venv check-venv help fclean rebuild webrun
+
+.PHONY:	clean run debug install lint-strict lint $(RUN_ARGS) venv check-venv help fclean rebuild-web rebuild-linux webrun

@@ -15,7 +15,7 @@ class Map:
     directions = {1: (0, -1), 2: (1, 0), 4: (0, 1), 8: (-1, -0)}
     possible_moves = dict((w, [d for b, d in {
         1: (0, -1), 2: (1, 0), 4: (0, 1), 8: (-1, -0)
-        }.items() if not (w & b)]) for w in range(16))
+    }.items() if not (w & b)]) for w in range(16))
 
     def __init__(self, game: Game):
         self.game = game
@@ -223,48 +223,48 @@ class Map:
         return path_
 
     def draw(self) -> None:
-        if self.background is None:
-            pg.draw.rect(self.game.screen, self.color, (
-                self.game.screen_left_shift, self.top,
-                self.wall_thickness,
-                self.rows * self.step
-                + self.wall_thickness), 0)
-            pg.draw.rect(self.game.screen, self.color, (
-                self.game.screen_left_shift, self.rows * self.step
-                + self.top,
-                self.cols * self.step,
-                self.wall_thickness), 0)
+        # if self.background is None:
+        pg.draw.rect(self.game.screen, self.color, (
+            self.game.screen_left_shift, self.top,
+            self.wall_thickness,
+            self.rows * self.step
+            + self.wall_thickness), 0)
+        pg.draw.rect(self.game.screen, self.color, (
+            self.game.screen_left_shift, self.rows * self.step
+            + self.top,
+            self.cols * self.step,
+            self.wall_thickness), 0)
 
-            for pos in self.world_map:
-                w = self.world_map[pos] & 15
-                if w == 15:  # call is part of 42 pattern (isolated cell)
-                    pg.draw.rect(self.game.screen, 'white', (
-                                self.game.screen_left_shift
-                                + pos[0] * self.step
-                                + self.wall_thickness,
-                                pos[1] * self.step
-                                + self.top + self.wall_thickness,
-                                self.cell_size,
-                                self.cell_size), 0)
-                if (w & 2) == 2:
-                    pg.draw.rect(self.game.screen, self.color, (
-                                self.game.screen_left_shift
-                                + (pos[0] + 1) * self.step,
-                                pos[1] * self.step
-                                + self.top,
-                                self.wall_thickness,
-                                self.cell_size + self.wall_thickness * 2), 0)
-                if (w & 1) == 1:
-                    pg.draw.rect(self.game.screen, self.color, (
-                                self.game.screen_left_shift
-                                + pos[0] * self.step,
-                                pos[1] * self.step
-                                + self.top,
-                                self.cell_size + self.wall_thickness * 2,
-                                self.wall_thickness), 0)
-            self.background = self.game.screen.copy()
-        else:
-            self.game.screen.blit(self.background)
+        for pos in self.world_map:
+            w = self.world_map[pos] & 15
+            if w == 15:  # call is part of 42 pattern (isolated cell)
+                pg.draw.rect(self.game.screen, 'white', (
+                    self.game.screen_left_shift
+                    + pos[0] * self.step
+                    + self.wall_thickness,
+                    pos[1] * self.step
+                    + self.top + self.wall_thickness,
+                    self.cell_size,
+                    self.cell_size), 0)
+            if (w & 2) == 2:
+                pg.draw.rect(self.game.screen, self.color, (
+                    self.game.screen_left_shift
+                    + (pos[0] + 1) * self.step,
+                    pos[1] * self.step
+                    + self.top,
+                    self.wall_thickness,
+                    self.cell_size + self.wall_thickness * 2), 0)
+            if (w & 1) == 1:
+                pg.draw.rect(self.game.screen, self.color, (
+                    self.game.screen_left_shift
+                    + pos[0] * self.step,
+                    pos[1] * self.step
+                    + self.top,
+                    self.cell_size + self.wall_thickness * 2,
+                    self.wall_thickness), 0)
+        # self.background = self.game.screen.copy()
+        # else:
+        #     self.game.screen.blit(self.background)
 
     def del_deadends(self) -> None:
         maze: list[list[int]] = []

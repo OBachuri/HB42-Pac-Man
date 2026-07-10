@@ -26,6 +26,8 @@ Main game loop:
 ## Game screen example
 ![Result](result.png)
 
+## [Play the web version](https://obachuriiiunusov.itch.io/pacman42)
+
 
 ## Instructions
 
@@ -248,15 +250,7 @@ The responsibilities were distributed among the team members as follows:
 
 Project management artifacts are maintained in a dedicated directory in the repository (timeline, tracking, risk analysis, role distribution, testing/acceptance notes, blockers/conflicts summary).
 
-**DRAFT! DRAFT! DRAFT! DRAFT! DRAFT! DRAFT! DRAFT!**
-> See the project-management folder in this repository for evidence and supporting documents.
-
-Suggested contents:
-- planning board / timeline
-- progress vs plan snapshots
-- risk register + mitigations
-- team responsibilities and decision process
-- acceptance test checklist and bugfix log
+See the [project-management](docs/) folder for evidence and supporting documents.
 
 ---
 ## Resources
