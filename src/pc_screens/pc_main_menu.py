@@ -12,12 +12,22 @@ from pc_screens.pc_utils import Button
 
 
 class MainMenuScreen(BaseScreen):
+    """Main entry screen with navigation to core game sections."""
+
     def __init__(self, app: "App"):
+        """Initialize menu assets and application context.
+
+        Args:
+            app (App): Application context and shared resources.
+        """
+
         self.app = app
         self.pacman_icon = pg.image.load(
             self.app.path_to_inc + "img/pacman/stay/S01.png").convert_alpha()
 
     async def run(self) -> None:
+        """Run the asynchronous main menu loop."""
+
         pg.display.set_caption("Pac-Man")
         clock = self.app.clock
 

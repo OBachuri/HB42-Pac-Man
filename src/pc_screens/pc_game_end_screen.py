@@ -10,7 +10,21 @@ from pc_constants import SCREEN_HEIGHT, SCREEN_WIDTH, FPS
 
 
 class GameEndScreen(BaseScreen):
+    """Final screen shown after victory or defeat.
+
+    Lets the player enter a name, save the score, and navigate to highscores
+    or back to the main menu.
+    """
+
     def __init__(self, app: "App", won: bool = False, score: int = 0):
+        """Initialize end-of-game screen state.
+
+        Args:
+            app (App): Application context and shared resources.
+            won (bool, optional): True if the player won the game.
+            score (int, optional): Final player score to store/display.
+        """
+
         self.app = app
         self.won = won
         self.score = score
@@ -27,6 +41,8 @@ class GameEndScreen(BaseScreen):
         self.running = True
 
     def save_and_exit(self) -> None:
+        """Persist entered name with score and open the highscores screen."""
+
         name = "".join(self.name_chars).strip()
         if not name:
             name = "Player"
@@ -35,6 +51,12 @@ class GameEndScreen(BaseScreen):
         self.app.move_to(ScreenTypes.HIGH_SCORES)
 
     def handle_text_input(self, event: pg.Event) -> None:
+        """Append allowed characters from keyboard input to player name.
+
+        Args:
+            event (pg.Event): Pygame keyboard event containing text input.
+        """
+
         if len(self.name_chars) >= self.max_name_len:
             return
         ch = event.unicode
@@ -44,6 +66,8 @@ class GameEndScreen(BaseScreen):
             self.name_chars.append(ch)
 
     def handle_events(self) -> None:
+        """Process input events for quitting, editing name, and navigation."""
+
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.running = False
@@ -61,16 +85,26 @@ class GameEndScreen(BaseScreen):
                     self.handle_text_input(event)
 
     def get_name_field_text(self) -> str:
+        """Build fixed-length name field text with placeholder underscores.
+
+        Returns:
+            str: Current name plus trailing placeholders.
+        """
+
         undersc_len = self.max_name_len - len(self.name_chars)
         return "".join(self.name_chars) + "_" * undersc_len
 
     def update_cursor(self) -> None:
+        """Toggle cursor blink state based on elapsed frame time."""
+
         self.cursor_timer += self.app.clock.get_time()
         if self.cursor_timer >= 450:
             self.cursor_visible = not self.cursor_visible
             self.cursor_timer = 0
 
     def draw(self) -> None:
+        """Render the game-end UI."""
+
         self.app.screen.fill("black")
 
         y = self.app.large_font.get_height()
@@ -112,6 +146,8 @@ class GameEndScreen(BaseScreen):
         pg.display.flip()
 
     async def run(self) -> None:
+        """Run the asynchronous loop for the game-end screen."""
+
         while self.running:
             self.app.clock.tick(FPS)
             self.handle_events()

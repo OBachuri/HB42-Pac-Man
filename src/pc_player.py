@@ -15,11 +15,22 @@ if TYPE_CHECKING:
 
 
 class Player(Entity):
-    """ Player = PacMan """
+    """Pac-Man player entity handling movement, collisions, and lives."""
+
     def __init__(self, game: Game,
                  point: tuple[float, float] = (0, 0),
                  color: tuple[int, int, int] = (250, 250, 10),
                  name: str = "PacMan", size: int = 21, lives: int = 3):
+        """Initialize player state and gameplay attributes.
+
+        Args:
+            game (Game): Active game context.
+            point (tuple[float, float], optional): Initial position.
+            color (tuple[int, int, int], optional): Player render color.
+            name (str, optional): Player name.
+            size (int, optional): Collision/render size factor.
+            lives (int, optional): Initial life count.
+        """
 
         super().__init__(game, color=color, name=name, size=size)
 
@@ -49,6 +60,13 @@ class Player(Entity):
              "inc/sounds/pacman/death/", SoundType.EATEN, sounds=self.sounds)
 
     def teleport(self, x: int = -1, y: int = -1) -> None:
+        """Teleport player to target tile or a valid center fallback.
+
+        Args:
+            x (int, optional): Target x tile, or auto-center if negative.
+            y (int, optional): Target y tile, or auto-center if negative.
+        """
+
         if x < 0:
             x = int(self.game.map.cols / 2)
         if y < 0:
@@ -63,7 +81,16 @@ class Player(Entity):
 
     def check_walls(self, new_x: float, new_y: float,
                     max_shift: float) -> bool:
-        """ Returned True if there is wall on new palace """
+        """Check whether movement to a new position is wall-valid.
+
+        Args:
+            new_x (float): Candidate x position.
+            new_y (float): Candidate y position.
+            max_shift (float): Allowed positional tolerance.
+
+        Returns:
+            bool: True if movement is valid (no blocking wall collision).
+        """
 
         new_x_int = round(new_x)
         new_y_int = round(new_y)
@@ -116,6 +143,8 @@ class Player(Entity):
         return False
 
     def after_death(self) -> None:
+        """Handle life loss state transitions and respawn/death outcome."""
+
         self.lives -= 1
         self.reset()
         for n in self.game.npcs:
@@ -127,6 +156,8 @@ class Player(Entity):
             self.game.running = False
 
     def movement(self) -> None:
+        """Update player velocity and position from input and collisions."""
+
         num_key_pressed = -1
         dx: int = self.dx
         dy: int = self.dy
@@ -309,6 +340,7 @@ class Player(Entity):
         #          max_shift:{max_shift}, df({dx},{dy})")
 
     def draw(self) -> None:
+        """Render player sprite/frame on the game surface."""
 
         x = (self.x * (self.game.map.cell_size
                        + self.game.map.wall_thickness)

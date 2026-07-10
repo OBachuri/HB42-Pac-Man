@@ -11,6 +11,12 @@ if TYPE_CHECKING:
 
 
 class Map:
+    """Maze map model handling storage, validation, pathfinding, and drawing.
+
+    Encodes cell walls with bit flags (1=top, 2=right, 4=bottom, 8=left).
+    Provides helpers for exits, movement directions, file loading, and
+    dead-end removal.
+    """
 
     directions = {1: (0, -1), 2: (1, 0), 4: (0, 1), 8: (-1, -0)}
     possible_moves = dict((w, [d for b, d in {
@@ -18,6 +24,12 @@ class Map:
     }.items() if not (w & b)]) for w in range(16))
 
     def __init__(self, game: Game):
+        """Initialize map resources and bind to game context.
+
+        Args:
+            game (Game): Active game instance using this map.
+        """
+
         self.game = game
         self.world_map: dict[tuple[int, int], int] = {}
         self.rows: int = 3
@@ -30,10 +42,27 @@ class Map:
         self.background: pg.Surface | None = None
 
     def get_cell(self, x: int, y: int) -> int:
+        """Return encoded cell value at coordinates.
+
+        Args:
+            x (int): Cell x index.
+            y (int): Cell y index.
+
+        Returns:
+            int: Encoded wall/value bitmask, or 0 if missing.
+        """
         return self.world_map.get((x, y), 0)
 
     def has_cell_exit(self, x: int, y: int) -> bool:
-        # return true if the cell inside the maze and have exit
+        """Check whether a cell is in bounds and not fully closed.
+
+        Args:
+            x (int): Cell x index.
+            y (int): Cell y index.
+
+        Returns:
+            bool: True if the cell exists and has at least one exit.
+        """
         return bool(
             x >= 0 and y >= 0
             and x < self.cols
@@ -41,22 +70,26 @@ class Map:
             and (self.get_cell(x, y) & 15) != 15)
 
     def get_direction_for_cell(self, x: int, y: int) -> list[tuple[int, int]]:
+        """Get allowed movement vectors from a cell.
+
+        Args:
+            x (int): Cell x index.
+            y (int): Cell y index.
+
+        Returns:
+            list[tuple[int, int]]: Direction vectors for open exits.
+        """
+
         w = self.world_map.get((x, y), 0) & 15
         return (list(self.possible_moves[w]))
 
-        # l_: list[tuple[int, int]] = []
-        # if w & 1 == 0:  # top
-        #     l_ = [(0, -1)]
-        # if w & 2 == 0:  # right
-        #     l_.append((1, 0))
-        # if w & 4 == 0:  #  bottom
-        #     l_.append((0, 1))
-        # if w & 8 == 0:  #  left
-        #     l_.append((-1, 0))
-        # return l_
-
     def get_map(self, maze_: list[list[int]]) -> None:
-        # get map from list
+        """Load map data from a 2D integer matrix.
+
+        Args:
+            maze_ (list[list[int]]): Maze grid with encoded cell values.
+        """
+
         self.world_map = {}
         for y, row in enumerate(maze_):
             for x, value in enumerate(row):
@@ -69,6 +102,12 @@ class Map:
         self.background = None
 
     def get_map_form_file(self, file_name: str) -> None:
+        """Load map data from a text file of hexadecimal cell values.
+
+        Args:
+            file_name (str): Relative or absolute maze file path.
+        """
+
         self.world_map = {}
         y: int = 0
 
@@ -101,6 +140,14 @@ class Map:
         self.background = None
 
     def map_check(self) -> list[str]:
+        """Validate wall consistency and outer boundaries.
+
+        Fixes one-sided wall mismatches in-place and reports found issues.
+
+        Returns:
+            list[str]: Human-readable validation/fix messages.
+        """
+
         error_: list[str] = []
         for x in range(0, self.cols):
             for y in range(0, self.rows):
@@ -162,6 +209,16 @@ class Map:
     def find_path(self,
                   start: tuple[int, int] = (0, 0),
                   end: tuple[int, int] = (0, 0)) -> list[tuple[int, int]]:
+        """Find shortest path between two cells using BFS.
+
+        Args:
+            start (tuple[int, int], optional): Start cell coordinates.
+            end (tuple[int, int], optional): Target cell coordinates.
+
+        Returns:
+            list[tuple[int, int]]: Ordered path including start/end, or empty
+            list if unreachable or identical.
+        """
 
         path_: list[tuple[int, int]] = []
 
@@ -223,6 +280,8 @@ class Map:
         return path_
 
     def draw(self) -> None:
+        """Render maze walls and special pattern cells to the game screen."""
+
         # if self.background is None:
         pg.draw.rect(self.game.screen, self.color, (
             self.game.screen_left_shift, self.top,
@@ -267,6 +326,8 @@ class Map:
         #     self.game.screen.blit(self.background)
 
     def del_deadends(self) -> None:
+        """Remove dead ends from the current maze and reload map data."""
+
         maze: list[list[int]] = []
         for y in range(0, self.rows):
             l_ = []
@@ -278,7 +339,14 @@ class Map:
 
     @classmethod
     def do_not_perfect(cls, maze: list[list[int]] = []) -> list[list[int]]:
-        # dell all deadends
+        """Break selected dead ends to make maze less 'perfect'.
+
+        Args:
+            maze (list[list[int]], optional): Maze matrix to modify.
+
+        Returns:
+            list[list[int]]: Updated maze matrix with some dead ends removed.
+        """
 
         for y in range(0, len(maze)):
             for x in range(0, len(maze[0])):

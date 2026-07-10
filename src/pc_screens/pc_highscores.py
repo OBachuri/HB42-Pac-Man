@@ -9,10 +9,19 @@ if TYPE_CHECKING:
 
 
 class HighscoresScreen(BaseScreen):
+    """Screen that displays the persisted Top 10 highscores."""
+
     def __init__(self, app: "App"):
+        """Initialize the highscores screen.
+
+        Args:
+            app (App): Application context and shared resources.
+        """
         self.app = app
 
     async def run(self) -> None:
+        """Run the asynchronous highscores screen loop."""
+
         highscores = HighscoresHandler.get_highscores(self.app.config)
 
         place_info = ""

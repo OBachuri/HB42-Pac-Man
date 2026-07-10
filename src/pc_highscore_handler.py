@@ -9,8 +9,20 @@ if TYPE_CHECKING:
 
 
 class HighscoresHandler:
+    """Read and persist Top 10 highscores for desktop and web platforms."""
+
     @staticmethod
     def get_highscores(config: "Config | ConfigWeb") -> list[dict[str, int]]:
+        """Load highscores from storage and return them sorted descending.
+
+        Args:
+            config (Config | ConfigWeb): Runtime config with highscores file.
+
+        Returns:
+            list[dict[str, int]]: Sorted highscore entries, or empty list on
+            read/format errors.
+        """
+
         highscores: list[dict[str, int]] = []
         path = config.highscores_filename
         if sys.platform == "emscripten":
@@ -30,6 +42,14 @@ class HighscoresHandler:
     @classmethod
     def store_highscores(cls, config: "Config | ConfigWeb",
                          name: str, score: int) -> None:
+        """Insert a new score, keep top 10 entries, and write to storage.
+
+        Args:
+            config (Config | ConfigWeb): Runtime config with highscores file.
+            name (str): Player name to store.
+            score (int): Score value associated with the player.
+        """
+
         highscores = cls.get_highscores(config)
         highscores.insert(0, {name: score})
         highscores.sort(key=lambda d: list(d.values())[0], reverse=True)

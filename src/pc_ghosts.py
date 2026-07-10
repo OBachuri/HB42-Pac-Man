@@ -17,24 +17,33 @@ if TYPE_CHECKING:
 
 
 class RedGhost(NPC):
-    """ Red ghost (Blinky, Shadow)
-        Blinky always chase his prey :)
-    """
+    """Red ghost (Blinky/Shadow) that directly chases the player."""
 
     def __init__(self, game: Game,
                  point: tuple[float, float] = (0, 0)) -> None:
+        """Initialize red ghost with default spawn and behavior.
+
+        Args:
+            game (Game): Active game context.
+            point (tuple[float, float], optional): Initial position.
+        """
+
         super().__init__(game, point, (250, 20, 20),
                          "Red ghost (Blinky, Shadow)")
         self.read_frames_from_file("inc/img/red/run/", FrameType.RUN)
         self.read_frames_from_file("inc/img/red/stay/", FrameType.STAY)
 
     def reset(self) -> None:
+        """Reset red ghost to its corner spawn in chase mode."""
+
         self.start_x = 0
         self.start_y = 0
         self.mode = GhostMode.CHASE
         super().reset()
 
     def find_goal(self) -> None:
+        """Set chase target to the player's current tile."""
+
         if self.mode == GhostMode.CHASE:
             self.goal = self.get_player_pos()
         else:
@@ -42,12 +51,19 @@ class RedGhost(NPC):
 
 
 class PinkGhost(NPC):
-    """ Pink ghost (Speedy)
-        Target at the 4 tiles ahead
-    """
+    """Pink ghost (Speedy) that targets tiles ahead of the player."""
+
     def __init__(self, game: Game,
                  point: tuple[float, float] = (0, 0),
                  red_ghost: NPC | None = None) -> None:
+        """Initialize pink ghost and optional red-ghost reference.
+
+        Args:
+            game (Game): Active game context.
+            point (tuple[float, float], optional): Initial position.
+            red_ghost (NPC | None, optional): Reference used by some tactics.
+        """
+
         super().__init__(game, point, (240, 24, 140), "Pink ghost (Speedy)")
         self.red_ghost = red_ghost
         self.tiles: int = 4
@@ -55,6 +71,8 @@ class PinkGhost(NPC):
         self.read_frames_from_file("inc/img/pink/stay/", FrameType.STAY)
 
     def reset(self) -> None:
+        """Reset pink ghost to its corner spawn in chase mode."""
+
         self.start_x = self.game.map.cols - 1
         self.start_y = 0
         self.mode = GhostMode.CHASE
@@ -65,6 +83,8 @@ class PinkGhost(NPC):
         #       "speed:", self.speed_factor)
 
     def find_goal(self) -> None:
+        """Set target to predicted player position ahead of movement."""
+
         if self.mode == GhostMode.CHASE:
             pos = pg.Vector2(self.x, self.y)
             red_ghost_pos = pg.Vector2(
@@ -104,13 +124,19 @@ class PinkGhost(NPC):
 
 
 class CyanGhost(NPC):
-    """ Cyan ghost (Inky, Bashful)
-        Target tile by doubling a vector drawn from Blinky (the red ghost)
-        to a point two tiles ahead of PacMan
-    """
+    """Cyan ghost (Inky/Bashful) using vector-based ambush targeting."""
+
     def __init__(self, game: Game,
                  point: tuple[float, float] = (0, 0),
                  red_ghost: NPC | None = None) -> None:
+        """Initialize cyan ghost with optional red-ghost reference.
+
+        Args:
+            game (Game): Active game context.
+            point (tuple[float, float], optional): Initial position.
+            red_ghost (NPC | None, optional): Red ghost used for vector math.
+        """
+
         super().__init__(game, point, (100, 250, 250),
                          "Cyan ghost (Inky, Bashful)")
         self.red_ghost = red_ghost
@@ -118,12 +144,16 @@ class CyanGhost(NPC):
         self.read_frames_from_file("inc/img/cyan/stay/", FrameType.STAY)
 
     def reset(self) -> None:
+        """Reset cyan ghost to its corner spawn in chase mode."""
+
         self.start_x = self.game.map.cols - 1
         self.start_y = self.game.map.rows - 1
         self.mode = GhostMode.CHASE
         super().reset()
 
     def find_goal(self) -> None:
+        """Compute ambush goal from player direction and red ghost vector."""
+
         if self.mode == GhostMode.CHASE:
             player_pos = self.get_player_pos()
             red_ghost_pos = pg.Vector2(0, 0)
@@ -169,11 +199,17 @@ class CyanGhost(NPC):
 
 
 class OrangeGhost(NPC):
-    """ Orange ghost (Clyde, Pockey)
-        Target a random cell at a specific distance (3 tiles) from Pac-Man.
-    """
+    """Orange ghost (Clyde/Pokey) with distance-based random targeting."""
+
     def __init__(self, game: Game,
                  point: tuple[float, float] = (0, 0)) -> None:
+        """Initialize orange ghost with default spawn and behavior.
+
+        Args:
+            game (Game): Active game context.
+            point (tuple[float, float], optional): Initial position.
+        """
+
         super().__init__(game, point, (250, 120, 10),
                          "Orange ghost (Clyde, Pockey)")
         # self.tiles = int(min(self.game.map.cols, self.game.map.rows) * 0.42)
@@ -185,6 +221,8 @@ class OrangeGhost(NPC):
         self.goal: pg.Vector2 | None = None
 
     def reset(self) -> None:
+        """Reset orange ghost to its corner spawn and clear cached goal."""
+
         self.start_x = 0
         self.start_y = self.game.map.rows - 1
         self.goal = None
@@ -192,6 +230,8 @@ class OrangeGhost(NPC):
         super().reset()
 
     def find_goal(self) -> None:
+        """Pick a random target constrained by distance from the player."""
+
         if self.mode == GhostMode.CHASE:
             if self.goal is not None:
                 speed_factor = self.get_speed_factor()

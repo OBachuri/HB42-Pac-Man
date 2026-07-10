@@ -12,6 +12,8 @@ if TYPE_CHECKING:
 
 
 class FrameType(Enum):
+    """Animation frame states for player and ghost sprite sequences."""
+
     # stay / run / left / right / top / bottom / dead / frightened
     STAY = 1
     RUN = 2
@@ -26,6 +28,8 @@ class FrameType(Enum):
 
 
 class GhostMode(Enum):
+    """Behavior modes that control ghost AI movement and targeting."""
+
     CHASE = 1
     SCATTER = 2
     FRIGHTENED = 3
@@ -36,7 +40,11 @@ class GhostMode(Enum):
 
 
 class Entity:
-    """Parent Class for NPC (Gosts) + Player (Pac-man) """
+    """Base movable entity for player and ghosts.
+
+    Provides shared state and behavior for position, movement, animation,
+    collision checks, teleporting, and sprite frame loading.
+    """
 
     def __init__(self,
                  game: Game,
@@ -44,6 +52,16 @@ class Entity:
                  color: tuple[int, int, int] = (50, 50, 50),
                  name: str = "Entity",
                  size: int = 11):
+        """Initialize common entity properties.
+
+        Args:
+            game (Game): Active game context.
+            point (tuple[float, float], optional): Initial map position.
+            color (tuple[int, int, int], optional): Default render color.
+            name (str, optional): Entity display/debug name.
+            size (int, optional): Collision/render size factor.
+        """
+
         self.game = game
         self.x: float = 0
         self.y: float = 0
@@ -69,6 +87,8 @@ class Entity:
         self.sound_index: int = 0
 
     def reset(self) -> None:
+        """Reset movement, animation, and lifecycle state to spawn defaults."""
+
         self.dx = 0
         self.dy = 0
         self.teleport()
@@ -78,6 +98,13 @@ class Entity:
         self.visible = True
 
     def teleport(self, x: int = -1, y: int = -1) -> None:
+        """Move entity instantly to coordinates or starting position.
+
+        Args:
+            x (int, optional): Target x coordinate, or start x if negative.
+            y (int, optional): Target y coordinate, or start y if negative.
+        """
+
         if x < 0:
             x = int(self.start_x)
         if y < 0:
@@ -86,9 +113,12 @@ class Entity:
         self.y = int(y)
 
     def movement(self) -> None:
+        """Update entity movement for the current frame."""
         pass
 
     def update(self) -> None:
+        """Advance movement and animation state for one tick."""
+
         self.movement()
         if self.alive:
             self.animation_timer += 0.1
@@ -100,6 +130,15 @@ class Entity:
             self.frame_index += 1
 
     def collide_check(self, o_: "Entity") -> bool:
+        """Check circular proximity collision against another entity.
+
+        Args:
+            o_ (Entity): Other entity to test collision with.
+
+        Returns:
+            bool: True if entities overlap within collision threshold.
+        """
+
         x = o_.x
         y = o_.y
         s = o_.size
@@ -116,6 +155,7 @@ class Entity:
         return (False)
 
     def draw(self) -> None:
+        """Render entity on the game surface."""
 
         if not (self.visible):
             return
@@ -173,10 +213,18 @@ class Entity:
                            (x, y), self.size)
 
     def after_death(self) -> None:
+        """Apply post-death behavior for the entity."""
         pass
 
     def read_frames_from_file(
             self, file_path: str, frame_type: FrameType) -> None:
+        """Load animation frames for a given frame type from disk.
+
+        Args:
+            file_path (str): Directory or base path containing frame images.
+            frame_type (FrameType): Target animation category to populate.
+        """
+
         path_ = os.path.join(
                 os.path.dirname(os.path.abspath(__file__)),
                 file_path,

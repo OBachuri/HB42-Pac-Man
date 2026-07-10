@@ -14,12 +14,23 @@ if TYPE_CHECKING:
 
 
 class NPC(Entity):
-    """ Ghosts """
+    """Ghost entity with AI modes, collision events, and respawn behavior."""
 
     def __init__(self, game: Game,
                  point: tuple[int | float, int | float] = (0, 0),
                  color: tuple[int, int, int] = (100, 100, 100),
                  name: str = "Ghost", size: int = 11, points: int = 200):
+        """Initialize ghost state, movement traits, and score value.
+
+        Args:
+            game (Game): Active game context.
+            point (tuple[int | float, int | float], optional): Spawn position.
+            color (tuple[int, int, int], optional): Ghost render color.
+            name (str, optional): Ghost name.
+            size (int, optional): Collision/render size factor.
+            points (int, optional): Base score awarded when eaten.
+        """
+
         super().__init__(game, point=point, color=color, name=name, size=size)
         self.speed_factor: float = 0.02
         self.points = points  # score add
@@ -67,6 +78,12 @@ class NPC(Entity):
         #       ", goal:", self.goal)
 
     def get_speed_factor(self) -> float:
+        """Return effective movement speed based on current ghost mode.
+
+        Returns:
+            float: Mode-adjusted speed factor.
+        """
+
         speed_factor = min(self.speed_factor, 0.5)
         if self.mode == GhostMode.SPAWN:
             speed_factor = max(0.05, speed_factor)
@@ -75,6 +92,7 @@ class NPC(Entity):
         return (speed_factor)
 
     def find_goal(self) -> None:
+        """Compute the current navigation target for ghost pathing."""
 
         speed_factor = self.get_speed_factor()
         cur_x = round(self.x)
@@ -128,6 +146,7 @@ class NPC(Entity):
                     self.goal = pg.Vector2(x_g, y_g)
 
     def movement(self) -> None:
+        """Update ghost movement vector and position for one frame."""
 
         keys = pg.key.get_pressed()
 
@@ -206,6 +225,8 @@ class NPC(Entity):
         self.y = y
 
     def update(self) -> None:
+        """Advance timers, movement, animation, and collision handling."""
+
         if self.event_timer > 0:
             self.event_timer -= 1/FPS
             if self.event_timer <= 0:
@@ -220,11 +241,14 @@ class NPC(Entity):
             self.event()
 
     def event_end(self) -> None:
-        # print("Fr End:", self.event_timer, self.mode, self.name)
+        """Resolve timed mode transitions when an event timer expires."""
+
         if self.mode == GhostMode.FRIGHTENED:
             self.mode = GhostMode.CHASE
 
     def event(self) -> None:
+        """Handle collision outcome between ghost and player."""
+
         if not self.alive:
             return
         if self.game.config.cheat:
@@ -254,12 +278,9 @@ class NPC(Entity):
             self.game.player.alive = False
             self.visible = False
 
-    # def reset(self) -> None:
-    #     super().reset()
-        # self.mode = GhostMode.CHASE
-        # print("name:",self.name, "mode:",self.mode, "alive:",self.alive)
-
     def after_death(self) -> None:
+        """Drive dead ghost return-to-spawn behavior."""
+
         self.mode = GhostMode.SPAWN
         self.goal = pg.Vector2(self.start_x, self.start_y)
         speed_factor = self.get_speed_factor()
@@ -278,6 +299,8 @@ class NPC(Entity):
                 self.dx = 0
 
     def reborn(self) -> None:
+        """Restore ghost to active chase state at spawn location."""
+
         self.mode = GhostMode.CHASE
         self.alive = True
         self.visible = True
@@ -286,9 +309,20 @@ class NPC(Entity):
         self.teleport()
 
     def get_player_pos(self) -> pg.Vector2:
+        """Get player position snapped to map coordinates.
+
+        Returns:
+            pg.Vector2: Rounded player grid position.
+        """
         return pg.Vector2(round(self.game.player.x), round(self.game.player.y))
 
     def get_player_direction(self) -> pg.Vector2:
+        """Get normalized cardinal movement direction of the player.
+
+        Returns:
+            pg.Vector2: Direction vector on one axis, or zero vector.
+        """
+
         if not self.game.player.dx and not self.game.player.dy:
             return pg.Vector2(0, 0)
         if abs(self.game.player.dx) > abs(self.game.player.dy):
@@ -296,6 +330,15 @@ class NPC(Entity):
         return pg.Vector2(0, 1 if self.game.player.dy > 0 else -1)
 
     def adjust_vector(self, vector: pg.Vector2) -> pg.Vector2:
+        """Clamp a vector to valid map bounds.
+
+        Args:
+            vector (pg.Vector2): Input map-space vector.
+
+        Returns:
+            pg.Vector2: Bounds-clamped vector.
+        """
+
         max_x = self.game.map.cols - 1
         max_y = self.game.map.rows - 1
         x = min(max(vector.x, 0), max_x)
@@ -303,6 +346,8 @@ class NPC(Entity):
         return pg.Vector2(x, y)
 
     def sound_init(self) -> None:
+        """Load or initialize ghost-specific sound effects."""
+
         self.sounds = Sound.read_sounds_from_files(
             "inc/sounds/ghosts/death/",
             SoundType.EATEN, self.sounds)

@@ -4,6 +4,14 @@ import asyncio
 
 
 def main() -> int:
+    """Run the game entrypoint.
+
+    Initializes dependencies, loads configuration, starts the app loop,
+    and exits with a process status code.
+
+    Returns:
+        int: Exit status code (0 on success).
+    """
 
     global MazeGenerator
     global pg

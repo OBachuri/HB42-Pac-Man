@@ -10,10 +10,19 @@ from pc_screens.pc_utils import wrap_text
 
 
 class ErrorScreen(BaseScreen):
+    """Screen that displays runtime errors and fallback information."""
+
     def __init__(self, app: "App") -> None:
+        """Initialize the error screen.
+
+        Args:
+            app (App): Application context and shared resources.
+        """
         self.app = app
 
     async def run(self) -> None:
+        """Render and process the error screen loop asynchronously."""
+
         # global g_error_txt
 
         font = self.app.small_font

@@ -38,11 +38,9 @@ class BonusFruitType(Enum):
 
 
 class PC_Artifacts():
-    """
-    Artifacts = Pellet or PowerPellet
+    """Base class for collectible map artifacts (pellets and fruits).
 
-    Pellet = Dot = Pacgums
-    PowerPellet = Super-pacgums = Energizer
+    Handles shared rendering, pickup scoring, and sound playback.
     """
 
     frames: dict[FrameType, list[pg.Surface]] = {}
@@ -55,6 +53,16 @@ class PC_Artifacts():
                  points: int = 10,
                  color: tuple[int, int, int] = (200, 200, 200),
                  name: str = 'Artifact'):
+        """Initialize artifact state and placement.
+
+        Args:
+            game (Game): Active game context.
+            point (tuple[int, int], optional): Artifact cell position.
+            points (int, optional): Score granted when collected.
+            color (tuple[int, int, int], optional): Fallback render color.
+            name (str, optional): Artifact label.
+        """
+
         self.game = game
         self.x, self.y = point
         self.size: int = 2  # radius
@@ -64,6 +72,8 @@ class PC_Artifacts():
         self.event_timer: float = 0
 
     def draw(self) -> None:
+        """Render artifact on the game surface."""
+
         x = (self.x * self.game.map.step
              + self.game.map.cell_size / 2
              + self.game.map.wall_thickness
@@ -89,6 +99,8 @@ class PC_Artifacts():
                            (x, y), self.size)
 
     def event(self) -> None:
+        """Handle artifact collection: score, sound, and removal."""
+
         self.game.score += self.points
         self.points = 0
         self.color = (255, 255, 255)
@@ -106,6 +118,8 @@ class PC_Artifacts():
         self.game.artifacts.remove(self)
 
     def update(self) -> None:
+        """Check player overlap and trigger collection when applicable."""
+
         x = round(self.game.player.x)
         y = round(self.game.player.y)
         if ((x, y) == (self.x, self.y)) and self.game.player.alive:
@@ -117,15 +131,27 @@ class PC_Artifacts():
 
 
 class PowerPellet(PC_Artifacts):
-    # PowerPellet = Super-pacgums = Energizer
+    """Special pellet that enables frightened mode for ghosts."""
+
     def __init__(self, game: "Game",
                  point: tuple[int, int] = (0, 0),
                  points: int = 50,
                  color: tuple[int, int, int] = (220, 250, 220)) -> None:
+        """Initialize power pellet defaults.
+
+        Args:
+            game (Game): Active game context.
+            point (tuple[int, int], optional): Artifact cell position.
+            points (int, optional): Score granted when collected.
+            color (tuple[int, int, int], optional): Render color.
+        """
+
         super().__init__(game, point, points, color)
         self.size: int = 6  # radius
 
     def event(self) -> None:
+        """Apply frightened-state effects to ghosts after collection."""
+
         super().event()
         self.game.player.dx = max(0, self.game.player.dx - 3)
         self.game.player.dy = max(0, self.game.player.dy - 3)
@@ -139,10 +165,12 @@ class PowerPellet(PC_Artifacts):
 
 
 class Pellet(PC_Artifacts):
-    # Pellet = Pacgums = Dots
+    """Standard pellet collectible used to clear levels."""
 
     @classmethod
     def sound_init(cls) -> None:
+        """Load shared pellet sound effects."""
+
         cls.sounds = Sound.read_sounds_from_files(
             "inc/sounds/pacgum/", SoundType.EATEN)
 
@@ -150,9 +178,19 @@ class Pellet(PC_Artifacts):
                  point: tuple[int, int] = (0, 0),
                  points: int = 10,
                  color: tuple[int, int, int] = (220, 220, 250)) -> None:
+        """Initialize standard pellet defaults.
+
+        Args:
+            game (Game): Active game context.
+            point (tuple[int, int], optional): Artifact cell position.
+            points (int, optional): Score granted when collected.
+            color (tuple[int, int, int], optional): Render color.
+        """
         super().__init__(game, point, points, color)
 
     def event(self) -> None:
+        """Handle pellet pickup and optional bonus-fruit spawn trigger."""
+
         if len(self.game.fruits_triger) > 0:
             if len(self.game.artifacts) < self.game.fruits_triger[0]:
                 bonus_fruit = Fruit(self.game, type=self.game.bonus_fruit_type)
@@ -173,12 +211,25 @@ class Pellet(PC_Artifacts):
 
 
 class Fruit(PC_Artifacts):
+    """Timed bonus collectible with animated sprite frames."""
+
     def __init__(self, game: "Game",
                  point: tuple[int, int] = (0, 0),
                  points: int = 100,
                  color: tuple[int, int, int] = (120, 250, 120),
                  name: str = "Fruit",
                  type: BonusFruitType = BonusFruitType.CHERRY) -> None:
+        """Initialize fruit type, score value, timers, and visuals.
+
+        Args:
+            game (Game): Active game context.
+            point (tuple[int, int], optional): Initial position.
+            points (int, optional): Score granted when collected.
+            color (tuple[int, int, int], optional): Fallback render color.
+            name (str, optional): Artifact label.
+            type (BonusFruitType, optional): Fruit variant.
+        """
+
         super().__init__(game, point, points, color, name=name)
         self.size: int = 20     # radius
         self.event_timer = 9    # s - time of live
@@ -193,6 +244,13 @@ class Fruit(PC_Artifacts):
             "inc/img/artifacts/" + f_name + "/", FrameType.STAY)
 
     def teleport(self, x: int | float = -1, y: int | float = -1) -> None:
+        """Place fruit at coordinates or choose a random valid cell.
+
+        Args:
+            x (int | float, optional): Target x coordinate.
+            y (int | float, optional): Target y coordinate.
+        """
+
         if (x > 0) and (y > 0):
             self.x = int(x)
             self.y = int(y)
@@ -224,6 +282,12 @@ class Fruit(PC_Artifacts):
 
     def read_frames_from_file(
             self, file_path: str, frame_type: FrameType) -> None:
+        """Load fruit animation frames from image files on disk.
+
+        Args:
+            file_path (str): Directory containing frame images.
+            frame_type (FrameType): Animation key to fill.
+        """
 
         path_ = os.path.join(
                 os.path.dirname(os.path.abspath(__file__)),
@@ -254,7 +318,8 @@ class Fruit(PC_Artifacts):
                   f"for {frame_type.name} of {self.name}.")
 
     def event_end(self) -> None:
-        # print("Fr End:", self.event_timer, self.name)
+        """Expire fruit, play disappear sound, and remove from artifacts."""
+
         self.points = 0
         self.color = (255, 255, 255)
         self.draw()
@@ -272,6 +337,8 @@ class Fruit(PC_Artifacts):
                         n.mode = GhostMode.SCATTER
 
     def update(self) -> None:
+        """Advance fruit animation/timer and process collection checks."""
+
         self.animation_timer += 0.1
         if self.animation_timer > 1:
             self.animation_timer = 0
@@ -286,6 +353,8 @@ class Fruit(PC_Artifacts):
 
     @classmethod
     def sound_init(cls) -> None:
+        """Load shared fruit sound effects."""
+
         cls.sounds = Sound.read_sounds_from_files(
             "inc/sounds/bonusfruit/eaten/",
             SoundType.EATEN)
