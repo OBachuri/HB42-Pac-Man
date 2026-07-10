@@ -21,8 +21,8 @@ The responsibilities were distributed among the team members as follows:
 
 ### Project timeline
 
-[Project timeline on Gantt (.pdf)](PacMan42-Gantt.pdf)
-[Tasklist (.xlsx)](PacMan42-plan.xlsx)
+- [Project timeline on Gantt (.pdf)](PacMan42-Gantt.pdf)
+- [Tasklist (.xlsx)](PacMan42-plan.xlsx)
 
 For the project planning was used monday.com.
 Backlog on github.com
