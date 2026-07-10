@@ -162,6 +162,10 @@ class PowerPellet(PC_Artifacts):
                 n.dx *= -1
                 n.dy *= -1
                 n.event_timer = self.game.ghost_edible
+                if n.dx == 0:
+                    n.x = round(n.x)
+                if n.dy == 0:
+                    n.y = round(n.y)
 
 
 class Pellet(PC_Artifacts):

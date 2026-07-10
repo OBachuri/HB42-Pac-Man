@@ -20,6 +20,7 @@ class NPC(Entity):
                  point: tuple[int | float, int | float] = (0, 0),
                  color: tuple[int, int, int] = (100, 100, 100),
                  name: str = "Ghost", size: int = 11, points: int = 200):
+
         """Initialize ghost state, movement traits, and score value.
 
         Args:
@@ -183,8 +184,8 @@ class NPC(Entity):
 
         x_i = round(x)
         y_i = round(y)
-        if (((abs(x_i - x) < speed_factor)
-             and (abs(y_i - y) < speed_factor))):
+        if (((abs(x_i - x) <= speed_factor)
+             and (abs(y_i - y) <= speed_factor))):
 
             if self.mode == GhostMode.SPAWN and not (self.goal is None):
                 gx, gy = tuple(self.goal)
@@ -193,8 +194,8 @@ class NPC(Entity):
                    and (abs(y_i-gy) < speed_factor)):
                     self.reborn()
                     return
-            else:
-                self.find_goal()
+
+            self.find_goal()
 
             # Check if player near and not ghosts etable now
 
@@ -220,6 +221,15 @@ class NPC(Entity):
 
         x = speed_factor * dx + self.x
         y = speed_factor * dy + self.y
+
+        if (x < 0):
+            x = 0
+        elif (x >= (self.game.map.cols - 1 + speed_factor)):
+            x = self.game.map.cols - 1
+        if (y < 0):
+            y = 0
+        elif (y >= (self.game.map.rows - 1 + speed_factor)):
+            y = self.game.map.rows - 1
 
         self.x = x
         self.y = y
