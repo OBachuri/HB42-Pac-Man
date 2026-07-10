@@ -250,7 +250,7 @@ The responsibilities were distributed among the team members as follows:
 
 Project management artifacts are maintained in a dedicated directory in the repository (timeline, tracking, risk analysis, role distribution, testing/acceptance notes, blockers/conflicts summary).
 
-See the [project-management](docs/) folder for evidence and supporting documents.
+See the [project-management](docs/Project.md) folder for evidence and supporting documents.
 
 ---
 ## Resources
