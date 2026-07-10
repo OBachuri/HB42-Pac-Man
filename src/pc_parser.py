@@ -7,8 +7,19 @@ if TYPE_CHECKING:
 
 
 class Parser:
+    """Utility class for loading and parsing game configuration files."""
+
     @staticmethod
     def _get_config_data(path: str) -> dict[str, Any]:
+        """Load JSON config from file and strip comment lines.
+
+        Args:
+            path (str): Path to the configuration file.
+
+        Returns:
+            dict[str, Any]: Parsed config mapping, or empty dict on failure.
+        """
+
         result: dict[str, Any] = {}
         try:
             with open(path) as f:
@@ -26,6 +37,15 @@ class Parser:
 
     @classmethod
     def get_config(cls, path: str = "config.json") -> "Config":
+        """Load desktop config and return a validated Config model.
+
+        Args:
+            path (str, optional): Path to desktop config JSON file.
+
+        Returns:
+            Config: Parsed configuration with defaults applied.
+        """
+
         from config import Config
 
         cfg_data = cls._get_config_data(path)
@@ -37,6 +57,15 @@ class Parser:
 
     @classmethod
     def get_config_web(cls, path: str = "config_web.json") -> "ConfigWeb":
+        """Load web config and return a ConfigWeb instance.
+
+        Args:
+            path (str, optional): Path to web config JSON file.
+
+        Returns:
+            ConfigWeb: Parsed web configuration with defaults applied.
+        """
+
         from config_web import ConfigWeb
 
         cfg_data = cls._get_config_data(path)

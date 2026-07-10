@@ -2,6 +2,8 @@ from enum import Enum
 
 
 class ScreenTypes(Enum):
+    """Identifiers for application screens used in navigation flow."""
+
     MAIN_MENU = "main_menu"
     GAME = "game"
     INSTRUCTIONS = "instructions"

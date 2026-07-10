@@ -6,7 +6,11 @@ from pc_artifact import BonusFruitType
 
 
 class LevelWeb:
+    """Level configuration model for web/runtime loading."""
+
     def __init__(self, data: dict[str, Any] = {}) -> None:
+        """Initialize level settings from raw dictionary data."""
+
         self.number: int = 1
         self.map_filename: str = ""
         self.remove_deadends: bool = True
@@ -130,6 +134,11 @@ class LevelWeb:
 
     @property
     def size(self) -> tuple[int, int]:
+        """Return level dimensions as (width, height).
+
+        Returns:
+            tuple[int, int]: Maze size in cells.
+        """
         return (self.width, self.height)
 
     def print(self) -> None:
@@ -145,7 +154,19 @@ class LevelWeb:
 
 
 class ConfigWeb:
+    """Lightweight global game configuration for web/runtime contexts.
+
+    Stores core gameplay parameters with default values when strict model
+    validation is not required.
+    """
+
     def __init__(self, cfg_data: dict[str, Any] = {}) -> None:
+        """Initialize global config values from raw dictionary data.
+
+        Args:
+            cfg_data (dict[str, Any], optional): Raw configuration mapping.
+                Missing or invalid entries fall back to defaults.
+        """
 
         self.highscores_filename: str = "highscores.json"
         self.lives: int = 3

@@ -17,7 +17,19 @@ if TYPE_CHECKING:
 
 
 class App:
+    """Main application controller for screen flow and game lifecycle.
+
+    Initializes pygame subsystems, loads shared resources, manages active
+    screens, and drives the async main loop.
+    """
+
     def __init__(self, config: Config | ConfigWeb) -> None:
+        """Initialize application state and rendering/audio resources.
+
+        Args:
+            config (Config | ConfigWeb): Global runtime configuration.
+        """
+
         self.config = config
         self.err_msg: str = ""
         pg.init()
@@ -53,6 +65,12 @@ class App:
             self.small_font = pg.font.SysFont('Nimbus Mono PS', 20)
 
     def move_to(self, screen: ScreenTypes) -> None:
+        """Switch to a target screen and prepare related state.
+
+        Args:
+            screen (ScreenTypes): Destination screen identifier.
+        """
+
         match screen:
             case ScreenTypes.MAIN_MENU:
                 self.current_screen = self.screens.setdefault(
@@ -80,6 +98,12 @@ class App:
         self.set_screen()
 
     def set_screen(self) -> None:
+        """Apply display mode and resolution for the current screen.
+
+        Chooses windowed/fullscreen layout based on active screen needs,
+        configured fullscreen preference, and desktop size constraints.
+        """
+
         if (not (self.current_screen is None)
            and self.current_screen.screen_type == ScreenTypes.GAME):
             if self.config.cheat:
@@ -139,11 +163,19 @@ class App:
                         pg.display.set_mode((m_width, m_height))
 
     def quit(self) -> None:
+        """Stop the app loop and close pygame on non-web platforms."""
+
         self.running = False
         if sys.platform != "emscripten":
             pg.quit()
 
     async def run(self) -> None:
+        """Run the asynchronous application main loop.
+
+        Starts from the main menu, delegates updates to the active screen,
+        and yields control each frame for cooperative scheduling.
+        """
+
         self.move_to(ScreenTypes.MAIN_MENU)
         while self.running:
             if self.current_screen:

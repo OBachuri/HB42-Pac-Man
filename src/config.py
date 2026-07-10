@@ -9,6 +9,30 @@ from pc_artifact import BonusFruitType
 
 
 class Level(BaseModel):
+    """Per-level gameplay and maze configuration.
+
+    Defines level geometry, timing, movement tuning, collectible values,
+    bonus fruit settings, and visual options. Validators coerce invalid
+    inputs to safe defaults to prevent runtime failures.
+
+    Attributes:
+        map_filename (str): Optional path to a predefined maze file.
+        number (PositiveInt): Level index (1-based).
+        remove_deadends (bool): Whether dead ends are removed in
+            generated maze.
+        width (PositiveInt): Maze width in cells.
+        height (PositiveInt): Maze height in cells.
+        seed (int): Random seed for maze generation.
+        pacgum (NonNegativeInt): Pacgum count override or placement hint.
+        level_max_time (PositiveInt): Time limit for the level in seconds.
+        speed_factor_player (PositiveFloat): Player movement speed factor.
+        max_player_acceleration (PositiveInt): Max player acceleration cap.
+        speed_factor_ghost (PositiveFloat): Ghost movement speed factor.
+        bonus_fruit_type (BonusFruitType): Bonus fruit kind for the level.
+        points_per_bonus_fruit (PositiveInt): Score awarded per bonus fruit.
+        walls_color (tuple[int, ...]): Wall RGB color tuple.
+    """
+
     map_filename: str = ""
     number: PositiveInt = 1
     remove_deadends: bool = True
@@ -26,11 +50,13 @@ class Level(BaseModel):
 
     @property
     def size(self) -> tuple[PositiveInt, PositiveInt]:
+        """Return level dimensions as (width, height)."""
         return (self.width, self.height)
 
     @field_validator("bonus_fruit_type", mode="before")
     @classmethod
     def fix_BonusFruitType(cls, value: Any) -> BonusFruitType:
+        """Normalize bonus fruit value to a known enum member."""
         try:
             f_name = str(value)
             fruit = BonusFruitType[f_name.upper()]
@@ -42,6 +68,7 @@ class Level(BaseModel):
     @field_validator("points_per_bonus_fruit", mode="before")
     @classmethod
     def fix_bonus_points(cls, value: Any) -> PositiveInt:
+        """Validate bonus fruit score value."""
         try:
             int_val = int(value)
             if int_val < 0:
@@ -57,6 +84,7 @@ class Level(BaseModel):
     @field_validator("number", mode="before")
     @classmethod
     def fix_number(cls, value: Any) -> PositiveInt:
+        """Validate level number."""
         try:
             int_val = int(value)
             if int_val < 1:
@@ -70,6 +98,7 @@ class Level(BaseModel):
     @field_validator("remove_deadends", mode="before")
     @classmethod
     def fix_is_perfect(cls, value: Any) -> bool:
+        """Validate dead-end removal flag."""
         try:
             return bool(value)
         except (TypeError, ValueError):
@@ -80,6 +109,7 @@ class Level(BaseModel):
     @field_validator("width", mode="before")
     @classmethod
     def fix_width(cls, value: Any) -> PositiveInt:
+        """Validate maze width bounds."""
         try:
             int_val = int(value)
             if int_val < 3 or int_val > 40:
@@ -93,6 +123,7 @@ class Level(BaseModel):
     @field_validator("height", mode="before")
     @classmethod
     def fix_height(cls, value: Any) -> PositiveInt:
+        """Validate maze height bounds."""
         try:
             int_val = int(value)
             if int_val < 3 or int_val > 20:
@@ -106,6 +137,7 @@ class Level(BaseModel):
     @field_validator("seed", mode="before")
     @classmethod
     def fix_seed(cls, value: Any) -> int:
+        """Validate level seed value."""
         try:
             return int(value)
         except (TypeError, ValueError):
@@ -115,6 +147,7 @@ class Level(BaseModel):
     @field_validator("pacgum", mode="before")
     @classmethod
     def fix_pacgum(cls, value: Any) -> NonNegativeInt:
+        """Validate pacgum count value."""
         try:
             int_val = int(value)
             if int_val < 0:
@@ -128,6 +161,7 @@ class Level(BaseModel):
     @field_validator("max_player_acceleration", mode="before")
     @classmethod
     def fix_max_player_acceleration(cls, value: Any) -> PositiveInt:
+        """Validate maximum player acceleration."""
         try:
             int_val = int(value)
             if int_val < 1:
@@ -142,6 +176,7 @@ class Level(BaseModel):
     @field_validator("level_max_time", mode="before")
     @classmethod
     def fix_level_max_time(cls, value: Any) -> PositiveInt:
+        """Validate level time limit."""
         try:
             int_val = int(value)
             if int_val < 1:
@@ -155,6 +190,7 @@ class Level(BaseModel):
     @field_validator("speed_factor_player", mode="before")
     @classmethod
     def fix_speed_factor_player(cls, value: Any) -> PositiveFloat:
+        """Validate player speed factor."""
         try:
             f_val = float(value)
             if f_val <= 0:
@@ -169,6 +205,7 @@ class Level(BaseModel):
     @field_validator("speed_factor_ghost", mode="before")
     @classmethod
     def fix_speed_factor_ghost(cls, value: Any) -> PositiveFloat:
+        """Validate ghost speed factor."""
         try:
             f_val = float(value)
             if f_val <= 0:
@@ -183,6 +220,7 @@ class Level(BaseModel):
     @field_validator("walls_color", mode="before")
     @classmethod
     def fix_walls_color(cls, value: Any) -> tuple[int, ...]:
+        """Validate wall color and convert to RGB tuple."""
         try:
             color = tuple(pg.Color(value)[:3])
             return color
@@ -204,6 +242,23 @@ class Level(BaseModel):
 
 
 class Config(BaseModel):
+    """Game configuration model loaded from JSON.
+
+    Stores global gameplay settings and normalizes invalid values through
+    field validators to keep the game running with safe defaults.
+
+    Attributes:
+        highscores_filename (str): Path to the highscores JSON file.
+        levels (list[Level]): Ordered level definitions.
+        lives (PositiveInt): Initial number of player lives.
+        points_per_pacgum (PositiveInt): Score gained per pacgum.
+        points_per_super_pacgum (PositiveInt): Score gained per super pacgum.
+        points_per_ghost (PositiveInt): Score gained per eaten ghost.
+        seed (int): Base random seed for generation logic.
+        cheat (bool): Enables evaluation cheat features when True.
+        fullscreen_mode (bool): Enables fullscreen display mode when True.
+    """
+
     default_highscores_filename: ClassVar[str] = "highscores.json"
 
     highscores_filename: str = default_highscores_filename
@@ -219,6 +274,7 @@ class Config(BaseModel):
     @field_validator("highscores_filename", mode="before")
     @classmethod
     def fix_highscores_filename(cls, value: Any) -> str:
+        """Validate highscores filename format."""
         if not isinstance(value, str):
             print("Wrong type of 'highscores_filename'. "
                   "Using default value:", cls.default_highscores_filename)
@@ -232,6 +288,7 @@ class Config(BaseModel):
     @field_validator("levels", mode="before")
     @classmethod
     def fix_levels(cls, value: Any) -> list[Level]:
+        """Validate level list input."""
         if not isinstance(value, list):
             print("Wrong type of the 'levels'. "
                   "Using default demo level settings")
@@ -244,6 +301,7 @@ class Config(BaseModel):
     @field_validator("lives", mode="before")
     @classmethod
     def fix_lives(cls, value: Any) -> PositiveInt:
+        """Validate initial lives count."""
         try:
             int_val = int(value)
             if int_val < 1:
@@ -257,6 +315,7 @@ class Config(BaseModel):
     @field_validator("points_per_pacgum", mode="before")
     @classmethod
     def fix_points_per_pacgum(cls, value: Any) -> PositiveInt:
+        """Validate pacgum score value."""
         try:
             int_val = int(value)
             if int_val < 1:
@@ -270,6 +329,7 @@ class Config(BaseModel):
     @field_validator("points_per_super_pacgum", mode="before")
     @classmethod
     def fix_points_per_super_pacgum(cls, value: Any) -> PositiveInt:
+        """Validate super pacgum score value."""
         try:
             int_val = int(value)
             if int_val < 1:
@@ -284,6 +344,7 @@ class Config(BaseModel):
     @field_validator("points_per_ghost", mode="before")
     @classmethod
     def fix_points_per_ghost(cls, value: Any) -> PositiveInt:
+        """Validate ghost score value."""
         try:
             int_val = int(value)
             if int_val < 1:
@@ -297,6 +358,7 @@ class Config(BaseModel):
     @field_validator("seed", mode="before")
     @classmethod
     def fix_seed(cls, value: Any) -> int:
+        """Validate random seed value."""
         try:
             return int(value)
         except (TypeError, ValueError):
@@ -306,6 +368,7 @@ class Config(BaseModel):
     @field_validator("cheat", mode="before")
     @classmethod
     def fix_cheat(cls, value: Any) -> bool:
+        """Validate cheat mode flag."""
         try:
             return bool(value)
         except (TypeError, ValueError) as er:
@@ -315,6 +378,7 @@ class Config(BaseModel):
     @field_validator("fullscreen_mode", mode="before")
     @classmethod
     def fix_fullscreen_mode(cls, value: Any) -> bool:
+        """Validate fullscreen mode flag."""
         try:
             return bool(value)
         except (TypeError, ValueError) as er:

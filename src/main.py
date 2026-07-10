@@ -26,11 +26,17 @@ except ModuleNotFoundError as e:
 
 
 async def run_error(screen: Any, clock: Any) -> None:
-    # The game loop must reside inside an async function
-    # global g_error_txt
+    """Run the async fallback error screen loop.
+
+    Displays startup error details and a simple scene while processing events
+    until the window is closed.
+
+    Args:
+        screen (Any): Pygame display surface used for rendering.
+        clock (Any): Pygame clock used to control frame rate.
+    """
 
     running = True
-    # font = pg.font.SysFont(['Nimbus Mono PS', 'couriernew', 'arial'], 20)
     font = pg.font.Font(None, 20)
 
     while running:
@@ -86,6 +92,12 @@ async def run_error(screen: Any, clock: Any) -> None:
 
 
 def main() -> None:
+    """Start the web game bootstrap flow.
+
+    Tries to import required modules and launch the app. If startup fails,
+    initializes pygame and shows the async error screen instead.
+    """
+
     global MazeGenerator
     global g_error_txt
 

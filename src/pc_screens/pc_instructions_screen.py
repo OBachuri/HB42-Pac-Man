@@ -11,7 +11,19 @@ from pc_screens.pc_utils import wrap_text
 
 
 class InstructionsScreen(BaseScreen):
+    """Screen that shows gameplay rules, controls, and scoring details.
+
+    Builds instruction text dynamically from runtime configuration and
+    includes cheat-mode hints when enabled.
+    """
+
     def __init__(self, app: "App") -> None:
+        """Initialize the instructions screen and compose help text.
+
+        Args:
+            app (App): Application context and shared resources.
+        """
+
         self.app = app
 
         self.text: str = ""
@@ -68,6 +80,8 @@ class InstructionsScreen(BaseScreen):
         )
 
     async def run(self) -> None:
+        """Run the asynchronous instructions screen loop."""
+
         font = self.app.small_font
         text_rect = pg.Rect(
             5, 5, SCREEN_WIDTH - 10, SCREEN_HEIGHT - font.get_height() * 2

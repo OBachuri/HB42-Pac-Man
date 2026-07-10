@@ -31,12 +31,22 @@ if TYPE_CHECKING:
 
 
 class Game(BaseScreen):
+    """Core gameplay screen managing map, entities, scoring, and loop state."""
+
     screen_type: ScreenTypes = ScreenTypes.GAME
 
     sounds: dict[SoundType, list[Sound]] = {}
     sound_index: int = 0
 
     def __init__(self, app: "App", config: Config | ConfigWeb | None = None):
+        """Initialize gameplay runtime state and dependencies.
+
+        Args:
+            app (App): Application context and shared resources.
+            config (Config | ConfigWeb | None, optional): Override config;
+                falls back to app config when omitted.
+        """
+
         self.app = app
         # pg.mouse.set_visible(False)
         if app.screen:
@@ -83,6 +93,8 @@ class Game(BaseScreen):
         self.new_game()
 
     def new_game(self) -> None:
+        """Create fresh map/entities, reset lives, and start from level 1."""
+
         self.map = Map(self)
         self.player = Player(self)
 
@@ -100,7 +112,11 @@ class Game(BaseScreen):
         self.next_level(0)
 
     def next_level(self, next: int = 1) -> None:
-        # global MazeGenerator
+        """Advance or reload level state and rebuild level resources.
+
+        Args:
+            next (int, optional): Level increment (0 to reload current setup).
+        """
 
         self.new_start = True
         self.pause = True
@@ -238,6 +254,8 @@ class Game(BaseScreen):
         self.game_time = self.game_max_time
 
     def update(self) -> None:
+        """Advance one gameplay tick (entities, timers, collisions, rules)."""
+
         if self.pause:
             self.delta_time = self.clock.tick(FPS)
             return
@@ -296,6 +314,8 @@ class Game(BaseScreen):
             self.next_level()
 
     def draw(self) -> None:
+        """Render map, entities, HUD, and frame presentation."""
+
         self.screen.fill('black')
         self.map.draw()
         for pellet in self.artifacts:
@@ -353,6 +373,8 @@ class Game(BaseScreen):
         pg.display.flip()
 
     def check_events(self) -> None:
+        """Process input and window/game control events."""
+
         self.global_trigger = False
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -412,7 +434,8 @@ class Game(BaseScreen):
                 self.old_keys = pg.key.get_pressed()
 
     async def run(self) -> None:
-        #        pg.time.set_timer(self.global_event, 40)
+        """Run the asynchronous gameplay loop until paused/exited."""
+
         pg.display.set_caption('Pac-man 42')
         if self.player.lives < 1:
             self.score = 0
@@ -430,6 +453,8 @@ class Game(BaseScreen):
 
     @classmethod
     def sound_init(cls) -> None:
+        """Load and initialize shared game-level sound resources."""
+
         cls.sounds = Sound.read_sounds_from_files(
             "inc/sounds/tick/",
             SoundType.TICK)

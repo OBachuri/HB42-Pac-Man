@@ -4,6 +4,8 @@ from pygame import mixer as mx
 
 
 class SoundType(Enum):
+    """Identifiers for grouped in-game sound effects."""
+
     EATEN = 1    # death
     REBORN = 2
     DISAPPEAR = 3
@@ -11,7 +13,15 @@ class SoundType(Enum):
 
 
 class Sound:
+    """Thin wrapper around pygame mixer sound loading and playback."""
+
     def __init__(self, file_path: str) -> None:
+        """Create a sound object from a file if it exists and is readable.
+
+        Args:
+            file_path (str): Path to a sound file.
+        """
+
         self._path: str = self._file_path_test(file_path)
         self._sound: mx.Sound | None = None
         if len(self._path) > 0:
@@ -22,12 +32,27 @@ class Sound:
                 print("Can't read sound from file:", file_path, ex)
 
     def _file_path_test(self, file_path: str) -> str:
+        """Validate file path existence.
+
+        Args:
+            file_path (str): Candidate file path.
+
+        Returns:
+            str: Original path if it exists, otherwise an empty string.
+        """
+
         if os.path.exists(file_path):
             return (file_path)
         else:
             return ("")
 
     def play(self, loops: int = 0) -> None:
+        """Play the loaded sound.
+
+        Args:
+            loops (int, optional): Number of extra repeats (0 = play once).
+        """
+
         if self._sound:
             try:
                 mx.Sound.play(self._sound, loops=loops)
@@ -35,6 +60,8 @@ class Sound:
                 print("Error with sound play:", ex)
 
     def stop(self) -> None:
+        """Stop playback of the loaded sound."""
+
         if self._sound:
             try:
                 mx.Sound.stop(self._sound)
@@ -45,6 +72,18 @@ class Sound:
     def read_sounds_from_files(file_path: str, sound_type: SoundType,
                                sounds: dict[SoundType, list["Sound"]] = {}
                                ) -> dict[SoundType, list["Sound"]]:
+        """Load sound files for a sound type and append them to a registry.
+
+        Args:
+            file_path (str): Directory or pattern source for sound files.
+            sound_type (SoundType): Sound category key.
+            sounds (dict[SoundType, list[Sound]], optional): Existing sound
+                registry to extend.
+
+        Returns:
+            dict[SoundType, list[Sound]]: Updated sound registry.
+        """
+
         path_ = os.path.join(
                 os.path.dirname(os.path.abspath(__file__)),
                 file_path,
