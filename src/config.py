@@ -53,6 +53,14 @@ class Level(BaseModel):
         """Return level dimensions as (width, height)."""
         return (self.width, self.height)
 
+    @field_validator("map_filename", mode="before")
+    @classmethod
+    def fix_map_filename(cls, value: Any) -> str:
+        """Validate map filename."""
+        if not isinstance(value, str):
+            return ""
+        return value
+
     @field_validator("bonus_fruit_type", mode="before")
     @classmethod
     def fix_BonusFruitType(cls, value: Any) -> BonusFruitType:
@@ -295,6 +303,23 @@ class Config(BaseModel):
             return [Level()]
         if not value:
             print("Empty 'levels'. Using default demo level settings")
+            return [Level()]
+        return value
+
+    @field_validator("levels", mode="after")
+    @classmethod
+    def check_level_numbers(cls, value: list[Level]) -> list[Level]:
+        """Validate levels list."""
+        numbers: list[int] = []
+        for lev in value:
+            if lev.number in numbers:
+                print("There are duplicate level numbers."
+                      "Using default demo level settings")
+                return [Level()]
+            numbers.append(lev.number)
+        if 1 not in numbers:
+            print("There is no level number 1."
+                  "Using default demo level settings")
             return [Level()]
         return value
 

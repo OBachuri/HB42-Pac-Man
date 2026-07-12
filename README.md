@@ -213,7 +213,7 @@ The entrypoint imports maze generation package at runtime and exits with a clear
 High-level architecture (actual class names may evolve):
 
 - **Entrypoint Layer**
-  - `pac-man.py`: bootstrap, dependency checks, CLI config argument, app launch
+  - `pac-man.py`: dependency checks, CLI config argument, app launch
 - **Configuration Layer**
   - Parser module (`pc_parser`) for config loading and validation
   - Config model (`config`) with typed fields/default logic
