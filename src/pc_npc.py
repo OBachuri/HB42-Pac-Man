@@ -111,17 +111,25 @@ class NPC(Entity):
                 self.mode = GhostMode.CHASE
         elif self.mode == GhostMode.FRIGHTENED:
 
+            if (self.goal is not None):
+                gx, gy = tuple(self.goal)
+                if (((abs(cur_x-gx) > speed_factor)
+                   or (abs(cur_y-gy) > speed_factor))
+                   and ((self.dx != 0) or (self.dy != 0))):
+                    return
+
             l_ = self.game.map.get_direction_for_cell(cur_x, cur_y)
+
+            self.x = round(self.x)
+            self.y = round(self.y)
 
             if (len(l_) > 1
                and ((self.dx != 0) or (self.dy != 0))
                and ((-self.dx, -self.dy) in l_)):
                 l_.remove((-self.dx, -self.dy))
-            else:
-                print("!!!!!",self.name, " int:",(cur_x,cur_y) ,(self.x, self.y) ,(self.dx, self.dy))
-                print(l_)
 
             dx, dy = random.choice(l_)
+
             new_goal = self.adjust_vector(pg.Vector2(cur_x + dx, cur_y + dy))
 
             if (new_goal == self.get_player_pos()
@@ -188,14 +196,14 @@ class NPC(Entity):
 
         x_i = round(x)
         y_i = round(y)
-        if (((abs(x_i - x) <= speed_factor)
-             and (abs(y_i - y) <= speed_factor))):
+        if (((abs(x_i - x) < speed_factor)
+             and (abs(y_i - y) < speed_factor))):
 
             if self.mode == GhostMode.SPAWN and not (self.goal is None):
                 gx, gy = tuple(self.goal)
 
-                if ((abs(x_i-gx) < speed_factor)
-                   and (abs(y_i-gy) < speed_factor)):
+                if ((abs(x_i-gx) <= speed_factor)
+                   and (abs(y_i-gy) <= speed_factor)):
                     self.reborn()
                     return
 

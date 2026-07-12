@@ -109,8 +109,6 @@ class Game(BaseScreen):
 
         self.player.lives = self.config.lives
 
-        # print("-new-game")
-
         self.next_level(0)
 
     def next_level(self, next: int = 1) -> None:
