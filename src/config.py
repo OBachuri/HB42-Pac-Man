@@ -53,6 +53,13 @@ class Level(BaseModel):
         """Return level dimensions as (width, height)."""
         return (self.width, self.height)
 
+    @field_validator("map_filename", mode="before")
+    @classmethod
+    def fix_map_filename(cls, value: Any) -> str:
+        if not isinstance(value, str):
+            return ""
+        return value
+
     @field_validator("bonus_fruit_type", mode="before")
     @classmethod
     def fix_BonusFruitType(cls, value: Any) -> BonusFruitType:
