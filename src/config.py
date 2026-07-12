@@ -298,6 +298,23 @@ class Config(BaseModel):
             return [Level()]
         return value
 
+    @field_validator("levels", mode="after")
+    @classmethod
+    def check_level_numbers(cls, value: list[Level]) -> list[Level]:
+        """Validate levels list."""
+        numbers: list[int] = []
+        for lev in value:
+            if lev.number in numbers:
+                print("There are duplicate level numbers."
+                      "Using default demo level settings")
+                return [Level()]
+            numbers.append(lev.number)
+        if 1 not in numbers:
+            print("There is no level number 1."
+                  "Using default demo level settings")
+            return [Level()]
+        return value
+
     @field_validator("lives", mode="before")
     @classmethod
     def fix_lives(cls, value: Any) -> PositiveInt:
