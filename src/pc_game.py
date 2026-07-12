@@ -325,8 +325,8 @@ class Game(BaseScreen):
         self.player.draw()
         for npc in self.npcs:
             npc.draw()
-        for txt_ in self.texts:
-            txt_.draw()
+        for pctxt in self.texts:
+            pctxt.draw()
 
         if self.pause:
             if self.new_start:

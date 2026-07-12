@@ -1,5 +1,4 @@
 import pygame as pg
-from pc_constants import FPS
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
