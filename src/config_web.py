@@ -150,7 +150,9 @@ class LevelWeb:
         print("Seed:", self.seed)
         print("Remove deadends:", self.remove_deadends)
         print("Time max:", self.level_max_time, "s")
-        print("walls color:", self.walls_color)
+        print("Walls color:", self.walls_color)
+        print("Fruit", self.bonus_fruit_type)
+        print("Point per fruit", self.points_per_bonus_fruit)
 
 
 class ConfigWeb:

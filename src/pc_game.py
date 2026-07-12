@@ -21,6 +21,7 @@ from pc_screens import ScreenTypes
 from pc_screens.pc_utils import PCUIElement
 from pc_sound import SoundType, Sound
 from pc_screens.pc_base_screen import BaseScreen
+from pc_texts import PC_Texts
 
 
 from typing import TYPE_CHECKING
@@ -90,6 +91,7 @@ class Game(BaseScreen):
 
         self.npcs: list[NPC] = []
         self.artifacts: list[PC_Artifacts] = []
+        self.texts: list[PC_Texts] = []
         self.new_game()
 
     def new_game(self) -> None:
@@ -264,6 +266,8 @@ class Game(BaseScreen):
             npc.update()
         for pellet in self.artifacts:
             pellet.update()
+        for txt_ in self.texts:
+            txt_.update()
         # self.raycasting.update()
         # self.object_handler.update()
         # self.weapon.update()
@@ -323,6 +327,8 @@ class Game(BaseScreen):
         self.player.draw()
         for npc in self.npcs:
             npc.draw()
+        for txt_ in self.texts:
+            txt_.draw()
 
         if self.pause:
             if self.new_start:

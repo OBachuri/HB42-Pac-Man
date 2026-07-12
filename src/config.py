@@ -246,7 +246,9 @@ class Level(BaseModel):
         print("Seed:", self.seed)
         print("Remove deadends:", self.remove_deadends)
         print("Time max:", self.level_max_time, "s")
-        print("walls color:", self.walls_color)
+        print("Walls color:", self.walls_color)
+        print("Fruit", self.bonus_fruit_type)
+        print("Point per fruit", self.points_per_bonus_fruit)
 
 
 class Config(BaseModel):
@@ -320,7 +322,7 @@ class Config(BaseModel):
         if 1 not in numbers:
             print("There is no level number 1."
                   "Using default demo level settings")
-            return [Level()]
+            value.append(Level())
         return value
 
     @field_validator("lives", mode="before")

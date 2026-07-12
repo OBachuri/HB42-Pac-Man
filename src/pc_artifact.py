@@ -6,6 +6,7 @@ import random
 from pc_constants import FPS
 from pc_entity import FrameType, GhostMode
 from pc_sound import SoundType, Sound
+from pc_texts import PC_Texts
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -100,8 +101,8 @@ class PC_Artifacts():
 
     def event(self) -> None:
         """Handle artifact collection: score, sound, and removal."""
-
-        self.game.score += self.points
+        points = self.points
+        self.game.score += points
         self.points = 0
         self.color = (255, 255, 255)
         self.draw()
@@ -115,6 +116,7 @@ class PC_Artifacts():
 
         # self.game.player.dx = max(0, self.game.player.dx - 0.1)
         # self.game.player.dy = max(0, self.game.player.dy - 0.1)
+
         self.game.artifacts.remove(self)
 
     def update(self) -> None:
@@ -197,7 +199,8 @@ class Pellet(PC_Artifacts):
 
         if len(self.game.fruits_triger) > 0:
             if len(self.game.artifacts) < self.game.fruits_triger[0]:
-                bonus_fruit = Fruit(self.game, type=self.game.bonus_fruit_type)
+                bonus_fruit = Fruit(self.game, type=self.game.bonus_fruit_type,
+                                    points=self.game.points_per_bonus_fruit)
                 bonus_fruit.teleport()
                 self.game.artifacts.append(bonus_fruit)
                 del self.game.fruits_triger[0]
@@ -236,7 +239,7 @@ class Fruit(PC_Artifacts):
 
         super().__init__(game, point, points, color, name=name)
         self.size: int = 20     # radius
-        self.event_timer = 9    # s - time of live
+        self.event_timer = 11    # s - time of live
         self.frames: dict[FrameType, list[pg.Surface]] = {}
         self.frame_index: int = 0
         self.animation_timer: float = 0
@@ -339,6 +342,14 @@ class Fruit(PC_Artifacts):
                         n.mode = GhostMode.CHASE
                     else:
                         n.mode = GhostMode.SCATTER
+
+    def event(self) -> None:
+        """Handle bonus fruit collection: score, sound, and removal."""
+        points = self.points
+        self.game.texts.append(PC_Texts(game=self.game,
+                                        point=(self.x, self.y),
+                                        text=str(points)))
+        super().event()
 
     def update(self) -> None:
         """Advance fruit animation/timer and process collection checks."""

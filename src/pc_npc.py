@@ -7,6 +7,7 @@ from collections.abc import Sequence
 from pc_entity import Entity, FrameType, GhostMode
 from pc_constants import FPS
 from pc_sound import SoundType, Sound
+from pc_texts import PC_Texts
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -116,6 +117,9 @@ class NPC(Entity):
                and ((self.dx != 0) or (self.dy != 0))
                and ((-self.dx, -self.dy) in l_)):
                 l_.remove((-self.dx, -self.dy))
+            else:
+                print("!!!!!",self.name, " int:",(cur_x,cur_y) ,(self.x, self.y) ,(self.dx, self.dy))
+                print(l_)
 
             dx, dy = random.choice(l_)
             new_goal = self.adjust_vector(pg.Vector2(cur_x + dx, cur_y + dy))
@@ -268,11 +272,15 @@ class NPC(Entity):
                 1 +
                 sum(
                  1 for n in self.game.npcs if n.mode != GhostMode.FRIGHTENED))
-            self.game.score += self.points * count_frightened
+            points = self.points * count_frightened
+            self.game.score += points
             self.mode = GhostMode.DEAD
             self.alive = False
             self.dx = 0
             self.dy = 0
+            self.game.texts.append(PC_Texts(game=self.game,
+                                            point=(self.x, self.y),
+                                            text=str(points)))
             sound = self.sounds.get(SoundType.EATEN, [])
             if len(sound) > 0:
                 sound[0].play()
