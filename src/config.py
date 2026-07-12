@@ -56,6 +56,7 @@ class Level(BaseModel):
     @field_validator("map_filename", mode="before")
     @classmethod
     def fix_map_filename(cls, value: Any) -> str:
+        """Validate map filename."""
         if not isinstance(value, str):
             return ""
         return value
