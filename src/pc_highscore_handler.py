@@ -23,7 +23,6 @@ class HighscoresHandler:
             read/format errors.
         """
 
-        highscores: list[dict[str, int]] = []
         path = config.highscores_filename
         if sys.platform == "emscripten":
             save_dir = pg.system.get_pref_path("42hr.fr", "PacMan")
@@ -33,11 +32,16 @@ class HighscoresHandler:
                 highscores = json.load(f)
                 if not isinstance(highscores, list):
                     return []
-                highscores.sort(key=lambda d: list(
+                valid_highscores = []
+                for h in highscores:
+                    s = list(h.values())[0]
+                    if isinstance(s, int) and s > 0:
+                        valid_highscores.append(h)
+                valid_highscores.sort(key=lambda d: list(
                     d.values())[0], reverse=True)
+                return valid_highscores
         except Exception:
-            pass
-        return highscores
+            return []
 
     @classmethod
     def store_highscores(cls, config: "Config | ConfigWeb",
